@@ -1,0 +1,32 @@
+{
+  "name": "html-res-webpack-plugin",
+  "version": "0.0.1",
+  "description": "webpack ",
+  "keywords": [
+    "front-end",
+    "web",
+    "webpack",
+    "plugin",
+    "building tool"
+  ],
+  "homepage": "https://github.com/lcxfs1991/html-res-webpack-plugin",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:lcxfs1991/html-res-webpack-plugin.git"
+  },
+  "author": "heyli",
+  "scripts": {
+    
+  },
+  "dependencies": {
+    
+  },
+  "devDependencies": {
+    "lodash": "^3.10.1",
+    "bluebird": "^3.1.1"
+  },
+  "engines": {
+    "node": ">=0.10.0",
+    "npm": ">=1.2.10"
+  }
+}
