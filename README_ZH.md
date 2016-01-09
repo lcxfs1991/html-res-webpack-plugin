@@ -1,5 +1,7 @@
 # html-res-webpack-plugin
 
+### [English README](https://github.com/lcxfs1991/html-res-webpack-plugin)
+
 ## 我为什么要写一个新的html生成插件
 
 之前，我一直使用[html-webpack-plugin](https://github.com/ampedandwired/html-webpack-plugin) 插件. 可是，这个插件有比较大的问题。当我使用inject模式的时候，我需要去筛走我不需要的入口文件。除此之外，如果我想加一些例如async这样的属性给我的script标签，也基本是不可能的事。如果我使用非inject模式，md5的自带特性将无法使用，更不用说资源内联了。

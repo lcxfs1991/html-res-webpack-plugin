@@ -1,5 +1,7 @@
 # html-res-webpack-plugin
 
+### [中文文档](https://github.com/lcxfs1991/html-res-webpack-plugin/blob/master/README_ZH.md)
+
 ## Why do I write a new html plugin
 
 Previously, I use [html-webpack-plugin](https://github.com/ampedandwired/html-webpack-plugin) for my projects. However, the plugin has a serious drawback. When I use inject mode, I need to filter all entry files that I don't need. In addition, If I hope to add attributes like async to my script tag, it is a mission impossible. If I use non-inject mode, md5 feature will be gone, let alone resource inline.
