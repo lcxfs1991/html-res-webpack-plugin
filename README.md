@@ -2,7 +2,7 @@
 
 ## Why do I write a new html plugin
 
-Previously, I use [html-webpack-plugin](https://github.com/ampedandwired/html-webpack-plugin) for my projects. However, the plugin has a serious drawback. When I use inject mode, I need to filter all entry files that I don't need. In addition, If I hope to add attributes like async to my script tag, it is a mission impossible. If I use non-inject mode, md5 feature is gone.
+Previously, I use [html-webpack-plugin](https://github.com/ampedandwired/html-webpack-plugin) for my projects. However, the plugin has a serious drawback. When I use inject mode, I need to filter all entry files that I don't need. In addition, If I hope to add attributes like async to my script tag, it is a mission impossible. If I use non-inject mode, md5 feature will be gone, let alone resource inline.
 
 That is why I need to write a brand new one which is more intuitively.
 
@@ -56,7 +56,7 @@ webpack.config.js
 	var config = {
 		hash: "-[hash:6]",
 		chunkhash: "-[chunkhash:6]",
-	}
+	};
 
 	plugins: [
 		// some other plugins
@@ -81,9 +81,28 @@ package.json
 
 If webpack is under watch mode (that is to say, the project is under developed), no md5 or resource inline functions will be called. If webpack is under production mode, the plugin will start adding md5 to resources and make the rest inline.
 
-Another thing worth mentioned is that if you use hash, please input [hash:x] (x is a number). If chunkhash is used, please input [chunkhash:x] (x is a number); x is required because I don't expect anyone will use a complete hash for a static resource. The difference between hash and chunkhash is that hash is the same for all resources and chunkhash is different for specific resource. Usually you are recommended to use chunkhash instead.
+Another thing worth mentioned is that if you use hash, please input `[hash:x]` (x is a number). If chunkhash is used, please input `[chunkhash:x]` (x is a number); x is required because I don't expect anyone will use a complete hash for a static resource. The difference between hash and chunkhash is that hash is the same for all resources and chunkhash is different for specific resource. Usually you are recommended to use chunkhash instead (Exception for style files required in an entry js file. They share the same chunkhash if you use extract-text-webpack-plugin).
 
 ## Multiple Html Page
+Sometimes there are more than one html pages in your projects. In this situation, please use similar iteration code to add plugins for different html pages
+```
+var config = {
+	hash: "-[hash:6]",
+	chunkhash: "-[chunkhash:6]",
+};
+
+var route = ['index', 'detail'];
+
+route.forEach(function(item) {
+    var htmlResWebpackPlugin = new HtmlResWebpackPlugin({
+        filename: item + ".html",
+        template: "src/" + item + ".html",
+        chunkhash: config.chunkhash
+    });
+    webpackConfig.plugins.push(htmlResWebpackPlugin);
+
+});
+```
 
 
 ## Options
