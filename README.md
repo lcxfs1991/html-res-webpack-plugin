@@ -59,6 +59,10 @@ webpack.config.js
 		hash: "-[hash:6]",
 		chunkhash: "-[chunkhash:6]",
 	};
+	
+	entry: {
+		'preivew/preview': [path.join(config.path.src, "/page/preview/main.js")],
+	},
 
 	plugins: [
 		// some other plugins
