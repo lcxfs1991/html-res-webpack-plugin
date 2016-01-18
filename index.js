@@ -1,5 +1,6 @@
 "use strict";
 
+// debug mode
 const isDebug = false;
 
 var fs = require('fs');
@@ -175,7 +176,7 @@ HtmlResWebpackPlugin.prototype.getHashedFile = function(opt, compilation) {
 		route = opt.route,
 		bits = (hashInfo.length > 1) ? hashInfo[1] : (compilation.hash.length),
 		isHash = (!~hashFormat.indexOf('chunkhash'));
-	var usedHash = compilation.hash.substr(0, opt.bits);
+	var usedHash = compilation.hash.substr(0, bits);
 
 	isDebug && console.log(hashFormat, hashInfo, bits, isHash, usedHash);
 	
