@@ -100,9 +100,9 @@ package.json
 
 If webpack is under watch mode (that is to say, the project is under developed), no md5 or resource inline functions will be called. If webpack is under production mode, the plugin will start adding md5 to resources and make the rest inline.
 
-Another thing worth mentioning is that if you use hash for js, please add `jsHash` the same as the output filename excluding folder destination. If you use hash for css, please add `cssHash` the same as the option you input into ExtractTextPlugin excluding css destination folder.  
+Another thing worth mentioning is that if you use hash for js, please add `jsHash` the same as the `output` webpack option `filename` excluding folder destination. If you use hash for css, please add `cssHash` the same as the option you input into ExtractTextPlugin excluding css destination folder.  
 
-Another thing need to be noticed is hash and chunkhash. The difference between hash and chunkhash is that hash is the same for all resources and chunkhash is different for specific resource. Usually you are recommended to use chunkhash instead (Exception for style files required in an entry js file. They share the same chunkhash if you use extract-text-webpack-plugin).
+One thing need to be noticed is hash and chunkhash. The difference between hash and chunkhash is that hash is the same for all resources and chunkhash is different for specific resource. Usually you are recommended to use chunkhash instead (Exception for style files required in an entry js file. They share the same chunkhash if you use extract-text-webpack-plugin).
 
 ## Multiple Html Page
 Sometimes there are more than one html pages in your projects. In this situation, please use similar iteration code to add plugins for different html pages
