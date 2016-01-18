@@ -1,13 +1,18 @@
 "use strict";
 
+const isDebug = false;
+
 var fs = require('fs');
 var _ = require('lodash');
 var path = require('path');
+var ConcatSource = require("webpack/lib/ConcatSource");
 
 function HtmlResWebpackPlugin(options) {
 	this.options = _.extend({
 		hash: null, // standard hash format
 		chunkhash: null, // chunk hash format
+		jsHash: options.jsHash || '',
+		cssHash: options.cssHash || '',
 		isWatch: false, // webpack watching mode or not
 	}, options);
 }
@@ -17,26 +22,15 @@ HtmlResWebpackPlugin.prototype.apply = function(compiler, callback) {
 
 	this.options = _.extend(this.options, {isWatch: compiler.options.watch || false})
 
-  	compiler.plugin("compilation", function(compilation) {
-    	compilation.plugin("optimize", function() {
-    		
-    	});
-  	});
-
-  	compiler.plugin("after-emit", function(compilation, callback) {
-  		// console.log("===============after-emit===========");
-
-  		callback();
-	});
-
   	compiler.plugin("make", function(compilation, callback) {
-	    // console.log("==================make================");
+	    isDebug && console.log("==================make================");
 	    callback();
 	});
 
+
   	// right after emit, files will be generated
 	compiler.plugin("emit", function(compilation, callback) {
-	    // console.log("===================emit===============");
+	    isDebug && console.log("===================emit===============");
 
 	    // return basename, ie, /xxx/xxx.html return xxx.html
 	    _this.options.basename = _this.addFileToWebpackAsset(compilation, _this.options.template);
@@ -48,6 +42,7 @@ HtmlResWebpackPlugin.prototype.apply = function(compiler, callback) {
 	    }
 
 	    _this.addAssets(compilation);
+
 	    
 	    callback();
 	});
@@ -89,19 +84,19 @@ HtmlResWebpackPlugin.prototype.getResourceMapping = function(compilation) {
 // process hash format
 HtmlResWebpackPlugin.prototype.processHashFormat = function() {
 	let hashFormat = this.options.hash || this.options.chunkhash;
-	let isHash = (!!this.options.hash);
-	let hashRegex = (isHash) ? new RegExp("hash:[0-9]*") : new RegExp("chunkhash:[0-9]*");
-	let hashType = (isHash) ? "hash" : "chunkhash";
-	let appendHash = hashFormat.match(hashRegex)[0];
 
-	let bits = parseInt(appendHash.replace(hashType + ':', ''));
+	let hashRegex = new RegExp("(hash|chunkhash)(:)*[0-9]*");
+
+	let jsHashMath = this.options.jsHash.match(hashRegex);
+	let cssHashMath = this.options.cssHash.match(hashRegex);
+
+	let jsHashInfo = (jsHashMath) ? (jsHashMath[0].split(':') || []) : [];
+	let cssHashInfo = (cssHashMath) ? (cssHashMath[0].split(':') || []) : [];
 
 	this.AssetOptions = _.assign(
 		this.AssetOptions,
-		{hashFormat: hashFormat},
-		{isHash: isHash},
-		{appendHash: appendHash},
-		{bits: bits}
+		{jsHashInfo: jsHashInfo},
+		{cssHashInfo: cssHashInfo}
 	);
 }
 
@@ -171,22 +166,30 @@ HtmlResWebpackPlugin.prototype.getNormalFile = function(opt, compilation) {
 
 // get the targeted hash file name
 HtmlResWebpackPlugin.prototype.getHashedFile = function(opt, compilation) {
-	
+	// console.log(opt);
+	var options = this.options;
+	var ext = opt.ext;
+	var hashFormat = (opt.ext === '.js') ? options.jsHash : options.cssHash,
+		hashInfo = (opt.ext === '.js') ? opt.jsHashInfo : opt.cssHashInfo,
+		resArr = this.AssetOptions.resArr,
+		route = opt.route,
+		bits = (hashInfo.length > 1) ? hashInfo[1] : (compilation.hash.length),
+		isHash = (!~hashFormat.indexOf('chunkhash'));
 	var usedHash = compilation.hash.substr(0, opt.bits);
-	let stats = this.AssetOptions.stats,
-	resArr = this.AssetOptions.resArr,
-	hashFormat = opt.hashFormat,
-	appendHash = opt.appendHash,
-	route = opt.route,
-	ext = opt.ext,
-	bits = opt.bits;
+
+	isDebug && console.log(hashFormat, hashInfo, bits, isHash, usedHash);
 	
 	for (let key in resArr) {
 		for (let item of resArr[key].files) {
-			usedHash = (opt.isHash) ? usedHash : resArr[key].hash.substr(0, bits);
-			
-			let fileHash = hashFormat.replace('[' + appendHash + ']', usedHash);
-			let newRoute = route.replace(ext, fileHash) + ext;
+			usedHash = (isHash) ? usedHash : resArr[key].hash.substr(0, bits);
+			let replaceRegx = '[' + hashInfo[0];
+			replaceRegx += (hashInfo.length > 1) ? ':' + hashInfo[1] + ']' : ']';
+
+			let newRoute = hashFormat.replace(replaceRegx, usedHash)
+									 .replace('[name]', route.replace(ext, ''));
+
+			isDebug && console.log(item, newRoute, !!~item.indexOf(newRoute));
+
 			if (!!~item.indexOf(newRoute)) {
 				return newRoute;
 			}
@@ -221,10 +224,8 @@ HtmlResWebpackPlugin.prototype.inlineRes = function(regex, htmlTag, ext, compila
 
 	return htmlContent.replace(regex, function(res, route) {
 		let hashFile = _this.getHashedFile({
-			hashFormat: AssetOptions.hashFormat,
-			isHash: AssetOptions.isHash,
-			appendHash: AssetOptions.appendHash,
-			bits: AssetOptions.bits,
+			jsHashInfo: AssetOptions.jsHashInfo,
+			cssHashInfo: AssetOptions.cssHashInfo,
 			route: route,
 			ext: path.extname(route)
 		}, compilation);
@@ -250,10 +251,8 @@ HtmlResWebpackPlugin.prototype.md5Res = function(regex, compilation, htmlContent
 	return htmlContent.replace(regex, function(script, route) {
 
 		let hashFile = _this.getHashedFile({
-			hashFormat: AssetOptions.hashFormat,
-			isHash: AssetOptions.isHash,
-			appendHash: AssetOptions.appendHash,
-			bits: AssetOptions.bits,
+			jsHashInfo: AssetOptions.jsHashInfo,
+			cssHashInfo: AssetOptions.cssHashInfo,
 			route: route,
 			ext: path.extname(route)
 		}, compilation);
