@@ -7,6 +7,7 @@ var fs = require('fs');
 var _ = require('lodash');
 var path = require('path');
 var ConcatSource = require("webpack/lib/ConcatSource");
+var minify = require('html-minifier').minify;
 
 function HtmlResWebpackPlugin(options) {
 	this.options = _.extend({
@@ -15,6 +16,7 @@ function HtmlResWebpackPlugin(options) {
 		jsHash: options.jsHash || '',
 		cssHash: options.cssHash || '',
 		isWatch: false, // webpack watching mode or not
+		htmlMinify: options.htmlMinify || false
 	}, options);
 }
 
@@ -52,12 +54,14 @@ HtmlResWebpackPlugin.prototype.apply = function(compiler, callback) {
 
 // use webpack to generate files when it is in dev mode
 HtmlResWebpackPlugin.prototype.addFileToWebpackAsset = function(compilation, template) {
+	var _this = this;
 	var filename = path.resolve(template);
 	var basename = path.basename(filename);
     compilation.fileDependencies.push(filename);
     compilation.assets[basename] = {
     	source: function() {
-      		return fs.readFileSync(filename).toString();
+    		let htmlContent = fs.readFileSync(filename).toString();
+      		return _this.options.htmlMinify ?  minify(htmlContent, _this.options.htmlMinify) : htmlContent;
       	},
       	size: function() {
       		return fs.statSync(filename).size;

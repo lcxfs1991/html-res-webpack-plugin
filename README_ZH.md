@@ -120,7 +120,11 @@ route.forEach(function(item) {
         filename: item + ".html",
         template: "src/" + item + ".html",
         jsHash: "[name]" + config.chunkhash + ".js",
-        cssHash:  "[name]" + config.chunkhash + ".css"
+        cssHash:  "[name]" + config.chunkhash + ".css",
+        htmlMinify:{
+            removeComments: true,
+            collapseWhitespace: true,
+        }
     });
     webpackConfig.plugins.push(htmlResWebpackPlugin);
 
@@ -132,6 +136,7 @@ route.forEach(function(item) {
 - `template`: html模板来源
 - `jsHash`: "[name]" + config.chunkhash + ".js" (example)
 - `cssHash`:  "[name]" + config.chunkhash + ".css" (example)
+- `htmlMinify`: 请查看`html-minifier`[https://github.com/kangax/html-minifier]文档. 如果设为false | null, html文件则不会被压缩
 
 ## 写在最后
 因为这只是v0.0.1版本，我可能会漏掉一些项目的场景。请给我发issue或者发邮件，我会尽快帮你解决问题(通常24小时之内）并不断优化这个插件。

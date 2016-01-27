@@ -119,7 +119,11 @@ route.forEach(function(item) {
         filename: item + ".html",
         template: "src/" + item + ".html",
         jsHash: "[name]" + config.chunkhash + ".js",
-        cssHash:  "[name]" + config.chunkhash + ".css"
+        cssHash:  "[name]" + config.chunkhash + ".css",
+        htmlMinify:{
+            removeComments: true,
+            collapseWhitespace: true,
+        }
     });
     webpackConfig.plugins.push(htmlResWebpackPlugin);
 
@@ -132,6 +136,7 @@ route.forEach(function(item) {
 - `template`: template source
 - `jsHash`: "[name]" + config.chunkhash + ".js" (example)
 - `cssHash`:  "[name]" + config.chunkhash + ".css" (example)
+- `htmlMinify`: please checkout `html-minifier`[https://github.com/kangax/html-minifier] to see detail options. If set false | null, html files won't be compressed.
 
 ## Last Words
 Since this is still v0.0.1, I may miss some project senarios. Please try this plugin and push any issues. I will help you solve the problem ASAP(usually within 24 hours).
