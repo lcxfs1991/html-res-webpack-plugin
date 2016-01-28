@@ -149,10 +149,4 @@ route.forEach(function(item) {
 ## 项目变更
 v0.0.1 html生成及相关js,css资源内联
 v0.0.2 使生成的文件名和哈希可定制化
-
-## 下一版本
-<<<<<<< HEAD
-v0.0.2 使用webpack的缓存特性使构建更快specs
-=======
 v0.0.3 使用webpack的缓存特性使构建更快specs
->>>>>>> dev
