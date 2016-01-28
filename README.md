@@ -147,6 +147,6 @@ Since this is still v0.0.1, I may miss some project senarios. Please try this pl
 
 
 ## Changelog
-v0.0.1 resouce inline and md5
-v0.0.2 customized name and hash
-v0.0.3 use cache to boost the speed and satisfy more projects specs
+- v0.0.1 resouce inline and md5
+- v0.0.2 customized name and hash
+- v0.0.3 use cache to boost the speed and satisfy more projects specs
