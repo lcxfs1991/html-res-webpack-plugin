@@ -64,13 +64,30 @@ webpack.config.js
 		'preivew/preview': [path.join(config.path.src, "/page/preview/main.js")],
 	},
 
+    /**
+     *  webpack options below
+     */
+    .
+    .
+    .
+    output: {
+        publicPath: (config.env === 'prod') ? config.cdn : config.defaultPath,
+        path: path.join(config.path.dist),
+        filename: "js/[name]" + config.chunkhash + ".js"
+    },
+    
+    .
+    .
+    .
+
     plugins: [
         // some other plugins
-
+        new ExtractTextPlugin("./css/[name]" + config.chunkhash + ".css"),
         new HtmlResWebpackPlugin({
             filename: "index.html",
             template: "src/index.html",
-            chunkhash: config.chunkhash
+            jsHash: "[name]" + config.chunkhash + ".js",
+            cssHash:  "[name]" + config.chunkhash + ".css"
         });
     ]
 ```
@@ -87,7 +104,9 @@ package.json
 
 如果webpack使用watch模式（就是说，项目正在开发中），md5和资源内联功能都不会被使用。如果webpack在production（生产）模式，插件将会给文件添上md5或者将其内联。
 
-另一个值得提的是hash（哈希）的使用。如果你使用hash，请输入如`[hash:x]`(x是一个数字)。如果使用的是chunkhash，请输入`[chunkhash:x]` （x是一个数字)。x是必须的，因为我认为没人会使用完整的hash字符串。hash与chunkhash的不同点在于，hash对于所有资源都是一样的，而每个入口文件却只有一个自己的chunkhash（如果你使用extract-text-webpack-plugin插件，在入口js文件里被引用的样式文件，则会共享相同的chunkhash）。
+另一个值得提的是hash（哈希）。如果你想给js添加hash，使用`jsHash`参数，与webpack的`output`参数`filename`一致，除去它的生成位置。如果你想给css添加hash，请使用`cssHash`，跟`ExtractTextPlugin`输入的参数一致，除了它的生成目录。
+
+有一个需要提及的是，hash与chunkhash的不同点在于，hash对于所有资源都是一样的，而每个入口文件却只有一个自己的chunkhash（如果你使用extract-text-webpack-plugin插件，在入口js文件里被引用的样式文件，则会共享相同的chunkhash）。
 
 ## 多html页面
 有时候，一个项目会有多于一个html文件。这种情况下，请对每个html文件添加对应的一个HtmlResWebacpk插件。
@@ -104,7 +123,12 @@ route.forEach(function(item) {
     var htmlResWebpackPlugin = new HtmlResWebpackPlugin({
         filename: item + ".html",
         template: "src/" + item + ".html",
-        chunkhash: config.chunkhash
+        jsHash: "[name]" + config.chunkhash + ".js",
+        cssHash:  "[name]" + config.chunkhash + ".css",
+        htmlMinify:{
+            removeComments: true,
+            collapseWhitespace: true,
+        }
     });
     webpackConfig.plugins.push(htmlResWebpackPlugin);
 
@@ -114,8 +138,9 @@ route.forEach(function(item) {
 ## Options
 - `filename`: 生成的html文件名
 - `template`: html模板来源
-- `chunkhash`: "-[chunkhash:6]" or ".[chunkhash:6]" 等
-- `hash`: "-[hash:6]" or ".[hash:6]" and 等
+- `jsHash`: "[name]" + config.chunkhash + ".js" (example)
+- `cssHash`:  "[name]" + config.chunkhash + ".css" (example)
+- `htmlMinify`: 请查看`html-minifier`[https://github.com/kangax/html-minifier]文档. 如果设为false | null, html文件则不会被压缩
 
 ## 写在最后
 因为这只是v0.0.1版本，我可能会漏掉一些项目的场景。请给我发issue或者发邮件，我会尽快帮你解决问题(通常24小时之内）并不断优化这个插件。
@@ -123,6 +148,11 @@ route.forEach(function(item) {
 
 ## 项目变更
 v0.0.1 html生成及相关js,css资源内联
+v0.0.2 使生成的文件名和哈希可定制化
 
 ## 下一版本
+<<<<<<< HEAD
 v0.0.2 使用webpack的缓存特性使构建更快specs
+=======
+v0.0.3 使用webpack的缓存特性使构建更快specs
+>>>>>>> dev
