@@ -13,6 +13,8 @@
 src/index.html
 --> 
 dist/index.html
+
+### (每个资源(script和link)之间请保留换行)
 ```
 <!DOCTYPE html>
 <html lang="en" id="html">

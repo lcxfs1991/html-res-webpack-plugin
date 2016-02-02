@@ -47,10 +47,26 @@ HtmlResWebpackPlugin.prototype.apply = function(compiler, callback) {
 
 	    _this.addAssets(compilation);
 
+	    if (_this.options.htmlMinify) {
+	    	_this.compressHtml(compilation);
+	    }
 	    
 	    callback();
 	});
 
+};
+
+// compress html files
+HtmlResWebpackPlugin.prototype.compressHtml = function(compilation) {
+	let basename = this.options.basename;
+	let source = compilation.assets[basename].source();
+	let obj = compilation.assets[basename];
+	let _this = this;
+	compilation.assets[basename] = Object.assign(obj, {
+		source: function() {
+			return minify(source, _this.options.htmlMinify);
+		}
+	});
 };
 
 // use webpack to generate files when it is in dev mode
@@ -62,7 +78,7 @@ HtmlResWebpackPlugin.prototype.addFileToWebpackAsset = function(compilation, tem
     compilation.assets[basename] = {
     	source: function() {
     		let htmlContent = fs.readFileSync(filename).toString();
-      		return _this.options.htmlMinify ?  minify(htmlContent, _this.options.htmlMinify) : htmlContent;
+      		return htmlContent; //_this.options.htmlMinify ?  minify(htmlContent, _this.options.htmlMinify) : htmlContent;
       	},
       	size: function() {
       		return fs.statSync(filename).size;

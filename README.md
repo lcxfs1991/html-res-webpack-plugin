@@ -13,6 +13,8 @@ That is why I need to write a brand new one which is more intuitively.
 src/index.html
 --> 
 dist/index.html
+
+### (please keep line break for each resource(script and link))
 ```
 <!DOCTYPE html>
 <html lang="en" id="html">
