@@ -16,7 +16,8 @@ function HtmlResWebpackPlugin(options) {
 		jsHash: options.jsHash || '',
 		cssHash: options.cssHash || '',
 		isWatch: false, // webpack watching mode or not
-		htmlMinify: options.htmlMinify || false
+		htmlMinify: options.htmlMinify || false,
+		isHotReload: options.isHotReload || false,
 	}, options);
 }
 
@@ -214,7 +215,11 @@ HtmlResWebpackPlugin.prototype.addPrefix = function(regex, compilation, htmlCont
 		}, compilation);
 
 		if (file) {
-			return script.replace(route, AssetOptions.webpackOptions.output.publicPath + route);
+			script = script.replace(route, AssetOptions.webpackOptions.output.publicPath + route);
+		}
+
+		if (!!~script.indexOf('<link') && _this.options.isHotReload) {
+			script = '';
 		}
 
 		return script;

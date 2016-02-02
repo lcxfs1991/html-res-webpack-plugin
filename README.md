@@ -108,6 +108,9 @@ Another thing worth mentioning is that if you use hash for js, please add `jsHas
 
 One thing need to be noticed is hash and chunkhash. The difference between hash and chunkhash is that hash is the same for all resources and chunkhash is different for specific resource. Usually you are recommended to use chunkhash instead (Exception for style files required in an entry js file. They share the same chunkhash if you use extract-text-webpack-plugin).
 
+## Compatible with Hot Reload
+If you use `ExtractTextPlugin` plugin, hot reload will fail for css changes. So you have to remove `ExtractTextPlugin` in development mode. However in this case, the link tag you put in html will warn you of reaching 404 because css codes are inline. In this case, please set `isHotReload` as `true`.
+
 ## Multiple Html Page
 Sometimes there are more than one html pages in your projects. In this situation, please use similar iteration code to add plugins for different html pages
 ```
@@ -141,6 +144,7 @@ route.forEach(function(item) {
 - `jsHash`: "[name]" + config.chunkhash + ".js" (example)
 - `cssHash`:  "[name]" + config.chunkhash + ".css" (example)
 - `htmlMinify`: please checkout `html-minifier`[https://github.com/kangax/html-minifier] to see detail options. If set false | null, html files won't be compressed.
+- 'isHotReload': if set true, <link> tags will be ignored
 
 ## Last Words
 Since this is still v0.0.1, I may miss some project senarios. Please try this plugin and push any issues. I will help you solve the problem ASAP(usually within 24 hours).

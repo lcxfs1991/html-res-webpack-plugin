@@ -108,6 +108,9 @@ package.json
 
 有一个需要提及的是，hash与chunkhash的不同点在于，hash对于所有资源都是一样的，而每个入口文件却只有一个自己的chunkhash（如果你使用extract-text-webpack-plugin插件，在入口js文件里被引用的样式文件，则会共享相同的chunkhash）。
 
+## 兼容代码热替换
+如果使用`ExtractTextPlugin`插件，热替换的功能无法兼容样式的更新，所以，你在开发模式下需要去掉`ExtractTextPlugin`插件。然而，你放在html里的`<link>`元素会显示404报错，因为css的代码都已内联。此时，请将`isHotReload`为true。
+
 ## 多html页面
 有时候，一个项目会有多于一个html文件。这种情况下，请对每个html文件添加对应的一个HtmlResWebacpk插件。
 
@@ -141,6 +144,7 @@ route.forEach(function(item) {
 - `jsHash`: "[name]" + config.chunkhash + ".js" (example)
 - `cssHash`:  "[name]" + config.chunkhash + ".css" (example)
 - `htmlMinify`: 请查看`html-minifier`[https://github.com/kangax/html-minifier]文档. 如果设为false | null, html文件则不会被压缩
+- 'isHotReload': 如果设为真,<link>元素会被忽略
 
 ## 写在最后
 因为这只是v0.0.1版本，我可能会漏掉一些项目的场景。请给我发issue或者发邮件，我会尽快帮你解决问题(通常24小时之内）并不断优化这个插件。
