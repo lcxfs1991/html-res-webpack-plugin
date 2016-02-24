@@ -139,6 +139,26 @@ route.forEach(function(item) {
 });
 ```
 
+## Favicon
+
+index.html
+```
+<head>
+    <link rel="shortcut icon" type="image/x-icon" href="./favicon.ico"> 
+    <link rel="icon" type="image/x-icon" href="./favicon.ico">
+</head>
+```
+
+
+webpack.config.js 
+```
+new HtmlResWebpackPlugin({
+    filename: "index.html",
+    template: "src/index.html",
+    favicon: "src/favicon.ico",
+}),
+```
+
 
 ## Options
 - `filename`: generated filename
@@ -146,7 +166,8 @@ route.forEach(function(item) {
 - `jsHash`: "[name]" + config.chunkhash + ".js" (example)
 - `cssHash`:  "[name]" + config.chunkhash + ".css" (example)
 - `htmlMinify`: please checkout `html-minifier`[https://github.com/kangax/html-minifier] to see detail options. If set false | null, html files won't be compressed.
-- 'isHotReload': if set true, <link> tags will be ignored
+- `isHotReload`: if set true, <link> tags will be ignored
+- `favicon`: favicon path, for example, "src/favicon.ico"
 
 ## Last Words
 Since this is still v0.0.1, I may miss some project senarios. Please try this plugin and push any issues. I will help you solve the problem ASAP(usually within 24 hours).
@@ -155,4 +176,5 @@ Since this is still v0.0.1, I may miss some project senarios. Please try this pl
 ## Changelog
 - v0.0.1 resouce inline and md5
 - v0.0.2 customized name and hash
-- v0.0.3 use cache to boost the speed and satisfy more projects specs
+- v0.0.3 support favicon file
+- v0.0.4 use cache to boost the speed and satisfy more projects specs

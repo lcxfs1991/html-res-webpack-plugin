@@ -140,13 +140,34 @@ route.forEach(function(item) {
 });
 ```
 
+## Favicon
+
+index.html
+```
+<head>
+    <link rel="shortcut icon" type="image/x-icon" href="./favicon.ico"> 
+    <link rel="icon" type="image/x-icon" href="./favicon.ico">
+</head>
+```
+
+
+webpack.config.js 
+```
+new HtmlResWebpackPlugin({
+    filename: "index.html",
+    template: "src/index.html",
+    favicon: "src/favicon.ico",
+}),
+```
+
 ## Options
 - `filename`: 生成的html文件名
 - `template`: html模板来源
 - `jsHash`: "[name]" + config.chunkhash + ".js" (example)
 - `cssHash`:  "[name]" + config.chunkhash + ".css" (example)
 - `htmlMinify`: 请查看`html-minifier`[https://github.com/kangax/html-minifier]文档. 如果设为false | null, html文件则不会被压缩
-- 'isHotReload': 如果设为真,<link>元素会被忽略
+- `isHotReload`: 如果设为真,<link>元素会被忽略
+- `favicon`: favicon路径, 如: "src/favicon.ico"
 
 ## 写在最后
 因为这只是v0.0.1版本，我可能会漏掉一些项目的场景。请给我发issue或者发邮件，我会尽快帮你解决问题(通常24小时之内）并不断优化这个插件。
@@ -155,4 +176,5 @@ route.forEach(function(item) {
 ## 项目变更
 - v0.0.1 html生成及相关js,css资源内联
 - v0.0.2 使生成的文件名和哈希可定制化
-- v0.0.3 使用webpack的缓存特性使构建更快specs
+- v0.0.3 支持生成favicon文件
+- v0.0.4 使用webpack的缓存特性使构建更快specs
