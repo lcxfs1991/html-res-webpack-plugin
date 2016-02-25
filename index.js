@@ -16,7 +16,10 @@ function HtmlResWebpackPlugin(options) {
 		jsHash: options.jsHash || '',
 		cssHash: options.cssHash || '',
 		isWatch: false, // webpack watching mode or not
-		htmlMinify: options.htmlMinify || false
+		htmlMinify: options.htmlMinify || false,
+		isHotReload: options.isHotReload || false,
+		favicon: options.favicon || false,
+		faviconHash: ''
 	}, options);
 }
 
@@ -36,7 +39,11 @@ HtmlResWebpackPlugin.prototype.apply = function(compiler, callback) {
 	    isDebug && console.log("===================emit===============");
 
 	    // return basename, ie, /xxx/xxx.html return xxx.html
-	    _this.options.basename = _this.addFileToWebpackAsset(compilation, _this.options.template);
+	    _this.options.basename = _this.addFileToWebpackAsset(compilation, _this.options.template, true);
+
+	    if (_this.options.favicon) {
+	    	_this.options.faviconBaseName = _this.addFileToWebpackAsset(compilation, _this.options.favicon);
+	    }
 
 	    _this.findAssets(compilation);
 
@@ -46,27 +53,45 @@ HtmlResWebpackPlugin.prototype.apply = function(compiler, callback) {
 
 	    _this.addAssets(compilation);
 
+	    if (_this.options.htmlMinify) {
+	    	_this.compressHtml(compilation);
+	    }
 	    
 	    callback();
 	});
 
 };
 
+// compress html files
+HtmlResWebpackPlugin.prototype.compressHtml = function(compilation) {
+	let basename = this.options.basename;
+	let source = compilation.assets[basename].source();
+	let obj = compilation.assets[basename];
+	let _this = this;
+	compilation.assets[basename] = Object.assign(obj, {
+		source: function() {
+			return minify(source, _this.options.htmlMinify);
+		}
+	});
+};
+
 // use webpack to generate files when it is in dev mode
-HtmlResWebpackPlugin.prototype.addFileToWebpackAsset = function(compilation, template) {
+HtmlResWebpackPlugin.prototype.addFileToWebpackAsset = function(compilation, template, isToStr) {
 	var _this = this;
 	var filename = path.resolve(template);
 	var basename = path.basename(filename);
+	
     compilation.fileDependencies.push(filename);
     compilation.assets[basename] = {
     	source: function() {
-    		let htmlContent = fs.readFileSync(filename).toString();
-      		return _this.options.htmlMinify ?  minify(htmlContent, _this.options.htmlMinify) : htmlContent;
+    		let fileContent = (isToStr) ? fs.readFileSync(filename).toString() : fs.readFileSync(filename);
+      		return fileContent; //_this.options.htmlMinify ?  minify(htmlContent, _this.options.htmlMinify) : htmlContent;
       	},
       	size: function() {
       		return fs.statSync(filename).size;
       	}
     };
+
     return basename;
 };
 
@@ -74,9 +99,15 @@ HtmlResWebpackPlugin.prototype.addFileToWebpackAsset = function(compilation, tem
 HtmlResWebpackPlugin.prototype.getResourceMapping = function(compilation) {
 	let resArr = [];
 	let stats = this.AssetOptions.stats;
-
+	
 	stats.chunks.forEach(function(item, key) {
 		resArr.push({files: item.files, hash: item.hash});
+	});
+	// add ico
+	stats.assets.forEach(function(item, key) {
+		if (!!~item.name.indexOf('.ico')) {
+			resArr.push({files: [item.name], hash: ""});
+		}
 	});
 
 	this.AssetOptions = _.assign(
@@ -121,7 +152,6 @@ HtmlResWebpackPlugin.prototype.findAssets = function(compilation) {
 // inline and md5 resources for prod and add prefix for dev
 HtmlResWebpackPlugin.prototype.addAssets = function(compilation) {
 	let stats = compilation.getStats().toJson();
-
 	let dest = this.AssetOptions.webpackOptions.output.path;
 	let tplPath = path.resolve(this.options.template);
 	let htmlContent = compilation.assets[this.options.basename].source();
@@ -171,28 +201,45 @@ HtmlResWebpackPlugin.prototype.getNormalFile = function(opt, compilation) {
 
 // get the targeted hash file name
 HtmlResWebpackPlugin.prototype.getHashedFile = function(opt, compilation) {
-	// console.log(opt);
 	var options = this.options;
 	var ext = opt.ext;
-	var hashFormat = (opt.ext === '.js') ? options.jsHash : options.cssHash,
-		hashInfo = (opt.ext === '.js') ? opt.jsHashInfo : opt.cssHashInfo,
+	var hashFormatArr = {
+		'.js': options.jsHash,
+		'.css': options.cssHash,
+		'.ico': options.faviconHash
+	};
+	var hashInfoArr = {
+		'.js': opt.jsHashInfo,
+		'.css': opt.cssHashInfo,
+		'.ico': []
+	};
+	var hashFormat = hashFormatArr[opt.ext],//(opt.ext === '.js') ? options.jsHash : options.cssHash,
+		hashInfo = hashInfoArr[opt.ext],//(opt.ext === '.js') ? opt.jsHashInfo : opt.cssHashInfo,
 		resArr = this.AssetOptions.resArr,
 		route = opt.route,
 		bits = (hashInfo.length > 1) ? hashInfo[1] : (compilation.hash.length),
 		isHash = (!~hashFormat.indexOf('chunkhash'));
-	var usedHash = compilation.hash.substr(0, bits);
+
+	var usedHash = (bits) ? compilation.hash.substr(0, bits) : '';
 
 	isDebug && console.log(hashFormat, hashInfo, bits, isHash, usedHash);
 	
 	for (let key in resArr) {
 		for (let item of resArr[key].files) {
-			usedHash = (isHash) ? usedHash : resArr[key].hash.substr(0, bits);
-			let replaceRegx = '[' + hashInfo[0];
-			replaceRegx += (hashInfo.length > 1) ? ':' + hashInfo[1] + ']' : ']';
+			var newRoute = '';
+			if (hashInfo.length > 0) {
+				usedHash = (isHash) ? usedHash : resArr[key].hash.substr(0, bits);
+				let replaceRegx = '[' + hashInfo[0];
+				replaceRegx += (hashInfo.length > 1) ? ':' + hashInfo[1] + ']' : ']';
 
-			let newRoute = hashFormat.replace(replaceRegx, usedHash)
-									 .replace('[name]', route.replace(ext, ''));
-
+				newRoute = hashFormat.replace(replaceRegx, usedHash)
+										 .replace('[name]', route.replace(ext, ''));
+			}
+			else {
+				// newRoute = route;
+				return route;
+			}
+			
 			isDebug && console.log(item, newRoute, !!~item.indexOf(newRoute));
 
 			if (!!~item.indexOf(newRoute)) {
@@ -206,15 +253,19 @@ HtmlResWebpackPlugin.prototype.addPrefix = function(regex, compilation, htmlCont
 
 	var _this = this;
 	var AssetOptions = this.AssetOptions;
-	
+
 	return htmlContent.replace(regex, function(script, route) {
-		
+
 		let file = _this.getNormalFile({
 			route: route,
 		}, compilation);
-
+		
 		if (file) {
-			return script.replace(route, AssetOptions.webpackOptions.output.publicPath + route);
+			script = script.replace(route, AssetOptions.webpackOptions.output.publicPath + route);
+		}
+		// hot reload = true, then don't create script/link tab
+		if (!!~script.indexOf('<link') && !!~script.indexOf('stylesheet') && _this.options.isHotReload) {
+			script = '';
 		}
 
 		return script;

@@ -13,6 +13,8 @@ That is why I need to write a brand new one which is more intuitively.
 src/index.html
 --> 
 dist/index.html
+
+### (please keep line break for each resource(script and link))
 ```
 <!DOCTYPE html>
 <html lang="en" id="html">
@@ -108,6 +110,9 @@ Another thing worth mentioning is that if you use hash for js, please add `jsHas
 
 One thing need to be noticed is hash and chunkhash. The difference between hash and chunkhash is that hash is the same for all resources and chunkhash is different for specific resource. Usually you are recommended to use chunkhash instead (Exception for style files required in an entry js file. They share the same chunkhash if you use extract-text-webpack-plugin).
 
+## Compatible with Hot Reload
+If you use `ExtractTextPlugin` plugin, hot reload will fail for css changes. So you have to remove `ExtractTextPlugin` in development mode. However in this case, the link tag you put in html will warn you of reaching 404 because css codes are inline. In this case, please set `isHotReload` as `true`.
+
 ## Multiple Html Page
 Sometimes there are more than one html pages in your projects. In this situation, please use similar iteration code to add plugins for different html pages
 ```
@@ -134,6 +139,26 @@ route.forEach(function(item) {
 });
 ```
 
+## Favicon
+
+index.html
+```
+<head>
+    <link rel="shortcut icon" type="image/x-icon" href="./favicon.ico"> 
+    <link rel="icon" type="image/x-icon" href="./favicon.ico">
+</head>
+```
+
+
+webpack.config.js 
+```
+new HtmlResWebpackPlugin({
+    filename: "index.html",
+    template: "src/index.html",
+    favicon: "src/favicon.ico",
+}),
+```
+
 
 ## Options
 - `filename`: generated filename
@@ -141,6 +166,8 @@ route.forEach(function(item) {
 - `jsHash`: "[name]" + config.chunkhash + ".js" (example)
 - `cssHash`:  "[name]" + config.chunkhash + ".css" (example)
 - `htmlMinify`: please checkout `html-minifier`[https://github.com/kangax/html-minifier] to see detail options. If set false | null, html files won't be compressed.
+- `isHotReload`: if set true, <link> tags will be ignored
+- `favicon`: favicon path, for example, "src/favicon.ico"
 
 ## Last Words
 Since this is still v0.0.1, I may miss some project senarios. Please try this plugin and push any issues. I will help you solve the problem ASAP(usually within 24 hours).
@@ -149,4 +176,5 @@ Since this is still v0.0.1, I may miss some project senarios. Please try this pl
 ## Changelog
 - v0.0.1 resouce inline and md5
 - v0.0.2 customized name and hash
-- v0.0.3 use cache to boost the speed and satisfy more projects specs
+- v0.0.3 support favicon file
+- v0.0.4 use cache to boost the speed and satisfy more projects specs
