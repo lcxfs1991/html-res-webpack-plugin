@@ -213,8 +213,8 @@ HtmlResWebpackPlugin.prototype.getHashedFile = function(opt, compilation) {
 		'.css': opt.cssHashInfo,
 		'.ico': []
 	};
-	var hashFormat = hashFormatArr[opt.ext],//(opt.ext === '.js') ? options.jsHash : options.cssHash,
-		hashInfo = hashInfoArr[opt.ext],//(opt.ext === '.js') ? opt.jsHashInfo : opt.cssHashInfo,
+	var hashFormat = hashFormatArr[opt.ext] || [],//(opt.ext === '.js') ? options.jsHash : options.cssHash,
+		hashInfo = hashInfoArr[opt.ext] || [],//(opt.ext === '.js') ? opt.jsHashInfo : opt.cssHashInfo,
 		resArr = this.AssetOptions.resArr,
 		route = opt.route,
 		bits = (hashInfo.length > 1) ? hashInfo[1] : (compilation.hash.length),
