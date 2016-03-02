@@ -190,13 +190,19 @@ HtmlResWebpackPlugin.prototype.getNormalFile = function(opt, compilation) {
 	let resArr = this.AssetOptions.resArr,
 		route = opt.route;
 
-	for (let key in resArr) {
-		for (let item of resArr[key].files) {
-			if (!!~route.indexOf(item)) {
-				return route;
-			}
-		}
+	if (!route.indexOf('http') || !route.indexOf('https') || !route.indexOf('//')) {
+		return false;
 	}
+
+	// for (let key in resArr) {
+	// 	for (let item of resArr[key].files) {
+	// 		if (!!~route.indexOf(item)) {
+	// 			return route;
+	// 		}
+	// 	}
+	// }
+
+	return route;
 };	
 
 // get the targeted hash file name
@@ -236,8 +242,8 @@ HtmlResWebpackPlugin.prototype.getHashedFile = function(opt, compilation) {
 										 .replace('[name]', route.replace(ext, ''));
 			}
 			else {
-				// newRoute = route;
-				return route;
+				// for those resources appended with query(?xxx=xxx), it will be passed
+				return false;
 			}
 			
 			isDebug && console.log(item, newRoute, !!~item.indexOf(newRoute));
@@ -247,6 +253,8 @@ HtmlResWebpackPlugin.prototype.getHashedFile = function(opt, compilation) {
 			}
 		}
 	}
+
+	return route;
 };
 
 HtmlResWebpackPlugin.prototype.addPrefix = function(regex, compilation, htmlContent) {
@@ -259,7 +267,7 @@ HtmlResWebpackPlugin.prototype.addPrefix = function(regex, compilation, htmlCont
 		let file = _this.getNormalFile({
 			route: route,
 		}, compilation);
-		
+
 		if (file) {
 			script = script.replace(route, AssetOptions.webpackOptions.output.publicPath + route);
 		}
@@ -289,7 +297,7 @@ HtmlResWebpackPlugin.prototype.inlineRes = function(regex, htmlTag, ext, compila
   		if (hashFile) {
   			let returnVal = (htmlTag === "script") ? compilation.assets[hashFile].source() : compilation.assets[hashFile].children[1]._value;
   			// don't need it anymore
-  			delete compilation.assets[hashFile]
+  			delete compilation.assets[hashFile];
   			return "<" + htmlTag + ">" +  returnVal  + "</" + htmlTag + ">";
   		}
   		else {
@@ -305,14 +313,14 @@ HtmlResWebpackPlugin.prototype.md5Res = function(regex, compilation, htmlContent
 	var AssetOptions = this.AssetOptions;
 	
 	return htmlContent.replace(regex, function(script, route) {
-
+		
 		let hashFile = _this.getHashedFile({
 			jsHashInfo: AssetOptions.jsHashInfo,
 			cssHashInfo: AssetOptions.cssHashInfo,
 			route: route,
 			ext: path.extname(route)
 		}, compilation);
-
+		
 		if (hashFile) {
 			return script.replace(route, AssetOptions.webpackOptions.output.publicPath + hashFile);
 		}
