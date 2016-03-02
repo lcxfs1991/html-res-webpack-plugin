@@ -41,7 +41,7 @@ dist/js/preview/preview.js
 require('./index.scss');
 
 var init = function() {
-	// some code here	
+    // some code here   
 };
 ```
 
@@ -50,21 +50,21 @@ src/page/preview/index.scss
 dist/css/preview/preview.css
 ```
 html, body {
-	margin: 0;
+    margin: 0;
 }
 // some code here
 ```
 
 webpack.config.js
 ```
-	var config = {
-		hash: "-[hash:6]",
-		chunkhash: "-[chunkhash:6]",
-	};
-	
-	entry: {
-		'preivew/preview': [path.join(config.path.src, "/page/preview/main.js")],
-	},
+    var config = {
+        hash: "-[hash:6]",
+        chunkhash: "-[chunkhash:6]",
+    };
+    
+    entry: {
+        'preivew/preview': [path.join(config.path.src, "/page/preview/main.js")],
+    },
 
     /**
      *  webpack options below
@@ -82,16 +82,16 @@ webpack.config.js
     .
     .
 
-	plugins: [
-		// some other plugins
+    plugins: [
+        // some other plugins
         new ExtractTextPlugin("./css/[name]" + config.chunkhash + ".css"),
-		new HtmlResWebpackPlugin({
-	        filename: "index.html",
-	        template: "src/index.html",
-	        jsHash: "[name]" + config.chunkhash + ".js",
+        new HtmlResWebpackPlugin({
+            filename: "index.html",
+            template: "src/index.html",
+            jsHash: "[name]" + config.chunkhash + ".js",
             cssHash:  "[name]" + config.chunkhash + ".css"
-	    });
-	]
+        });
+    ]
 ```
 
 package.json
@@ -117,8 +117,8 @@ If you use `ExtractTextPlugin` plugin, hot reload will fail for css changes. So 
 Sometimes there are more than one html pages in your projects. In this situation, please use similar iteration code to add plugins for different html pages
 ```
 var config = {
-	hash: "-[hash:6]",
-	chunkhash: "-[chunkhash:6]",
+    hash: "-[hash:6]",
+    chunkhash: "-[chunkhash:6]",
 };
 
 var route = ['index', 'detail'];
@@ -177,4 +177,5 @@ Since this is still v0.0.1, I may miss some project senarios. Please try this pl
 - v0.0.1 resouce inline and md5
 - v0.0.2 customized name and hash
 - v0.0.3 support favicon file
-- v0.0.4 use cache to boost the speed and satisfy more projects specs
+- v0.0.4 fix adding prefix and adding md5 bugs
+- v0.0.5 use cache to boost the speed and satisfy more projects specs

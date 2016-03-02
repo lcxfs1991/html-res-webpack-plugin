@@ -1,6 +1,6 @@
 {
   "name": "html-res-webpack-plugin",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "html generation and resource inline or md5 for webpack",
   "keywords": [
     "front-end",

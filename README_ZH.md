@@ -63,8 +63,8 @@ webpack.config.js
     };
     
     entry: {
-		'preivew/preview': [path.join(config.path.src, "/page/preview/main.js")],
-	},
+        'preivew/preview': [path.join(config.path.src, "/page/preview/main.js")],
+    },
 
     /**
      *  webpack options below
@@ -177,4 +177,5 @@ new HtmlResWebpackPlugin({
 - v0.0.1 html生成及相关js,css资源内联
 - v0.0.2 使生成的文件名和哈希可定制化
 - v0.0.3 支持生成favicon文件
-- v0.0.4 使用webpack的缓存特性使构建更快specs
+- v0.0.4 修复针对某些资源添加前缀或添加md5的错误
+- v0.0.5 使用webpack的缓存特性使构建更快specs
