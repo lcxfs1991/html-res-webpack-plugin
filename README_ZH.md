@@ -1,6 +1,7 @@
 # html-res-webpack-plugin
 
 ### [English README](https://github.com/lcxfs1991/html-res-webpack-plugin)
+#### 联系方式: QQ:249806703 | email:lcxfs1991@gmail.com
 
 ## 我为什么要写一个新的html生成插件
 
