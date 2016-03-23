@@ -19,7 +19,8 @@ function HtmlResWebpackPlugin(options) {
 		htmlMinify: options.htmlMinify || false,
 		isHotReload: options.isHotReload || false,
 		favicon: options.favicon || false,
-		faviconHash: ''
+		faviconHash: '',
+		templateContent: options.templateContent || function(tpl) {return tpl},
 	}, options);
 }
 
@@ -178,8 +179,9 @@ HtmlResWebpackPlugin.prototype.addAssets = function(compilation) {
 		htmlContent = this.addPrefix(styleMd5Regex, compilation, htmlContent);
 	}
 
+	let _this = this;
 	compilation.assets[this.options.basename].source = function() {
-		return htmlContent;
+		return _this.options.templateContent.bind(_this)(htmlContent);
 	};
 
 	return htmlContent;

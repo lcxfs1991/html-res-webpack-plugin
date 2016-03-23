@@ -159,6 +159,19 @@ new HtmlResWebpackPlugin({
 }),
 ```
 
+## Modify Html Content Before Output
+```
+new HtmlResWebpackPlugin({
+    filename: "index.html",
+    template: "src/index.html",
+    templateContent: function(tpl) {
+        // some modification of tpl
+        // you can use this.options here, you can open index.js of the plugin
+        // to check what options are offered
+        return tpl;
+    }
+}),
+```
 
 ## Options
 - `filename`: generated filename
@@ -168,6 +181,7 @@ new HtmlResWebpackPlugin({
 - `htmlMinify`: please checkout `html-minifier`[https://github.com/kangax/html-minifier] to see detail options. If set false | null, html files won't be compressed.
 - `isHotReload`: if set true, <link> tags will be ignored
 - `favicon`: favicon path, for example, "src/favicon.ico"
+- `templateContent`: a point for developer to modify html content before output. `this.options` can be used in such a function.
 
 ## Last Words
 Since this is still v0.0.1, I may miss some project senarios. Please try this plugin and push any issues. I will help you solve the problem ASAP(usually within 24 hours).
@@ -178,4 +192,4 @@ Since this is still v0.0.1, I may miss some project senarios. Please try this pl
 - v0.0.2 customized name and hash
 - v0.0.3 support favicon file
 - v0.0.4 fix adding prefix and adding md5 bugs
-- v0.0.5 use cache to boost the speed and satisfy more projects specs
+- v0.0.5 offer templateContent to modify html content before output

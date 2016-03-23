@@ -161,6 +161,20 @@ new HtmlResWebpackPlugin({
 }),
 ```
 
+## 输出前修改Html内容
+```
+new HtmlResWebpackPlugin({
+    filename: "index.html",
+    template: "src/index.html",
+    templateContent: function(tpl) {
+        // 你可以在这里修改html内容tpl
+        // 你也可以在这里使用this.options
+        // 打开插件的index.js可以查看都有哪些option提供使用
+        return tpl;
+    }
+}),
+```
+
 ## Options
 - `filename`: 生成的html文件名
 - `template`: html模板来源
@@ -169,6 +183,7 @@ new HtmlResWebpackPlugin({
 - `htmlMinify`: 请查看`html-minifier`[https://github.com/kangax/html-minifier]文档. 如果设为false | null, html文件则不会被压缩
 - `isHotReload`: 如果设为真,<link>元素会被忽略
 - `favicon`: favicon路径, 如: "src/favicon.ico"
+- `templateContent`: 这里可提供给开发者在输出前修改html内容。 `this.options`在这里也可以被使用
 
 ## 写在最后
 因为这只是v0.0.1版本，我可能会漏掉一些项目的场景。请给我发issue或者发邮件，我会尽快帮你解决问题(通常24小时之内）并不断优化这个插件。
@@ -179,4 +194,5 @@ new HtmlResWebpackPlugin({
 - v0.0.2 使生成的文件名和哈希可定制化
 - v0.0.3 支持生成favicon文件
 - v0.0.4 修复针对某些资源添加前缀或添加md5的错误
-- v0.0.5 使用webpack的缓存特性使构建更快specs
+- v0.0.5 添加templateContent函数以提供定制化修改html的办法
+
