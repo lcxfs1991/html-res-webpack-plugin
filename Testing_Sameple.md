@@ -10,3 +10,6 @@
 - resource md5
 - html compression
 - cdn prefix
+
+### both mode
+- templateContent => modify html content before output
