@@ -6,7 +6,6 @@ const isDebug = false;
 var fs = require('fs');
 var _ = require('lodash');
 var path = require('path');
-var ConcatSource = require("webpack/lib/ConcatSource");
 var minify = require('html-minifier').minify;
 
 function HtmlResWebpackPlugin(options) {
