@@ -193,3 +193,4 @@ Since this is still v0.0.1, I may miss some project senarios. Please try this pl
 - v0.0.3 support favicon file
 - v0.0.4 fix adding prefix and adding md5 bugs
 - v0.0.5 offer templateContent to modify html content before output
+- v0.0.6 compatible with webpack2.0
