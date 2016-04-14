@@ -186,7 +186,7 @@ new HtmlResWebpackPlugin({
 - `templateContent`: 这里可提供给开发者在输出前修改html内容。 `this.options`在这里也可以被使用
 
 ## 写在最后
-因为这只是v0.0.1版本，我可能会漏掉一些项目的场景。请给我发issue或者发邮件，我会尽快帮你解决问题(通常24小时之内）并不断优化这个插件。
+因为这只是v0.0.6版本，我可能会漏掉一些项目的场景。请给我发issue或者发邮件，我会尽快帮你解决问题(通常24小时之内）并不断优化这个插件。
 
 
 ## 项目变更
@@ -195,4 +195,4 @@ new HtmlResWebpackPlugin({
 - v0.0.3 支持生成favicon文件
 - v0.0.4 修复针对某些资源添加前缀或添加md5的错误
 - v0.0.5 添加templateContent函数以提供定制化修改html的办法
-
+- v0.0.6 适应webpack2.0
