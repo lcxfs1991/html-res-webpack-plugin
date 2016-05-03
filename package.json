@@ -1,6 +1,6 @@
 {
   "name": "html-res-webpack-plugin",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "html generation and resource inline or md5 for webpack",
   "keywords": [
     "front-end",
@@ -22,12 +22,11 @@
     
   },
   "dependencies": {
-    
+    "lodash": "^3.10.1",
+    "html-minifier": "^1.1.1"
   },
   "devDependencies": {
-    "lodash": "^3.10.1",
-    "bluebird": "^3.1.1",
-    "html-minifier": "^1.1.1"
+    
   },
   "license": "MIT",
   "engines": {

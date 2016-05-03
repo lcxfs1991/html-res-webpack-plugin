@@ -195,4 +195,4 @@ new HtmlResWebpackPlugin({
 - v0.0.3 支持生成favicon文件
 - v0.0.4 修复针对某些资源添加前缀或添加md5的错误
 - v0.0.5 添加templateContent函数以提供定制化修改html的办法
-- v0.0.6 适应webpack2.0
+- v0.0.7 适应webpack2.0
