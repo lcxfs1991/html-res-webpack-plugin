@@ -24,12 +24,12 @@ dist/index.html
     <meta http-equiv="x-dns-prefetch-control" content="on" />
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, minimal-ui" />
     <title>html-res-webpack-example</title>
-    <link rel="stylesheet" href="./css/preview/preview.css">
+    <link rel="stylesheet" href="/css/preview/preview.css">
 </head>
 <body>
     <div class="preview-wrapper"></div>
-    <script src="js/common.js"></script>
-    <script src="js/preview/preview.js?__inline"></script>
+    <script src="/js/common.js"></script>
+    <script src="/js/preview/preview.js?__inline"></script>
 </body>
 </html>
 ```
