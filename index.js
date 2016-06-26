@@ -99,7 +99,7 @@ HtmlResWebpackPlugin.prototype.addFileToWebpackAsset = function(compilation, tem
 HtmlResWebpackPlugin.prototype.getResourceMapping = function(compilation) {
 	let resArr = [];
 	let stats = this.AssetOptions.stats;
-	
+
 	stats.chunks.forEach(function(item, key) {
 		resArr.push({files: item.files, hash: item.hash});
 	});
@@ -156,7 +156,6 @@ HtmlResWebpackPlugin.prototype.addAssets = function(compilation) {
 	let tplPath = path.resolve(this.options.template);
 	let htmlContent = compilation.assets[this.options.basename].source();
 
-	//
 	if (!this.options.isWatch) {
 		let scriptInlineRegex = new RegExp("<script.*src=[\"|\']*(.+)[\?]\_\_inline.*?[\"|\']><\/script>", "ig");
 		htmlContent = this.inlineRes(scriptInlineRegex, 'script', 'js', compilation, htmlContent);
@@ -165,6 +164,7 @@ HtmlResWebpackPlugin.prototype.addAssets = function(compilation) {
 		htmlContent = this.inlineRes(styleInlineRegex, 'style', 'css', compilation, htmlContent);
 
 		let scriptMd5Regex = new RegExp("<script.*src=[\"|\']*(.+).*?[\"|\']><\/script>", "ig");
+
 		htmlContent = this.md5Res(scriptMd5Regex, compilation, htmlContent);
 
 		let styleMd5Regex = new RegExp("<link.*href=[\"|\']*(.+).*?[\"|\']>", "ig");
@@ -230,7 +230,8 @@ HtmlResWebpackPlugin.prototype.getHashedFile = function(opt, compilation) {
 	var usedHash = (bits) ? compilation.hash.substr(0, bits) : '';
 
 	isDebug && console.log(hashFormat, hashInfo, bits, isHash, usedHash);
-	
+
+
 	for (let key in resArr) {
 		for (let item of resArr[key].files) {
 			var newRoute = '';
@@ -241,6 +242,12 @@ HtmlResWebpackPlugin.prototype.getHashedFile = function(opt, compilation) {
 
 				newRoute = hashFormat.replace(replaceRegx, usedHash)
 										 .replace('[name]', route.replace(ext, ''));
+
+				// avaoid path like ./a/b/c.js or /a/b/c.js, keep things like a/b/c.js
+				// in order to compare in item.indexOf(newRoute) below
+				if (newRoute[0] === '/' || newRoute[0] === '.') {
+					newRoute = newRoute.replace('/', '').replace('./');
+				}
 			}
 			else {
 				// for those resources appended with query(?xxx=xxx), it will be passed
