@@ -7,6 +7,7 @@ var fs = require('fs');
 var _ = require('lodash');
 var path = require('path');
 var minify = require('html-minifier').minify;
+var utils = require('./libs/utils');
 
 function HtmlResWebpackPlugin(options) {
 	this.options = _.extend({
@@ -231,7 +232,7 @@ HtmlResWebpackPlugin.prototype.getHashedFile = function(opt, compilation) {
 
 	isDebug && console.log(hashFormat, hashInfo, bits, isHash, usedHash);
 
-
+	// console.log(route)
 	for (let key in resArr) {
 		for (let item of resArr[key].files) {
 			var newRoute = '';
@@ -245,17 +246,17 @@ HtmlResWebpackPlugin.prototype.getHashedFile = function(opt, compilation) {
 
 				// avaoid path like ./a/b/c.js or /a/b/c.js, keep things like a/b/c.js
 				// in order to compare in item.indexOf(newRoute) below
+				/*console.log(newRoute);
 				if (newRoute[0] === '/' || newRoute[0] === '.') {
 					newRoute = newRoute.replace('/', '').replace('./');
-				}
+				}*/
 			}
 			else {
 				// for those resources appended with query(?xxx=xxx), it will be passed
 				return false;
 			}
 			
-			isDebug && console.log(item, newRoute, !!~item.indexOf(newRoute));
-
+			// console.log(item, newRoute, !!~item.indexOf(newRoute));
 			if (!!~item.indexOf(newRoute)) {
 				return newRoute;
 			}
@@ -298,12 +299,13 @@ HtmlResWebpackPlugin.prototype.inlineRes = function(regex, htmlTag, ext, compila
 		let hashFile = _this.getHashedFile({
 			jsHashInfo: AssetOptions.jsHashInfo,
 			cssHashInfo: AssetOptions.cssHashInfo,
-			route: route,
+			route: utils.unifyFile(route),
 			ext: path.extname(route)
 		}, compilation);
 
   		if (hashFile) {
-  			let returnVal = (htmlTag === "script") ? compilation.assets[hashFile].source() : compilation.assets[hashFile].children[1]._value;
+
+  			let returnVal = (htmlTag === "script") ? compilation.assets[hashFile].source() : utils.getCssSource(compilation.assets[hashFile].children);
   			// don't need it anymore
   			delete compilation.assets[hashFile];
   			return "<" + htmlTag + ">" +  returnVal  + "</" + htmlTag + ">";
@@ -325,7 +327,7 @@ HtmlResWebpackPlugin.prototype.md5Res = function(regex, compilation, htmlContent
 		let hashFile = _this.getHashedFile({
 			jsHashInfo: AssetOptions.jsHashInfo,
 			cssHashInfo: AssetOptions.cssHashInfo,
-			route: route,
+			route: utils.unifyFile(route),
 			ext: path.extname(route)
 		}, compilation);
 		
