@@ -1,0 +1,8 @@
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+.img {
+  background-url: url(//localhost:9000/img/logo-60af28.png);
+}

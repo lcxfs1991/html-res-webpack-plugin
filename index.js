@@ -1,33 +1,34 @@
 "use strict";
 
 // debug mode
-const isDebug = false;
+const isDebug = false,
+	  IS_TO_STR = true; 
 
-var fs = require('fs');
-var _ = require('lodash');
-var path = require('path');
-var minify = require('html-minifier').minify;
-var utils = require('./libs/utils');
+const fs = require('fs'),
+	_ = require('lodash'),
+	path = require('path'),
+	minify = require('html-minifier').minify,
+	utils = require('./libs/utils'),
+	loaderUtils = require('loader-utils');
 
 function HtmlResWebpackPlugin(options) {
+
+	// user input options
 	this.options = _.extend({
-		hash: null, // standard hash format
-		chunkhash: null, // chunk hash format
-		jsHash: options.jsHash || '',
-		cssHash: options.cssHash || '',
-		isWatch: false, // webpack watching mode or not
+		chunks: options.chunks || [],
 		htmlMinify: options.htmlMinify || false,
-		isHotReload: options.isHotReload || false,
 		favicon: options.favicon || false,
-		faviconHash: '',
-		templateContent: options.templateContent || function(tpl) {return tpl},
+		templateContent: options.templateContent || function(tpl) { return tpl }
 	}, options);
+
+	// html scripts/css/favicon assets
+	this.stats = {
+		assets: [],
+	};
+	this.webpackOptions = {};
 }
 
 HtmlResWebpackPlugin.prototype.apply = function(compiler, callback) {
-	let _this = this;
-
-	this.options = _.extend(this.options, {isWatch: compiler.options.watch || false})
 
   	compiler.plugin("make", function(compilation, callback) {
 	    isDebug && console.log("==================make================");
@@ -36,59 +37,167 @@ HtmlResWebpackPlugin.prototype.apply = function(compiler, callback) {
 
 
   	// right after emit, files will be generated
-	compiler.plugin("emit", function(compilation, callback) {
+	compiler.plugin("emit", (compilation, callback) => {
 	    isDebug && console.log("===================emit===============");
-
 	    // return basename, ie, /xxx/xxx.html return xxx.html
-	    _this.options.basename = _this.addFileToWebpackAsset(compilation, _this.options.template, true);
-
-	    if (_this.options.favicon) {
-	    	_this.options.faviconBaseName = _this.addFileToWebpackAsset(compilation, _this.options.favicon);
+	    this.options.htmlFileName = this.addFileToWebpackAsset(compilation, this.options.template, IS_TO_STR);
+	    // inject favicon
+	    if (this.options.favicon) {
+	    	this.options.faviconFileName = this.addFileToWebpackAsset(compilation, this.options.favicon);
 	    }
 
-	    _this.findAssets(compilation);
+	    // webpack options
+	    this.webpackOptions = compilation.options;
 
-	    if (!_this.options.isWatch) {
-	    	_this.processHashFormat();
-	    }
+	    this.buildStats(compilation);
 
-	    _this.addAssets(compilation);
+	    this.injectAssets(compilation);
 
-	    if (_this.options.htmlMinify) {
-	    	_this.compressHtml(compilation);
-	    }
+
+	    this.options.htmlMinify && this.compressHtml(compilation);
 	    
 	    callback();
 	});
 
 };
 
-// compress html files
-HtmlResWebpackPlugin.prototype.compressHtml = function(compilation) {
-	let basename = this.options.basename;
-	let source = compilation.assets[basename].source();
-	let obj = compilation.assets[basename];
-	let _this = this;
-	compilation.assets[basename] = Object.assign(obj, {
-		source: function() {
-			return minify(source, _this.options.htmlMinify);
+/**
+ * find resources related the html
+ * @param  {[type]} compilation [description]
+ * @return {[type]}             [description]
+ */
+HtmlResWebpackPlugin.prototype.buildStats = function(compilation) {
+	// array and object are allowed
+	let optionChunks = this.options.chunks,
+		injectChunks = _.isArray(optionChunks) ? optionChunks : Object.keys(optionChunks);
+
+	// console.log(chunkSorter['auto'](c));
+
+	compilation.chunks.map((chunk, key) => {
+		// console.log(chunk.name, !!~injectChunks.indexOf(chunk.name));
+		if (!!~injectChunks.indexOf(chunk.name)) {
+			this.stats.assets[chunk.name] = chunk.files;
+		}
+	});
+
+	// console.log(this.stats.assets);
+};
+
+/**
+ * inject assets into html file
+ * @param  {[type]} compilation [description]
+ * @return {[type]}             [description]
+ */
+HtmlResWebpackPlugin.prototype.injectAssets = function(compilation) {
+	let htmlContent = compilation.assets[this.options.htmlFileName].source(),
+		styleContent = "",
+		scriptContent = "",
+		faviconContent = "",
+		publicPath = this.webpackOptions.output.publicPath,
+		optionChunks = this.options.chunks,
+		injectChunks = _.isArray(optionChunks) ? optionChunks : Object.keys(optionChunks);
+
+	let loopKeys = Object.keys(this.stats.assets);
+
+	// use injectChunks in order to allow user to control occurences of file order
+	injectChunks.map((chunkKey, key1) => {
+		
+		this.stats.assets[chunkKey].map((file, key2) => {
+			let fileType = utils.getFileType(file);
+			switch(fileType) {
+				case 'js':
+					let jsInline = false;
+					if (!_.isArray(optionChunks)) {
+						jsInline = this.inlineRes(compilation, optionChunks[chunkKey], file, fileType);
+					}
+
+					let jsAttr = (_.isArray(optionChunks)) ? '' :  this.injectAssetsAttr(optionChunks[chunkKey], fileType);
+					scriptContent += (jsInline) ? 
+									('<script ' + jsAttr + ' >' + jsInline + '</script>')
+									: ('<script ' + jsAttr + ' type="text/javascript" src="' + publicPath + file + '"></script>\n');
+					break;
+				case 'css':
+					let styleInline = false;
+					if (!_.isArray(optionChunks)) {
+						styleInline = this.inlineRes(compilation, optionChunks[chunkKey], file, fileType);
+					}
+
+					let styleAttr = (_.isArray(optionChunks)) ? '' :  this.injectAssetsAttr(optionChunks[chunkKey], fileType);
+					styleContent += (styleInline) ? 
+									('<style ' + styleAttr + '>' + styleInline + '</style>')
+									: ('<link ' + styleAttr + ' rel="stylesheet" href="' + publicPath + file + '">\n');
+					break;
+				case 'ico':
+					console.log(file);
+					break;
+			}
+		});
+	});
+
+	// inject favicon
+	if (this.options.favicon) {
+		faviconContent = '<link rel="shortcut icon" type="image/x-icon" href="' + publicPath + this.options.faviconFileName + '">\n'
+    				      + '<link rel="icon" type="image/x-icon" href="' + publicPath + this.options.faviconFileName + '">\n'
+	}
+
+	htmlContent = htmlContent.replace("</head>", faviconContent + "</head>").replace("</head>", styleContent + "</head>").replace("</body>", scriptContent + "</body>");
+	
+	let htmlAssetObj = compilation.assets[this.options.htmlFileName];
+	compilation.assets[this.options.htmlFileName] = _.merge(htmlAssetObj, {
+		source: () => {
+			return this.options.templateContent.bind(this)(htmlContent);
 		}
 	});
 };
 
-// use webpack to generate files when it is in dev mode
+/**
+ * inject resource attributes
+ * @param  {[type]} chunk    [description]
+ * @param  {[type]} fileType [description]
+ * @return {[type]}          [description]
+ */
+HtmlResWebpackPlugin.prototype.injectAssetsAttr = function(chunk, fileType) {
+
+	if (!chunk.hasOwnProperty('attr') || !chunk.attr) {
+		return '';
+	}
+
+	return chunk.attr[fileType] || '';
+};
+
+/**
+ * inline resource
+ * @param  {[type]} compilation [description]
+ * @param  {[type]} chunk       [description]
+ * @param  {[type]} file        [description]
+ * @param  {[type]} fileType    [description]
+ * @return {[type]}             [description]
+ */
+HtmlResWebpackPlugin.prototype.inlineRes = function(compilation, chunk, file, fileType) {
+	if (!chunk.hasOwnProperty('inline') || !chunk.inline || !chunk.inline[fileType]) {
+		return false;
+	}
+
+	return compilation.assets[file].source();
+};
+
+/**
+ * use webpack to generate files when it is in dev mode
+ * @param {[type]}  compilation [description]
+ * @param {[type]}  template    [description]
+ * @param {Boolean} isToStr     [description]
+ */
 HtmlResWebpackPlugin.prototype.addFileToWebpackAsset = function(compilation, template, isToStr) {
-	var _this = this;
 	var filename = path.resolve(template);
 	var basename = path.basename(filename);
 	
     compilation.fileDependencies.push(filename);
     compilation.assets[basename] = {
-    	source: function() {
+    	source: () => {
     		let fileContent = (isToStr) ? fs.readFileSync(filename).toString() : fs.readFileSync(filename);
-      		return fileContent; //_this.options.htmlMinify ?  minify(htmlContent, _this.options.htmlMinify) : htmlContent;
+      		return fileContent;
       	},
-      	size: function() {
+      	size: () => {
       		return fs.statSync(filename).size;
       	}
     };
@@ -96,245 +205,20 @@ HtmlResWebpackPlugin.prototype.addFileToWebpackAsset = function(compilation, tem
     return basename;
 };
 
-// map those html-related resources in an array
-HtmlResWebpackPlugin.prototype.getResourceMapping = function(compilation) {
-	let resArr = [];
-	let stats = this.AssetOptions.stats;
+/**
+ * compress html files
+ * @param  {[type]} compilation [description]
+ * @return {[type]}             [description]
+ */
+HtmlResWebpackPlugin.prototype.compressHtml = function(compilation) {
+	let htmlFileName = this.options.htmlFileName,
+		htmlContent = compilation.assets[htmlFileName].source(),
+		htmlAsset = compilation.assets[htmlFileName];
 
-	stats.chunks.forEach(function(item, key) {
-		resArr.push({files: item.files, hash: item.hash});
-	});
-	// add ico
-	stats.assets.forEach(function(item, key) {
-		if (!!~item.name.indexOf('.ico')) {
-			resArr.push({files: [item.name], hash: ""});
+	compilation.assets[htmlFileName] = Object.assign(htmlAsset, {
+		source: () => {
+			return minify(htmlContent, this.options.htmlMinify);
 		}
-	});
-
-	this.AssetOptions = _.assign(
-		this.AssetOptions,
-		{resArr: resArr}
-	);
-
-};
-
-// process hash format
-HtmlResWebpackPlugin.prototype.processHashFormat = function() {
-	let hashFormat = this.options.hash || this.options.chunkhash;
-
-	let hashRegex = new RegExp("(hash|chunkhash)(:)*[0-9]*");
-
-	let jsHashMath = this.options.jsHash.match(hashRegex);
-	let cssHashMath = this.options.cssHash.match(hashRegex);
-
-	let jsHashInfo = (jsHashMath) ? (jsHashMath[0].split(':') || []) : [];
-	let cssHashInfo = (cssHashMath) ? (cssHashMath[0].split(':') || []) : [];
-
-	this.AssetOptions = _.assign(
-		this.AssetOptions,
-		{jsHashInfo: jsHashInfo},
-		{cssHashInfo: cssHashInfo}
-	);
-}
-
-// find resources related the html
-HtmlResWebpackPlugin.prototype.findAssets = function(compilation) {
-
-	this.AssetOptions = _.assign(
-		{webpackOptions: compilation.options},
-		{stats: compilation.getStats().toJson()}
-	);
-
-	this.getResourceMapping();
-
-};
-
-
-// inline and md5 resources for prod and add prefix for dev
-HtmlResWebpackPlugin.prototype.addAssets = function(compilation) {
-	let stats = compilation.getStats().toJson();
-	let dest = this.AssetOptions.webpackOptions.output.path;
-	let tplPath = path.resolve(this.options.template);
-	let htmlContent = compilation.assets[this.options.basename].source();
-
-	if (!this.options.isWatch) {
-		let scriptInlineRegex = new RegExp("<script.*src=[\"|\']*(.+)[\?]\_\_inline.*?[\"|\']><\/script>", "ig");
-		htmlContent = this.inlineRes(scriptInlineRegex, 'script', 'js', compilation, htmlContent);
-		
-		let styleInlineRegex = new RegExp("<link.*href=[\"|\']*(.+)[\?]\_\_inline.*?[\"|\']>", "ig");
-		htmlContent = this.inlineRes(styleInlineRegex, 'style', 'css', compilation, htmlContent);
-
-		let scriptMd5Regex = new RegExp("<script.*src=[\"|\']*(.+).*?[\"|\']><\/script>", "ig");
-
-		htmlContent = this.md5Res(scriptMd5Regex, compilation, htmlContent);
-
-		let styleMd5Regex = new RegExp("<link.*href=[\"|\']*(.+).*?[\"|\']>", "ig");
-		htmlContent = this.md5Res(styleMd5Regex, compilation, htmlContent);
-	}
-	else {
-		let scriptMd5Regex = new RegExp("<script.*src=[\"|\']*(.+).*?[\"|\']><\/script>", "ig");
-		htmlContent = this.addPrefix(scriptMd5Regex, compilation, htmlContent);
-		
-		let styleMd5Regex = new RegExp("<link.*href=[\"|\']*(.+).*?[\"|\']>", "ig");
-		htmlContent = this.addPrefix(styleMd5Regex, compilation, htmlContent);
-	}
-
-	let _this = this;
-	compilation.assets[this.options.basename].source = function() {
-		return _this.options.templateContent.bind(_this)(htmlContent);
-	};
-
-	return htmlContent;
-};
-
-// check if script / link is in entry
-HtmlResWebpackPlugin.prototype.getNormalFile = function(opt, compilation) {
-	let resArr = this.AssetOptions.resArr,
-		route = opt.route;
-
-	if (!route.indexOf('http') || !route.indexOf('https') || !route.indexOf('//')) {
-		return false;
-	}
-
-	// for (let key in resArr) {
-	// 	for (let item of resArr[key].files) {
-	// 		if (!!~route.indexOf(item)) {
-	// 			return route;
-	// 		}
-	// 	}
-	// }
-
-	return route;
-};	
-
-// get the targeted hash file name
-HtmlResWebpackPlugin.prototype.getHashedFile = function(opt, compilation) {
-	var options = this.options;
-	var ext = opt.ext;
-	var hashFormatArr = {
-		'.js': options.jsHash,
-		'.css': options.cssHash,
-		'.ico': options.faviconHash
-	};
-	var hashInfoArr = {
-		'.js': opt.jsHashInfo,
-		'.css': opt.cssHashInfo,
-		'.ico': []
-	};
-	var hashFormat = hashFormatArr[opt.ext] || [],//(opt.ext === '.js') ? options.jsHash : options.cssHash,
-		hashInfo = hashInfoArr[opt.ext] || [],//(opt.ext === '.js') ? opt.jsHashInfo : opt.cssHashInfo,
-		resArr = this.AssetOptions.resArr,
-		route = opt.route,
-		bits = (hashInfo.length > 1) ? hashInfo[1] : (compilation.hash.length),
-		isHash = (!~hashFormat.indexOf('chunkhash'));
-
-	var usedHash = (bits) ? compilation.hash.substr(0, bits) : '';
-
-	isDebug && console.log(hashFormat, hashInfo, bits, isHash, usedHash);
-
-	// console.log(route)
-	for (let key in resArr) {
-		for (let item of resArr[key].files) {
-			var newRoute = '';
-			if (hashInfo.length > 0) {
-				usedHash = (isHash) ? usedHash : resArr[key].hash.substr(0, bits);
-				let replaceRegx = '[' + hashInfo[0];
-				replaceRegx += (hashInfo.length > 1) ? ':' + hashInfo[1] + ']' : ']';
-
-				newRoute = hashFormat.replace(replaceRegx, usedHash)
-										 .replace('[name]', route.replace(ext, ''));
-
-				// avaoid path like ./a/b/c.js or /a/b/c.js, keep things like a/b/c.js
-				// in order to compare in item.indexOf(newRoute) below
-				/*console.log(newRoute);
-				if (newRoute[0] === '/' || newRoute[0] === '.') {
-					newRoute = newRoute.replace('/', '').replace('./');
-				}*/
-			}
-			else {
-				// for those resources appended with query(?xxx=xxx), it will be passed
-				return false;
-			}
-			
-			// console.log(item, newRoute, !!~item.indexOf(newRoute));
-			if (!!~item.indexOf(newRoute)) {
-				return newRoute;
-			}
-		}
-	}
-
-	return route;
-};
-
-HtmlResWebpackPlugin.prototype.addPrefix = function(regex, compilation, htmlContent) {
-
-	var _this = this;
-	var AssetOptions = this.AssetOptions;
-
-	return htmlContent.replace(regex, function(script, route) {
-
-		let file = _this.getNormalFile({
-			route: route,
-		}, compilation);
-
-		if (file) {
-			script = script.replace(route, AssetOptions.webpackOptions.output.publicPath + route);
-		}
-		// hot reload = true, then don't create script/link tab
-		if (!!~script.indexOf('<link') && !!~script.indexOf('stylesheet') && _this.options.isHotReload) {
-			script = '';
-		}
-
-		return script;
-	});
-
-};
-
-// inline resources
-HtmlResWebpackPlugin.prototype.inlineRes = function(regex, htmlTag, ext, compilation, htmlContent) {
-	var _this = this;
-	var AssetOptions = this.AssetOptions;
-
-	return htmlContent.replace(regex, function(res, route) {
-		let hashFile = _this.getHashedFile({
-			jsHashInfo: AssetOptions.jsHashInfo,
-			cssHashInfo: AssetOptions.cssHashInfo,
-			route: utils.unifyFile(route),
-			ext: path.extname(route)
-		}, compilation);
-
-  		if (hashFile) {
-
-  			let returnVal = (htmlTag === "script") ? compilation.assets[hashFile].source() : utils.getCssSource(compilation.assets[hashFile].children);
-  			// don't need it anymore
-  			delete compilation.assets[hashFile];
-  			return "<" + htmlTag + ">" +  returnVal  + "</" + htmlTag + ">";
-  		}
-  		else {
-  			return res;
-  		}
-        
-    });
-};
-
-// md5 resources
-HtmlResWebpackPlugin.prototype.md5Res = function(regex, compilation, htmlContent) {
-	var _this = this;
-	var AssetOptions = this.AssetOptions;
-	
-	return htmlContent.replace(regex, function(script, route) {
-		
-		let hashFile = _this.getHashedFile({
-			jsHashInfo: AssetOptions.jsHashInfo,
-			cssHashInfo: AssetOptions.cssHashInfo,
-			route: utils.unifyFile(route),
-			ext: path.extname(route)
-		}, compilation);
-		
-		if (hashFile) {
-			return script.replace(route, AssetOptions.webpackOptions.output.publicPath + hashFile);
-		}
-		return script;
 	});
 };
 
