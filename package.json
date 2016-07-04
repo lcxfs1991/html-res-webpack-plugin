@@ -20,7 +20,8 @@
   "author": "heyli",
   "files": [
     "bin",
-    "libs"
+    "libs",
+    "index.js"
   ],
   "scripts": {
     "test": "jasmine"
