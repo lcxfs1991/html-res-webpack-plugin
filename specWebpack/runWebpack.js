@@ -13,7 +13,7 @@ var webpackConfig = [
 	require('./src/resource-inline-2/webpack.config.js'),	// inline with compression
 	require('./src/resource-md5-1/webpack.config.js'),		// md5 with compression / index chunk before react
 	require('./src/resource-md5-2/webpack.config.js'),	    // md5 without compression  / react chunk before index
-	require('./src/resource-favico/webpack.config.js'),
+	require('./src/resource-favico/webpack.config.js'), 	// generate favicon
 ];
 
 async.filter(webpackConfig, function(configPath, callback) {
