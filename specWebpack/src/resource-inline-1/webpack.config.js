@@ -62,7 +62,7 @@ module.exports = {
         new ExtractTextPlugin("./css/[name]" + config.chunkhash + ".css"),
         new HtmlResWebpackPlugin({
         	filename: "index.html",
-            template: "src/resource-inline-1/index.html",
+            template: config.path.src + "/resource-inline-1/index.html",
             chunks:{
                 'index': {
                     attr: {

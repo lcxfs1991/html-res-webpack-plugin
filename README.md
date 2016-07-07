@@ -2,11 +2,10 @@
 
 ### [中文文档](https://github.com/lcxfs1991/html-res-webpack-plugin/blob/master/README_ZH.md)
 
-## Why do I write a new html plugin
+## Why do I rewrite the whole thing
 
-Previously, I use [html-webpack-plugin](https://github.com/ampedandwired/html-webpack-plugin) for my projects. However, the plugin has a serious drawback. When I use inject mode, I need to filter all entry files that I don't need. In addition, If I hope to add attributes like async to my script tag, it is a mission impossible. If I use non-inject mode, md5 feature will be gone, let alone resource inline.
+I rencently notice that webpack is based itself on chunks. Therefore, writing plugin logic based on chunk may be adaptable to the core and sprite of webpack.
 
-That is why I need to write a brand new one which is more intuitively.
 
 ## How to start
 
@@ -14,7 +13,6 @@ src/index.html
 --> 
 dist/index.html
 
-### (please keep line break for each resource(script and link))
 ```
 <!DOCTYPE html>
 <html lang="en" id="html">
@@ -24,12 +22,9 @@ dist/index.html
     <meta http-equiv="x-dns-prefetch-control" content="on" />
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, minimal-ui" />
     <title>html-res-webpack-example</title>
-    <link rel="stylesheet" href="/css/preview/preview.css">
 </head>
 <body>
     <div class="preview-wrapper"></div>
-    <script src="/js/common.js"></script>
-    <script src="/js/preview/preview.js?__inline"></script>
 </body>
 </html>
 ```
@@ -60,6 +55,7 @@ webpack.config.js
     var config = {
         hash: "-[hash:6]",
         chunkhash: "-[chunkhash:6]",
+        contenthash: "-[contenthash:6]"
     };
     
     entry: {
@@ -84,12 +80,22 @@ webpack.config.js
 
     plugins: [
         // some other plugins
-        new ExtractTextPlugin("./css/[name]" + config.chunkhash + ".css"),
+        new ExtractTextPlugin("./css/[name]" + config.contenthash + ".css"),
         new HtmlResWebpackPlugin({
             filename: "index.html",
             template: "src/index.html",
-            jsHash: "[name]" + config.chunkhash + ".js",
-            cssHash:  "[name]" + config.chunkhash + ".css"
+            chunks:{
+                'index': {
+                    attr: {
+                        js: "async=\"true\"",
+                        css: "offline",
+                    },
+                    inline: {
+                        js: true,
+                        css: true
+                    }
+                }
+            },
         });
     ]
 ```
@@ -110,15 +116,13 @@ Another thing worth mentioning is that if you use hash for js, please add `jsHas
 
 One thing need to be noticed is hash and chunkhash. The difference between hash and chunkhash is that hash is the same for all resources and chunkhash is different for specific resource. Usually you are recommended to use chunkhash instead (Exception for style files required in an entry js file. They share the same chunkhash if you use extract-text-webpack-plugin).
 
-## Compatible with Hot Reload
-If you use `ExtractTextPlugin` plugin, hot reload will fail for css changes. So you have to remove `ExtractTextPlugin` in development mode. However in this case, the link tag you put in html will warn you of reaching 404 because css codes are inline. In this case, please set `isHotReload` as `true`.
-
 ## Multiple Html Page
 Sometimes there are more than one html pages in your projects. In this situation, please use similar iteration code to add plugins for different html pages
 ```
 var config = {
     hash: "-[hash:6]",
     chunkhash: "-[chunkhash:6]",
+    contenthash: "-[contenthash:6]"
 };
 
 var route = ['index', 'detail'];
@@ -194,3 +198,4 @@ Since this is still v0.0.1, I may miss some project senarios. Please try this pl
 - v0.0.4 fix adding prefix and adding md5 bugs
 - v0.0.5 offer templateContent to modify html content before output
 - v0.0.7 compatible with webpack2.0
+- v1.0.0 rewrite the whole thing and add testing function

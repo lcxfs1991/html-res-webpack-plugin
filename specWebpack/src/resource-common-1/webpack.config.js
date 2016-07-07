@@ -11,12 +11,14 @@ var HtmlResWebpackPlugin = require('../../../index'),
 
 module.exports = {
 	entry: {
-        'js/index': [path.join(config.path.src, "/resource-md5-1/index")],
-        'libs/react': [path.join(config.path.src, "/resource-md5-1/libs/react")],
+        'js/index': [path.join(config.path.src, "/resource-common-1/index")],
+        'js/detail': [path.join(config.path.src, "/resource-common-1/detail")],
+        'js/list': [path.join(config.path.src, "/resource-common-1/list")],
+        'libs/react': [path.join(config.path.src, "/resource-common-1/libs/react")],
     },
     output: {
         publicPath: config.defaultPath,
-        path: path.join(config.path.dist + '/resource-md5-1/'),
+        path: path.join(config.path.dist + '/resource-common-1/'),
         filename: "[name]" + config.chunkhash + ".js",
         chunkFilename: "chunk/[name]" + config.chunkhash + ".js",
     },
@@ -66,12 +68,28 @@ module.exports = {
             // console.log(filename);
             return filename.replace('/js', '');
         }}),
+        new webpack.optimize.CommonsChunkPlugin({
+          name: "commons",
+          // (the commons chunk name)
+
+          filename: "js/commons-[hash:6].js",
+          // (the filename of the commons chunk)
+
+          // minChunks: 3,
+          // (Modules must be shared between 3 entries)
+
+          // chunks: ["pageA", "pageB"],
+          // (Only use these entries)
+        }),
         new HtmlResWebpackPlugin({
         	filename: "index.html",
-	        template: config.path.src + "/resource-md5-1/index.html",
+	        template: config.path.src + "/resource-common-1/index.html",
 	        chunks:[
-                'js/index',
                 'libs/react',
+                'commons',
+                'js/index',
+                'js/detail',
+                'js/list',
             ],
 	        templateContent: function(tpl) {
 	            // 生产环境不作处理

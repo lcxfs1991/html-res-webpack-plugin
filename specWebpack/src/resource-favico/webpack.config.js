@@ -68,8 +68,8 @@ module.exports = {
         }}),
         new HtmlResWebpackPlugin({
         	filename: "index.html",
-	        template: "src/resource-favico/index.html",
-            favicon: "src/resource-favico/favicon.ico",
+	        template: config.path.src + "/resource-favico/index.html",
+            favicon: config.path.src + "/resource-favico/favicon.ico",
 	        chunks:[
                 'libs/react',
                 'js/index',

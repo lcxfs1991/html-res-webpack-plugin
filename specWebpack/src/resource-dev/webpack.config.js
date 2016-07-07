@@ -63,7 +63,7 @@ module.exports = {
         new ExtractTextPlugin("./css/[name].css"),
         new HtmlResWebpackPlugin({
         	filename: "index.html",
-	        template: "src/resource-dev/index.html",
+	        template: config.path.src + "/resource-dev/index.html",
 	        chunks:{
                 'libs/react': {
 

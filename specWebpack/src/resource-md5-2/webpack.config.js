@@ -68,7 +68,7 @@ module.exports = {
         }}),
         new HtmlResWebpackPlugin({
         	filename: "index.html",
-	        template: "src/resource-md5-2/index.html",
+	        template: config.path.src + "/resource-md5-2/index.html",
 	        chunks:[
                 'libs/react',
                 'js/index',
