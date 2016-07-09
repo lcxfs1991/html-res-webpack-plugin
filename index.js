@@ -51,9 +51,10 @@ HtmlResWebpackPlugin.prototype.apply = function(compiler, callback) {
 
 	    this.buildStats(compilation);
 
+	    // start injecting resource into html
 	    this.injectAssets(compilation);
 
-
+	    // compress html content
 	    this.options.htmlMinify && this.compressHtml(compilation);
 	    
 	    callback();
@@ -71,12 +72,27 @@ HtmlResWebpackPlugin.prototype.buildStats = function(compilation) {
 	let optionChunks = this.options.chunks,
 		injectChunks = _.isArray(optionChunks) ? optionChunks : Object.keys(optionChunks);
 
-	// console.log(chunkSorter['auto'](c));
-
 	compilation.chunks.map((chunk, key) => {
-		// console.log(chunk.name, !!~injectChunks.indexOf(chunk.name));
 		if (!!~injectChunks.indexOf(chunk.name)) {
 			this.stats.assets[chunk.name] = chunk.files;
+		}
+	});
+
+	/**
+	 * compatible with copy-webpack-plugin / copy-webpack-plugin-hash
+	 * @param  {[type]} compilation.assets).map((assetKey, key           [description]
+	 * @return {[type]}                                    [description]
+	 */
+	Object.keys(compilation.assets).map((assetKey, key) => {
+		let files = [],
+			asset = compilation.assets[assetKey],
+			chunk = (asset.hasOwnProperty('chunk')) ? asset.chunk : "",
+			ext = path.extname(chunk);
+		
+		chunk = chunk.replace(ext, "");
+
+		if (!!~injectChunks.indexOf(chunk)) {
+			this.stats.assets[chunk] = files.concat(assetKey);
 		}
 	});
 
