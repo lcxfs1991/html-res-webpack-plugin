@@ -12,12 +12,11 @@ var HtmlResWebpackPlugin = require('../../../index'),
 
 module.exports = {
 	entry: {
-        // 'libs/react': [path.join(config.path.src, "/resource-copy-plugin/libs/react")],
-        'js/index': [path.join(config.path.src, "/resource-copy-plugin/index")],
+        'js/index': [path.join(config.path.src, "/resource-copy-plugin-2/index")],
     },
     output: {
         publicPath: config.defaultPath,
-        path: path.join(config.path.dist + '/resource-copy-plugin/'),
+        path: path.join(config.path.dist + '/resource-copy-plugin-2/'),
         filename: "[name]" + config.chunkhash + ".js",
         chunkFilename: "chunk/[name]" + config.chunkhash + ".js",
     },
@@ -69,7 +68,7 @@ module.exports = {
         }}),
         new CopyWebpackPlugin([
             {
-                from: config.path.src + '/resource-copy-plugin/libs/',
+                from: config.path.src + '/resource-copy-plugin-2/libs/',
                 to: 'libs/'
             }
         ], {
@@ -77,12 +76,17 @@ module.exports = {
         }),
         new HtmlResWebpackPlugin({
         	filename: "index.html",
-	        template: config.path.src + "/resource-copy-plugin/index.html",
-	        chunks:[
-                'libs/react',
-                'libs/react-dom',
-                'js/index',
-            ],
+	        template: config.path.src + "/resource-copy-plugin-2/index.html",
+	        chunks:{
+                'libs/react': {
+                    attr: {
+                        js: "async=\"true\"",
+                        css: "offline",
+                    }
+                },
+                'libs/react-dom': null,
+                'js/index': null,
+            },
 	        templateContent: function(tpl) {
 	            // 生产环境不作处理
 	            if (!this.webpackOptions.watch) {

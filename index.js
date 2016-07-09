@@ -9,6 +9,7 @@ const fs = require('fs'),
 	path = require('path'),
 	minify = require('html-minifier').minify,
 	utils = require('./libs/utils'),
+	errors = require('./libs/errors'),
 	loaderUtils = require('loader-utils');
 
 function HtmlResWebpackPlugin(options) {
@@ -21,12 +22,36 @@ function HtmlResWebpackPlugin(options) {
 		templateContent: options.templateContent || function(tpl) { return tpl }
 	}, options);
 
+	this.checkRequiredOptions(this.options);
+
 	// html scripts/css/favicon assets
 	this.stats = {
 		assets: [],
 	};
 	this.webpackOptions = {};
 }
+
+/**
+ * check required options
+ * @param  {[type]} options [description]
+ * @return {[type]}         [description]
+ */
+HtmlResWebpackPlugin.prototype.checkRequiredOptions = function(options) {
+	var requireOptions = ['filename', 'template', 'chunks'],
+		count = 0,
+		requiredOption = '';
+
+	for (let option in options) {
+		if (!!~requireOptions.indexOf(option)) {
+			count++;
+			requiredOption = option;
+		}
+	}
+
+	if (count < requireOptions.length) {
+		throw new errors.optionRequredErr(requiredOption);
+	}
+};
 
 HtmlResWebpackPlugin.prototype.apply = function(compiler, callback) {
 
@@ -79,10 +104,13 @@ HtmlResWebpackPlugin.prototype.buildStats = function(compilation) {
 	});
 
 	/**
-	 * compatible with copy-webpack-plugin / copy-webpack-plugin-hash
-	 * @param  {[type]} compilation.assets).map((assetKey, key           [description]
-	 * @return {[type]}                                    [description]
+	 * compatible with copy-webpack-plugin / copy-webpack-plugin-hash                                 [description]
 	 */
+	
+	if (!compilation.assets) {
+		return;
+	}
+
 	Object.keys(compilation.assets).map((assetKey, key) => {
 		let files = [],
 			asset = compilation.assets[assetKey],
@@ -114,7 +142,6 @@ HtmlResWebpackPlugin.prototype.injectAssets = function(compilation) {
 		injectChunks = _.isArray(optionChunks) ? optionChunks : Object.keys(optionChunks);
 
 	let loopKeys = Object.keys(this.stats.assets);
-
 	// use injectChunks in order to allow user to control occurences of file order
 	injectChunks.map((chunkKey, key1) => {
 		
@@ -144,7 +171,6 @@ HtmlResWebpackPlugin.prototype.injectAssets = function(compilation) {
 									: ('<link ' + styleAttr + ' rel="stylesheet" href="' + publicPath + file + '">\n');
 					break;
 				case 'ico':
-					console.log(file);
 					break;
 			}
 		});
@@ -173,8 +199,7 @@ HtmlResWebpackPlugin.prototype.injectAssets = function(compilation) {
  * @return {[type]}          [description]
  */
 HtmlResWebpackPlugin.prototype.injectAssetsAttr = function(chunk, fileType) {
-
-	if (!chunk.hasOwnProperty('attr') || !chunk.attr) {
+	if (!chunk || !chunk.hasOwnProperty('attr') || !chunk.attr) {
 		return '';
 	}
 
@@ -190,7 +215,7 @@ HtmlResWebpackPlugin.prototype.injectAssetsAttr = function(chunk, fileType) {
  * @return {[type]}             [description]
  */
 HtmlResWebpackPlugin.prototype.inlineRes = function(compilation, chunk, file, fileType) {
-	if (!chunk.hasOwnProperty('inline') || !chunk.inline || !chunk.inline[fileType]) {
+	if (!chunk || !chunk.hasOwnProperty('inline') || !chunk.inline || !chunk.inline[fileType]) {
 		return false;
 	}
 

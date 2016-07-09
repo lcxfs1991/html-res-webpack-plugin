@@ -88,3 +88,27 @@ describe("resource-common-1", function() {
       expect(true).toBe(distContent === resultContent);
     });
 });
+
+describe("resource-copy-plugin-1", function() {
+    it("=> usage with copy-webpack-plugin", function() {
+      let distHtml = path.resolve('specWebpack/dist/resource-copy-plugin-1/index.html'),
+        resultHtml = path.resolve('specWebpack/result/resource-copy-plugin-1/index.html');
+
+      let distContent = fs.readFileSync(distHtml).toString(),
+        resultContent = fs.readFileSync(resultHtml).toString();
+
+      expect(true).toBe(distContent === resultContent);
+    });
+});
+
+describe("resource-copy-plugin-2", function() {
+    it("=> usage with copy-webpack-plugin with attributes", function() {
+      let distHtml = path.resolve('specWebpack/dist/resource-copy-plugin-2/index.html'),
+        resultHtml = path.resolve('specWebpack/result/resource-copy-plugin-2/index.html');
+
+      let distContent = fs.readFileSync(distHtml).toString(),
+        resultContent = fs.readFileSync(resultHtml).toString();
+
+      expect(true).toBe(distContent === resultContent);
+    });
+});

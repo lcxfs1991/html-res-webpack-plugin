@@ -7,6 +7,19 @@
 I rencently notice that webpack is based itself on chunks. Therefore, writing plugin logic based on chunk may be adaptable to the core and sprite of webpack.
 
 
+## Basic Concpets: `chunks` and `assets`
+In webpack, the basic element is `chunks`. The values in `entry` of webpack config are `chunks`. For instance, `index` and `detail` in the following entry config are chunks' names; In most cases, chunk is a js file. But if you require stylesheet or other files in js, a js chunk will include not only js file but also the files you require.
+
+```
+entry: {
+    index: xxx
+    detail: xxx
+}
+```
+
+What about assets? Assets are files will be exported by webpack. They can be any file types like stylesheets, images, html and so on. 
+
+
 ## How to start
 
 src/index.html
@@ -57,47 +70,48 @@ webpack.config.js
         chunkhash: "-[chunkhash:6]",
         contenthash: "-[contenthash:6]"
     };
-    
-    entry: {
-        'preivew/preview': [path.join(config.path.src, "/page/preview/main.js")],
-    },
+    var webpackconfig = {
+        entry: {
+            'preivew/preview': [path.join(config.path.src, "/page/preview/main.js")],
+        },
 
-    /**
-     *  webpack options below
-     */
-    .
-    .
-    .
-    output: {
-        publicPath: (config.env === 'prod') ? config.cdn : config.defaultPath,
-        path: path.join(config.path.dist),
-        filename: "js/[name]" + config.chunkhash + ".js"
-    },
+        /**
+         *  webpack options below
+         */
+        .
+        .
+        .
+        output: {
+            publicPath: (config.env === 'prod') ? config.cdn : config.defaultPath,
+            path: path.join(config.path.dist),
+            filename: "js/[name]" + config.chunkhash + ".js"
+        },
     
-    .
-    .
-    .
+        .
+        .
+        .
 
-    plugins: [
-        // some other plugins
-        new ExtractTextPlugin("./css/[name]" + config.contenthash + ".css"),
-        new HtmlResWebpackPlugin({
-            filename: "index.html",
-            template: "src/index.html",
-            chunks:{
-                'index': {
-                    attr: {
-                        js: "async=\"true\"",
-                        css: "offline",
-                    },
-                    inline: {
-                        js: true,
-                        css: true
+        plugins: [
+            // some other plugins
+            new ExtractTextPlugin("./css/[name]" + config.contenthash + ".css"),
+            new HtmlResWebpackPlugin({
+                filename: "index.html",
+                template: "src/index.html",
+                chunks:{
+                    'index': {
+                        attr: {                     // attributes for index chunk
+                            js: "async=\"true\"",
+                            css: "offline",
+                        },
+                        inline: {                   // inline or not for index chunk
+                            js: true,
+                            css: true
+                        }
                     }
-                }
-            },
-        });
-    ]
+                },
+            });
+        ]
+    };
 ```
 
 package.json
@@ -110,11 +124,10 @@ package.json
 
 ```
 
-If webpack is under watch mode (that is to say, the project is under developed), no md5 or resource inline functions will be called. If webpack is under production mode, the plugin will start adding md5 to resources and make the rest inline.
 
-Another thing worth mentioning is that if you use hash for js, please add `jsHash` the same as the `output` webpack option `filename` excluding folder destination. If you use hash for css, please add `cssHash` the same as the option you input into ExtractTextPlugin excluding css destination folder.  
+One thing need to be noticed is `hash` and `chunkhash`. The difference between `hash` and `chunkhash` is that `hash` is the same for all resources and `chunkhash` is different for specific resource. Usually you are recommended to use `chunkhash` instead (Exception for style files required in an entry js file. They share the same `chunkhash` if you use extract-text-webpack-plugin. Please use `contenthash` instead in order to ensure hash for stylesheet changes only when content changes).
 
-One thing need to be noticed is hash and chunkhash. The difference between hash and chunkhash is that hash is the same for all resources and chunkhash is different for specific resource. Usually you are recommended to use chunkhash instead (Exception for style files required in an entry js file. They share the same chunkhash if you use extract-text-webpack-plugin).
+Another thing worth being noticed is the order of `chunks`. The order of resources that will be injected is based on the order of `chunks` in `html-res-webpack-plugin`.
 
 ## Multiple Html Page
 Sometimes there are more than one html pages in your projects. In this situation, please use similar iteration code to add plugins for different html pages
@@ -127,68 +140,175 @@ var config = {
 
 var route = ['index', 'detail'];
 
-route.forEach(function(item) {
-    var htmlResWebpackPlugin = new HtmlResWebpackPlugin({
-        filename: item + ".html",
-        template: "src/" + item + ".html",
-        jsHash: "[name]" + config.chunkhash + ".js",
-        cssHash:  "[name]" + config.chunkhash + ".css",
-        htmlMinify:{
-            removeComments: true,
-            collapseWhitespace: true,
-        }
-    });
-    webpackConfig.plugins.push(htmlResWebpackPlugin);
+var webapckConfig = {
+    entry: {
+        "js/index": "xxx/index",
+        "js/detail": "xxx/detail",
+    }
+};
 
-});
+let pageMapping = {
+    'detail': {
+        'js/detail': {
+            attr:{
+                js: "",
+                css: "",
+            }
+        },
+    },
+    'index': {
+        'js/index': {
+            attr:{
+                js: "",
+                css: "",
+            }
+        },
+    }
+};
+
+webpackConfig.addPlugins = function(plugin, opt) {
+    devConfig.plugins.push(new plugin(opt));
+};
+
+route.html.forEach(function(page) {
+    webapckConfig.addPlugins(HtmlResWebpackPlugin, {
+        filename: page + ".html",
+        template: "src/" + page + ".html",
+        favicon: "src/favicon.ico",
+        chunks: pageMapping[page],
+    });
+}); 
 ```
 
 ## Favicon
-
-index.html
-```
-<head>
-    <link rel="shortcut icon" type="image/x-icon" href="./favicon.ico"> 
-    <link rel="icon" type="image/x-icon" href="./favicon.ico">
-</head>
-```
-
 
 webpack.config.js 
 ```
 new HtmlResWebpackPlugin({
     filename: "index.html",
-    template: "src/index.html",
-    favicon: "src/favicon.ico",
+    template: "xxx/index.html",
+    favicon: "xxx/favicon.ico",
+    chunks:[
+        'js/index',
+    ],
 }),
 ```
 
 ## Modify Html Content Before Output
+
 ```
 new HtmlResWebpackPlugin({
     filename: "index.html",
     template: "src/index.html",
     templateContent: function(tpl) {
         // some modification of tpl
-        // you can use this.options here, you can open index.js of the plugin
+        // you can use this.options [user input plugin options]
+        // and this.webpackOptions [webpack config] here, you can open index.js of the plugin
         // to check what options are offered
         return tpl;
     }
 }),
 ```
 
+## Usage with ```copy-webpack-plugin```
+[copy-webpack-plugin-hash](https://www.npmjs.com/package/copy-webpack-plugin-hash)  is a plugin that helps copy files directly without webpack parsing. I add `namePattern` option feature for it so that files generated by this plugin can also have hash (Once the main repo accepts my pull request, I will delete this temporary repo).
+
+If you use copy-webpack-plugin for example, you can use `html-res-webpack-plugin` easily. For example, if you copy `/xxx/libs` folder to `libs/`. If the folder contains `react` and `react-dom`, you can add chunks `libs/react/` and `libs/react-dom` in `html-res-webpack-plugin`.
+
+```
+plugins: [
+    new CopyWebpackPlugin([
+        {
+            from: '/xxx/libs/',
+            to: 'libs/'
+        }
+    ], {
+        namePattern: "[name]-[contenthash:6].js"
+    }),
+    new HtmlResWebpackPlugin({
+        filename: "index.html",
+        template: config.path.src + "/resource-copy-plugin-1/index.html",
+        chunks:[
+            'libs/react',
+            'libs/react-dom',
+            'js/index',
+        ],
+    }),
+]
+```
+
 ## Options
-- `filename`: generated filename
-- `template`: template source
-- `jsHash`: "[name]" + config.chunkhash + ".js" (example)
-- `cssHash`:  "[name]" + config.chunkhash + ".css" (example)
-- `htmlMinify`: please checkout `html-minifier`[https://github.com/kangax/html-minifier] to see detail options. If set false | null, html files won't be compressed.
-- `isHotReload`: if set true, <link> tags will be ignored
-- `favicon`: favicon path, for example, "src/favicon.ico"
-- `templateContent`: a point for developer to modify html content before output. `this.options` can be used in such a function.
+- `filename`: 
+    - is required
+    - generated filename
+- `template`: 
+    - is required
+    - template source
+- `chunks`: 
+    - is required
+    - [Array|Object]
+    - injected chunks
+    - examples:
+[Array]
+```
+    entry: {
+        'index': xxx,
+        'detail': xxx,
+        'libs/react': xxx,
+    }
+
+    plugins: [
+        new HtmlResWebpackPlugin({
+            /** other config */
+            chunks: [
+                'index',
+                'detail',
+                'libs/react'
+            ]
+        })
+    ]
+
+```
+[Object]
+
+```
+    plugins: [
+        new HtmlResWebpackPlugin({
+            /** other config */
+            chunks: {
+                'index': {
+                    attr: {                     // attributes for index chunk
+                        js: "async=\"true\"",
+                        css: "offline",
+                    },
+                },
+                'detail': {
+                    inline: {                   // inline or not for detail chunk
+                        js: true,
+                        css: true
+                    }
+                },
+                'libs/react': nulls
+            }
+        })
+    ]
+```
+
+- `htmlMinify`: 
+    - is optional
+    - please checkout `html-minifier`[https://github.com/kangax/html-minifier] to see detail options. If set false | null, html files won't be compressed.
+- `favicon`: 
+    - is optional
+    - favicon path, for example, "src/favicon.ico"
+- `templateContent`: 
+    - is optional
+    - a point for developer to modify html content before output. `this.options` and `this.webpackOptions`can be used in such a function.
 
 ## Last Words
-Since this is still v0.0.1, I may miss some project senarios. Please try this plugin and push any issues. I will help you solve the problem ASAP(usually within 24 hours).
+
+I add automatic testing samples fo for the plugin to ensure stablity and relablility. I starting using this plugin in internal development.
+
+If you still don't understand README, you can checkout examples in specWepback where testing samples are located.
 
 
 ## Changelog
@@ -197,5 +317,5 @@ Since this is still v0.0.1, I may miss some project senarios. Please try this pl
 - v0.0.3 support favicon file
 - v0.0.4 fix adding prefix and adding md5 bugs
 - v0.0.5 offer templateContent to modify html content before output
-- v0.0.7 compatible with webpack2.0
+- v0.0.7 compatible with webpack2.0 [README](https://github.com/lcxfs1991/html-res-webpack-plugin/blob/v0.0.7/README.md)
 - v1.0.0 rewrite the whole thing and add testing function

@@ -7,16 +7,17 @@ var webpack = require('webpack'),
 
 var HtmlResWebpackPlugin = require('../../../index'),
 	ExtractTextPlugin = require("extract-text-webpack-plugin"),
-    StatsPlugin = require('stats-webpack-plugin');
+    StatsPlugin = require('stats-webpack-plugin'),
+    CopyWebpackPlugin = require('copy-webpack-plugin-hash');
 
 module.exports = {
 	entry: {
-        'libs/react': [path.join(config.path.src, "/resource-favico/libs/react")],
-        'js/index': [path.join(config.path.src, "/resource-favico/index")],
+        // 'libs/react': [path.join(config.path.src, "/resource-copy-plugin/libs/react")],
+        'js/index': [path.join(config.path.src, "/resource-copy-plugin-1/index")],
     },
     output: {
         publicPath: config.defaultPath,
-        path: path.join(config.path.dist + '/resource-favico/'),
+        path: path.join(config.path.dist + '/resource-copy-plugin-1/'),
         filename: "[name]" + config.chunkhash + ".js",
         chunkFilename: "chunk/[name]" + config.chunkhash + ".js",
     },
@@ -63,20 +64,41 @@ module.exports = {
         new webpack.optimize.OccurrenceOrderPlugin(),
         new webpack.NoErrorsPlugin(),
         new ExtractTextPlugin("./css/[name]-[contenthash:6].css", {filenamefilter: function(filename) {
+            // console.log(filename);
             return filename.replace('/js', '');
         }}),
+        new CopyWebpackPlugin([
+            {
+                from: config.path.src + '/resource-copy-plugin-1/libs/',
+                to: 'libs/'
+            }
+        ], {
+            namePattern: "[name]-[contenthash:6].js"
+        }),
         new HtmlResWebpackPlugin({
         	filename: "index.html",
-	        template: config.path.src + "/resource-favico/index.html",
-            favicon: config.path.src + "/resource-favico/favicon.ico",
+	        template: config.path.src + "/resource-copy-plugin-1/index.html",
 	        chunks:[
                 'libs/react',
+                'libs/react-dom',
                 'js/index',
             ],
 	        templateContent: function(tpl) {
+	            // 生产环境不作处理
+	            if (!this.webpackOptions.watch) {
+                    return tpl;
+                }
+	            // 开发环境先去掉外链react.js
+	            var regex = new RegExp("<script.*src=[\"|\']*(.+).*?[\"|\']><\/script>", "ig");
+	            tpl = tpl.replace(regex, function(script, route) {
+	                if (!!~script.indexOf('react.js') || !!~script.indexOf('react-dom.js')) {
+	                    return '';
+	                }
+	                return script;
+	            });
 	            return tpl;
 	        }, 
 	        htmlMinify: null
-        })
+        }),
     ],
 };
