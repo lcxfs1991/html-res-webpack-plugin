@@ -1,6 +1,6 @@
 # html-res-webpack-plugin
 
-### [中文文档](https://github.com/lcxfs1991/html-res-webpack-plugin/blob/master/README_ZH.md)
+### [中文文档](https://github.com/lcxfs1991/html-res-webpack-plugin/blob/v0.0.7/README_ZH.md)
 
 ## Why do I write a new html plugin
 
