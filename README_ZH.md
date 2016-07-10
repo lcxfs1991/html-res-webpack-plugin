@@ -210,7 +210,7 @@ new HtmlResWebpackPlugin({
 }),
 ```
 
-## 与 ```copy-webpack-plugin```插件搭配使用
+## 与 ```copy-webpack-plugin-hash```插件搭配使用
 [copy-webpack-plugin-hash](https://www.npmjs.com/package/copy-webpack-plugin-hash) 是一个帮助直接复制文件的webpack插件。 我添加了一个`namePattern`的选项目，这样能够让复制的文件也带上hash（一旦主要的repo接受了我的request，我可能会删掉这个临时的repo）
 
 如果你使用`copy-webpack-plugin-hash`，你也可以轻松使用`html-res-webpack-plugin`。例如，你想复制`/xxx/libs`文件夹到`libs/`。若你的文件夹包含`react`和`react-dom`，你可以添加chunks `libs/react/`和`libs/react-dom`到`html-res-webpack-plugin`中。
@@ -250,6 +250,7 @@ plugins: [
     - [Array|Object]
     - 注入的chunks
     - examples:
+
 [Array]
 ```
     entry: {
@@ -297,7 +298,7 @@ plugins: [
 
 - `htmlMinify`: 
     - is optional
-    - 请查看 `html-minifier`[https://github.com/kangax/html-minifier] to see detail options. 如果设为false | null, html文件则不会被压缩
+    - 请查看 [html-minifier](https://github.com/kangax/html-minifier) to see detail options. 如果设为false | null, html文件则不会被压缩
 - `favicon`: 
     - is optional
     - favicon路径, 如: "src/favicon.ico"
