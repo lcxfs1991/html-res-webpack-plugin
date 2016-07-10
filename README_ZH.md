@@ -1,13 +1,24 @@
 # html-res-webpack-plugin
 
-### [English README](https://github.com/lcxfs1991/html-res-webpack-plugin)
-#### 联系方式: QQ:249806703 | email:lcxfs1991@gmail.com
+### [英文文档](https://github.com/lcxfs1991/html-res-webpack-plugin/blob/master/README.md)
 
-## 我为什么要写一个新的html生成插件
+## 为什么我要重构
 
-之前，我一直使用[html-webpack-plugin](https://github.com/ampedandwired/html-webpack-plugin) 插件. 可是，这个插件有比较大的问题。当我使用inject模式的时候，我需要去筛走我不需要的入口文件。除此之外，如果我想加一些例如async这样的属性给我的script标签，也基本是不可能的事。如果我使用非inject模式，md5的自带特性将无法使用，更不用说资源内联了。
+最近随着我对webpack了解的深入，发现webpack主要是基于chunks。因此基于chunks去写插件会更贴近webpack的理念。
 
-这就是我为什么要写一个全新的插件的原因，新的插件使用起来将会更加简单明了。
+
+## 基本概念：`chunks`和`assets`
+在webpack里，基本的要素就是`chunks`。`entry`配置项中的值其实就是chunks。例如下面的`entry`配置中的`index`和`detail`都是`chunks`的名字。大多数情况下，chunk都是一个js文件。但如果你在js文件里引入样式或者其它文件，那么一个js的chunk除了包括js文件以外，还会包括你引入的那些文件。
+
+```
+entry: {
+    index: xxx
+    detail: xxx
+}
+```
+
+那么`assets`呢？`Assets`是那些将要被webpack输出的文件。它们可以是任何类型的文件，比如样式、图片或者html文件。
+
 
 ## 如何开始
 
@@ -15,7 +26,6 @@ src/index.html
 --> 
 dist/index.html
 
-### (每个资源(script和link)之间请保留换行)
 ```
 <!DOCTYPE html>
 <html lang="en" id="html">
@@ -25,12 +35,9 @@ dist/index.html
     <meta http-equiv="x-dns-prefetch-control" content="on" />
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, minimal-ui" />
     <title>html-res-webpack-example</title>
-    <link rel="stylesheet" href="/css/preview/preview.css">
 </head>
 <body>
     <div class="preview-wrapper"></div>
-    <script src="/js/common.js"></script>
-    <script src="/js/preview/preview.js?__inline"></script>
 </body>
 </html>
 ```
@@ -61,38 +68,50 @@ webpack.config.js
     var config = {
         hash: "-[hash:6]",
         chunkhash: "-[chunkhash:6]",
+        contenthash: "-[contenthash:6]"
     };
-    
-    entry: {
-        'preivew/preview': [path.join(config.path.src, "/page/preview/main.js")],
-    },
+    var webpackconfig = {
+        entry: {
+            'preivew/preview': [path.join(config.path.src, "/page/preview/main.js")],
+        },
 
-    /**
-     *  webpack options below
-     */
-    .
-    .
-    .
-    output: {
-        publicPath: (config.env === 'prod') ? config.cdn : config.defaultPath,
-        path: path.join(config.path.dist),
-        filename: "js/[name]" + config.chunkhash + ".js"
-    },
+        /**
+         *  webpack options below
+         */
+        .
+        .
+        .
+        output: {
+            publicPath: (config.env === 'prod') ? config.cdn : config.defaultPath,
+            path: path.join(config.path.dist),
+            filename: "js/[name]" + config.chunkhash + ".js"
+        },
     
-    .
-    .
-    .
+        .
+        .
+        .
 
-    plugins: [
-        // some other plugins
-        new ExtractTextPlugin("./css/[name]" + config.chunkhash + ".css"),
-        new HtmlResWebpackPlugin({
-            filename: "index.html",
-            template: "src/index.html",
-            jsHash: "[name]" + config.chunkhash + ".js",
-            cssHash:  "[name]" + config.chunkhash + ".css"
-        });
-    ]
+        plugins: [
+            // some other plugins
+            new ExtractTextPlugin("./css/[name]" + config.contenthash + ".css"),
+            new HtmlResWebpackPlugin({
+                filename: "index.html",
+                template: "src/index.html",
+                chunks:{
+                    'index': {
+                        attr: {                     // attributes for index chunk
+                            js: "async=\"true\"",
+                            css: "offline",
+                        },
+                        inline: {                   // inline or not for index chunk
+                            js: true,
+                            css: true
+                        }
+                    }
+                },
+            });
+        ]
+    };
 ```
 
 package.json
@@ -105,94 +124,198 @@ package.json
 
 ```
 
-如果webpack使用watch模式（就是说，项目正在开发中），md5和资源内联功能都不会被使用。如果webpack在production（生产）模式，插件将会给文件添上md5或者将其内联。
+有一个需要提及的是，hash与chunkhash的不同点在于，hash对于所有资源都是一样的，而每个入口文件却只有一个自己的chunkhash（如果你使用extract-text-webpack-plugin插件，在入口js文件里被引用的样式文件，则会共享相同的chunkhash。但请使用`contenthash`，这样能保证样式文件的hash会随着自身内容的改变而改变）。
 
-另一个值得提的是hash（哈希）。如果你想给js添加hash，使用`jsHash`参数，与webpack的`output`参数`filename`一致，除去它的生成位置。如果你想给css添加hash，请使用`cssHash`，跟`ExtractTextPlugin`输入的参数一致，除了它的生成目录。
+另一个值得提及的，是`chunks`的顺序。那些被注入的资源的顺序，就是基于`html-res-webpack-plugin`中`chunks`配置的顺序。
 
-有一个需要提及的是，hash与chunkhash的不同点在于，hash对于所有资源都是一样的，而每个入口文件却只有一个自己的chunkhash（如果你使用extract-text-webpack-plugin插件，在入口js文件里被引用的样式文件，则会共享相同的chunkhash）。
-
-## 兼容代码热替换
-如果使用`ExtractTextPlugin`插件，热替换的功能无法兼容样式的更新，所以，你在开发模式下需要去掉`ExtractTextPlugin`插件。然而，你放在html里的`<link>`元素会显示404报错，因为css的代码都已内联。此时，请将`isHotReload`为true。
 
 ## 多html页面
 有时候，一个项目会有多于一个html文件。这种情况下，请对每个html文件添加对应的一个HtmlResWebacpk插件。
-
 ```
 var config = {
     hash: "-[hash:6]",
     chunkhash: "-[chunkhash:6]",
+    contenthash: "-[contenthash:6]"
 };
 
 var route = ['index', 'detail'];
 
-route.forEach(function(item) {
-    var htmlResWebpackPlugin = new HtmlResWebpackPlugin({
-        filename: item + ".html",
-        template: "src/" + item + ".html",
-        jsHash: "[name]" + config.chunkhash + ".js",
-        cssHash:  "[name]" + config.chunkhash + ".css",
-        htmlMinify:{
-            removeComments: true,
-            collapseWhitespace: true,
-        }
-    });
-    webpackConfig.plugins.push(htmlResWebpackPlugin);
+var webapckConfig = {
+    entry: {
+        "js/index": "xxx/index",
+        "js/detail": "xxx/detail",
+    }
+};
 
-});
+let pageMapping = {
+    'detail': {
+        'js/detail': {
+            attr:{
+                js: "",
+                css: "",
+            }
+        },
+    },
+    'index': {
+        'js/index': {
+            attr:{
+                js: "",
+                css: "",
+            }
+        },
+    }
+};
+
+webpackConfig.addPlugins = function(plugin, opt) {
+    devConfig.plugins.push(new plugin(opt));
+};
+
+route.html.forEach(function(page) {
+    webapckConfig.addPlugins(HtmlResWebpackPlugin, {
+        filename: page + ".html",
+        template: "src/" + page + ".html",
+        favicon: "src/favicon.ico",
+        chunks: pageMapping[page],
+    });
+}); 
 ```
 
 ## Favicon
-
-index.html
-```
-<head>
-    <link rel="shortcut icon" type="image/x-icon" href="./favicon.ico"> 
-    <link rel="icon" type="image/x-icon" href="./favicon.ico">
-</head>
-```
-
 
 webpack.config.js 
 ```
 new HtmlResWebpackPlugin({
     filename: "index.html",
-    template: "src/index.html",
-    favicon: "src/favicon.ico",
+    template: "xxx/index.html",
+    favicon: "xxx/favicon.ico",
+    chunks:[
+        'js/index',
+    ],
 }),
 ```
 
 ## 输出前修改Html内容
+
 ```
 new HtmlResWebpackPlugin({
     filename: "index.html",
     template: "src/index.html",
     templateContent: function(tpl) {
         // 你可以在这里修改html内容tpl
-        // 你也可以在这里使用this.options
+        // 你也可以在这里使用this.options[用户传入的插件options]
+        // 和this.webpackOptions[webpack配置]
         // 打开插件的index.js可以查看都有哪些option提供使用
         return tpl;
     }
 }),
 ```
 
+## 与 ```copy-webpack-plugin```插件搭配使用
+[copy-webpack-plugin-hash](https://www.npmjs.com/package/copy-webpack-plugin-hash) 是一个帮助直接复制文件的webpack插件。 我添加了一个`namePattern`的选项目，这样能够让复制的文件也带上hash（一旦主要的repo接受了我的request，我可能会删掉这个临时的repo）
+
+如果你使用`copy-webpack-plugin-hash`，你也可以轻松使用`html-res-webpack-plugin`。例如，你想复制`/xxx/libs`文件夹到`libs/`。若你的文件夹包含`react`和`react-dom`，你可以添加chunks `libs/react/`和`libs/react-dom`到`html-res-webpack-plugin`中。
+
+
+```
+plugins: [
+    new CopyWebpackPlugin([
+        {
+            from: '/xxx/libs/',
+            to: 'libs/'
+        }
+    ], {
+        namePattern: "[name]-[contenthash:6].js"
+    }),
+    new HtmlResWebpackPlugin({
+        filename: "index.html",
+        template: config.path.src + "/resource-copy-plugin-1/index.html",
+        chunks:[
+            'libs/react',
+            'libs/react-dom',
+            'js/index',
+        ],
+    }),
+]
+```
+
 ## Options
-- `filename`: 生成的html文件名
-- `template`: html模板来源
-- `jsHash`: "[name]" + config.chunkhash + ".js" (example)
-- `cssHash`:  "[name]" + config.chunkhash + ".css" (example)
-- `htmlMinify`: 请查看`html-minifier`[https://github.com/kangax/html-minifier]文档. 如果设为false | null, html文件则不会被压缩
-- `isHotReload`: 如果设为真,<link>元素会被忽略
-- `favicon`: favicon路径, 如: "src/favicon.ico"
-- `templateContent`: 这里可提供给开发者在输出前修改html内容。 `this.options`在这里也可以被使用
+- `filename`: 
+    - is required
+    - 生成的html文件名
+- `template`: 
+    - is required
+    - html模板来源
+- `chunks`: 
+    - is required
+    - [Array|Object]
+    - 注入的chunks
+    - examples:
+[Array]
+```
+    entry: {
+        'index': xxx,
+        'detail': xxx,
+        'libs/react': xxx,
+    }
+
+    plugins: [
+        new HtmlResWebpackPlugin({
+            /** other config */
+            chunks: [
+                'index',
+                'detail',
+                'libs/react'
+            ]
+        })
+    ]
+
+```
+[Object]
+
+```
+    plugins: [
+        new HtmlResWebpackPlugin({
+            /** other config */
+            chunks: {
+                'index': {
+                    attr: {                     // index chunk注入的html标签属性
+                        js: "async=\"true\"",
+                        css: "offline",
+                    },
+                },
+                'detail': {
+                    inline: {                   // detail chunk是否内联
+                        js: true,
+                        css: true
+                    }
+                },
+                'libs/react': nulls
+            }
+        })
+    ]
+```
+
+- `htmlMinify`: 
+    - is optional
+    - 请查看 `html-minifier`[https://github.com/kangax/html-minifier] to see detail options. 如果设为false | null, html文件则不会被压缩
+- `favicon`: 
+    - is optional
+    - favicon路径, 如: "src/favicon.ico"
+- `templateContent`: 
+    - is optional
+    - 这里可提供给开发者在输出前修改html内容。 this.options和this.webpackOptions在这里也可以被使用
 
 ## 写在最后
-因为这只是v0.0.6版本，我可能会漏掉一些项目的场景。请给我发issue或者发邮件，我会尽快帮你解决问题(通常24小时之内）并不断优化这个插件。
+为了保证稳定性和可靠性，我添加了测试用例。我早已开始在我自己的开发项目中使用。
+
+如果你对README还是不理解，可以查看一下`specWebpack`目录下的例子。那也是测试用例存放的地方。
 
 
-## 项目变更
+## Changelog
 - v0.0.1 html生成及相关js,css资源内联
 - v0.0.2 使生成的文件名和哈希可定制化
 - v0.0.3 支持生成favicon文件
 - v0.0.4 修复针对某些资源添加前缀或添加md5的错误
 - v0.0.5 添加templateContent函数以提供定制化修改html的办法
-- v0.0.7 适应webpack2.0
+- v0.0.7 compatible with webpack2.0 [README](https://github.com/lcxfs1991/html-res-webpack-plugin/blob/v0.0.7/README_ZH.md)
+- v1.0.0 重构及添加测试用例
