@@ -6,7 +6,14 @@ const path = require('path');
 module.exports = {
 
 	getFileType: (filename) => {
-		return path.extname(filename).replace(".", "");
+		let ext = path.extname(filename).replace(".", ""),
+			questionMark = ext.indexOf("?");
+
+		if (!!~questionMark) {
+			ext = ext.replace(ext.substring(questionMark, ext.length), "");
+		}
+		
+		return ext;
 	},
 
 };

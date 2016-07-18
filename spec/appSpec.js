@@ -112,3 +112,15 @@ describe("resource-copy-plugin-2", function() {
       expect(true).toBe(distContent === resultContent);
     });
 });
+
+describe("resource-external-1", function() {
+    it("=> external resource", function() {
+      let distHtml = path.resolve('specWebpack/dist/resource-external-1/index.html'),
+        resultHtml = path.resolve('specWebpack/result/resource-external-1/index.html');
+
+      let distContent = fs.readFileSync(distHtml).toString(),
+        resultContent = fs.readFileSync(resultHtml).toString();
+
+      expect(true).toBe(distContent === resultContent);
+    });
+});

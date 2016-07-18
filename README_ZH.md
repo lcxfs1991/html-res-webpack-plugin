@@ -128,6 +128,20 @@ package.json
 
 另一个值得提及的，是`chunks`的顺序。那些被注入的资源的顺序，就是基于`html-res-webpack-plugin`中`chunks`配置的顺序。
 
+## 注入外部资源
+有时候你可能需要使用外部的公共资源。如果是这样，请仿照以下的配置写法：
+
+```
+chunks:{
+    'qreport': {
+        external: true,                                 // 告诉插件不要带上publicPath
+        res:  "//s.url.cn/pub/js/qreport.js?_bid=2231", // 资源路径
+        attr: {
+            js: "async=\"true\"",
+        }
+    }
+}
+```
 
 ## 多html页面
 有时候，一个项目会有多于一个html文件。这种情况下，请对每个html文件添加对应的一个HtmlResWebacpk插件。
@@ -278,6 +292,10 @@ plugins: [
         new HtmlResWebpackPlugin({
             /** other config */
             chunks: {
+                'qreport': {
+                    external: true              // 告诉插件不要带上publicPath
+                    res: "xxx"                  // 资源路径
+                },
                 'index': {
                     attr: {                     // index chunk注入的html标签属性
                         js: "async=\"true\"",
@@ -320,3 +338,4 @@ plugins: [
 - v0.0.5 添加templateContent函数以提供定制化修改html的办法
 - v0.0.7 compatible with webpack2.0 [README](https://github.com/lcxfs1991/html-res-webpack-plugin/blob/v0.0.7/README_ZH.md)
 - v1.0.0 重构及添加测试用例
+- v1.0.1 允许外部资源注入

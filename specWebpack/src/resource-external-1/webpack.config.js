@@ -10,12 +10,12 @@ var HtmlResWebpackPlugin = require('../../../index'),
 
 module.exports = {
 	entry: {
-        'libs/react': [path.join(config.path.src, "/resource-md5-2/libs/react")],
-        'js/index': [path.join(config.path.src, "/resource-md5-2/index")],
+        'js/index': [path.join(config.path.src, "/resource-external-1/index")],
+        'libs/react': [path.join(config.path.src, "/resource-external-1/libs/react")],
     },
     output: {
         publicPath: config.defaultPath,
-        path: path.join(config.path.dist + '/resource-md5-2/'),
+        path: path.join(config.path.dist + '/resource-external-1/'),
         filename: "[name]" + config.chunkhash + ".js",
         chunkFilename: "chunk/[name]" + config.chunkhash + ".js",
     },
@@ -67,11 +67,25 @@ module.exports = {
         }}),
         new HtmlResWebpackPlugin({
         	filename: "index.html",
-	        template: config.path.src + "/resource-md5-2/index.html",
-	        chunks:[
-                'libs/react',
-                'js/index',
-            ],
+	        template: config.path.src + "/resource-external-1/index.html",
+	        chunks:{
+                'common': {
+                    external: true,
+                    res: "//s.url.cn/common.css",
+                    attr: {
+                        css: "offline"
+                    }
+                },
+                'libs/react': null,
+                'qreport': {
+                    external: true,
+                    res:  "//s.url.cn/pub/js/qreport.js?_bid=2231",
+                    attr: {
+                        js: "async=\"true\"",
+                    }
+                },
+                'js/index': null,
+            },
 	        templateContent: function(tpl) {
 	            // 生产环境不作处理
 	            if (!this.webpackOptions.watch) {
@@ -87,7 +101,6 @@ module.exports = {
 	            });
 	            return tpl;
 	        }, 
-	        htmlMinify: null
         }),
     ],
 };

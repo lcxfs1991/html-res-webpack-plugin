@@ -6,8 +6,7 @@ var webpack = require('webpack'),
 
 
 var HtmlResWebpackPlugin = require('../../../index'),
-	ExtractTextPlugin = require("extract-text-webpack-plugin"),
-    StatsPlugin = require('stats-webpack-plugin');
+	ExtractTextPlugin = require("extract-text-webpack-plugin");
 
 module.exports = {
 	entry: {

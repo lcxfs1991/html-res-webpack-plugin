@@ -145,8 +145,14 @@ HtmlResWebpackPlugin.prototype.injectAssets = function(compilation) {
 	// use injectChunks in order to allow user to control occurences of file order
 	injectChunks.map((chunkKey, key1) => {
 		
+		if (!this.stats.assets.hasOwnProperty(chunkKey)) {
+			this.stats.assets[chunkKey] = [optionChunks[chunkKey].res];
+		}
+		// console.log(this.stats.assets);
 		this.stats.assets[chunkKey].map((file, key2) => {
-			let fileType = utils.getFileType(file);
+			let fileType = utils.getFileType(file),
+				isExternal = (optionChunks[chunkKey] && optionChunks[chunkKey].external) || false;
+			
 			switch(fileType) {
 				case 'js':
 					let jsInline = false;
@@ -154,10 +160,11 @@ HtmlResWebpackPlugin.prototype.injectAssets = function(compilation) {
 						jsInline = this.inlineRes(compilation, optionChunks[chunkKey], file, fileType);
 					}
 
-					let jsAttr = (_.isArray(optionChunks)) ? '' :  this.injectAssetsAttr(optionChunks[chunkKey], fileType);
+					let jsAttr = (_.isArray(optionChunks)) ? '' :  this.injectAssetsAttr(optionChunks[chunkKey], fileType),
+					    srcPath = (isExternal) ? file : publicPath + file;
 					scriptContent += (jsInline) ? 
 									('<script ' + jsAttr + ' >' + jsInline + '</script>')
-									: ('<script ' + jsAttr + ' type="text/javascript" src="' + publicPath + file + '"></script>\n');
+									: ('<script ' + jsAttr + ' type="text/javascript" src="' + srcPath + '"></script>\n');
 					break;
 				case 'css':
 					let styleInline = false;
@@ -165,10 +172,11 @@ HtmlResWebpackPlugin.prototype.injectAssets = function(compilation) {
 						styleInline = this.inlineRes(compilation, optionChunks[chunkKey], file, fileType);
 					}
 
-					let styleAttr = (_.isArray(optionChunks)) ? '' :  this.injectAssetsAttr(optionChunks[chunkKey], fileType);
+					let styleAttr = (_.isArray(optionChunks)) ? '' :  this.injectAssetsAttr(optionChunks[chunkKey], fileType),
+						hrefPath = (isExternal) ? file : publicPath + file;
 					styleContent += (styleInline) ? 
 									('<style ' + styleAttr + '>' + styleInline + '</style>')
-									: ('<link ' + styleAttr + ' rel="stylesheet" href="' + publicPath + file + '">\n');
+									: ('<link ' + styleAttr + ' rel="stylesheet" href="' + hrefPath + '">\n');
 					break;
 				case 'ico':
 					break;

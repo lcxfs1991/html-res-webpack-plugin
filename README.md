@@ -129,6 +129,22 @@ One thing need to be noticed is `hash` and `chunkhash`. The difference between `
 
 Another thing worth being noticed is the order of `chunks`. The order of resources that will be injected is based on the order of `chunks` in `html-res-webpack-plugin`.
 
+## Inject External Resource
+Sometimes, you may need to use external common resources. If this is the case, please write options like following:
+
+```
+chunks:{
+    'qreport': {
+        external: true,                                 // tell the plugin not to append publicPath
+        res:  "//s.url.cn/pub/js/qreport.js?_bid=2231", // resource path
+        attr: {
+            js: "async=\"true\"",
+        }
+    }
+}
+```
+
+
 ## Multiple Html Page
 Sometimes there are more than one html pages in your projects. In this situation, please use similar iteration code to add plugins for different html pages
 ```
@@ -277,6 +293,10 @@ plugins: [
         new HtmlResWebpackPlugin({
             /** other config */
             chunks: {
+                'qreport': {
+                    external: true              // tell the plugin not to append publicPath
+                    res: "xxx"                  // resource path
+                },
                 'index': {
                     attr: {                     // attributes for index chunk
                         js: "async=\"true\"",
@@ -320,3 +340,4 @@ If you still don't understand README, you can checkout examples in specWepback w
 - v0.0.5 offer templateContent to modify html content before output
 - v0.0.7 compatible with webpack2.0 [README](https://github.com/lcxfs1991/html-res-webpack-plugin/blob/v0.0.7/README.md)
 - v1.0.0 rewrite the whole thing and add testing function
+- v1.0.1 allow external resource to be injected
