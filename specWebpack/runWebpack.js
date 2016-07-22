@@ -22,6 +22,8 @@ var webpackConfig = [
 	require(basePath + '/resource-external-1/webpack.config.js'), //  external resource
 ];
 
+fs.removeSync(path.resolve('./specWebpack/dist/'));
+
 async.filter(webpackConfig, function(configPath, callback) {
 	let compiler = webpack(configPath);
 	compiler.run(function(err, stats) {

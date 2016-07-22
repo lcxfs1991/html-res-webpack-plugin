@@ -5,8 +5,8 @@ const path = require('path'),
 
 
 describe("resource-dev", function() {
-  	it("=> dev environment", function() {
-  		let distHtml = path.resolve('specWebpack/dist/resource-dev/index.html'),
+  	it("=> dev environment && custom html path", function() {
+  		let distHtml = path.resolve('specWebpack/dist/resource-dev/html/entry.html'),
   			resultHtml = path.resolve('specWebpack/result/resource-dev/index.html');
 
   		let distContent = fs.readFileSync(distHtml).toString(),

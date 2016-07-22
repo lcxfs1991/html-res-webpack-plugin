@@ -16,6 +16,7 @@ function HtmlResWebpackPlugin(options) {
 
 	// user input options
 	this.options = _.extend({
+		filename: options.filename || '',
 		chunks: options.chunks || [],
 		htmlMinify: options.htmlMinify || false,
 		favicon: options.favicon || false,
@@ -65,10 +66,11 @@ HtmlResWebpackPlugin.prototype.apply = function(compiler, callback) {
 	compiler.plugin("emit", (compilation, callback) => {
 	    isDebug && console.log("===================emit===============");
 	    // return basename, ie, /xxx/xxx.html return xxx.html
-	    this.options.htmlFileName = this.addFileToWebpackAsset(compilation, this.options.template, IS_TO_STR);
+	    this.options.htmlFileName = this.addFileToWebpackAsset(compilation, this.options.template, utils.getBaseName(this.options.template, this.options.filename), IS_TO_STR);
+
 	    // inject favicon
 	    if (this.options.favicon) {
-	    	this.options.faviconFileName = this.addFileToWebpackAsset(compilation, this.options.favicon);
+	    	this.options.faviconFileName = this.addFileToWebpackAsset(compilation, this.options.template, utils.getBaseName(this.options.favicon, null));
 	    }
 
 	    // webpack options
@@ -189,7 +191,7 @@ HtmlResWebpackPlugin.prototype.injectAssets = function(compilation) {
 		faviconContent = '<link rel="shortcut icon" type="image/x-icon" href="' + publicPath + this.options.faviconFileName + '">\n'
     				      + '<link rel="icon" type="image/x-icon" href="' + publicPath + this.options.faviconFileName + '">\n'
 	}
-
+	// console.log(compilation.assets[this.options.htmlFileName].source());
 	htmlContent = htmlContent.replace("</head>", faviconContent + "</head>").replace("</head>", styleContent + "</head>").replace("</body>", scriptContent + "</body>");
 	
 	let htmlAssetObj = compilation.assets[this.options.htmlFileName];
@@ -236,9 +238,8 @@ HtmlResWebpackPlugin.prototype.inlineRes = function(compilation, chunk, file, fi
  * @param {[type]}  template    [description]
  * @param {Boolean} isToStr     [description]
  */
-HtmlResWebpackPlugin.prototype.addFileToWebpackAsset = function(compilation, template, isToStr) {
+HtmlResWebpackPlugin.prototype.addFileToWebpackAsset = function(compilation, template, basename, isToStr) {
 	var filename = path.resolve(template);
-	var basename = path.basename(filename);
 	
     compilation.fileDependencies.push(filename);
     compilation.assets[basename] = {

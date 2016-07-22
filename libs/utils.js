@@ -16,4 +16,16 @@ module.exports = {
 		return ext;
 	},
 
+	/**
+	 * [description]
+	 * @param  {[type]} template [模版位置]
+	 * @param  {[type]} dest     [目标位置]
+	 * @return {[type]}          []
+	 */
+	getBaseName: (template, dest) => {
+		var filename = path.resolve(template);
+		var basename = dest || path.basename(filename);
+		
+		return basename;
+	}
 };
