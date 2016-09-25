@@ -224,6 +224,31 @@ new HtmlResWebpackPlugin({
 }),
 ```
 
+## 支持在html文件中配置资源Support Writing Assets in html files
+在0.0.7版本及之前，我们支持在html文件中配置资源，这是一种对开发者来说比较直观的方式。这个功能在1.0版本去掉，但在1.1版本回归了。但使用方法会稍微有点不同。
+
+例如，若entry配置中如下：
+```
+entry: {
+    'index': xxx,
+    'detail': xxx,
+    'libs/react': xxx,
+}
+```
+那么html中的资源可以这样写，也就是将entry的key值，放在资源路径中，以便插件方便进行替换。
+```
+<script src="libs/react"></script>
+<link rel="stylesheet" href="index">
+<script src="index"></script>
+```
+
+而favico则直接配置:
+```
+<link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+<link rel="icon" type="image/x-icon" href="favicon.ico">
+```
+
+
 ## 与 ```copy-webpack-plugin-hash```插件搭配使用
 [copy-webpack-plugin-hash](https://www.npmjs.com/package/copy-webpack-plugin-hash) 是一个帮助直接复制文件的webpack插件。 我添加了一个`namePattern`的选项目，这样能够让复制的文件也带上hash（一旦主要的repo接受了我的request，我可能会删掉这个临时的repo）
 
@@ -253,6 +278,9 @@ plugins: [
 ```
 
 ## Options
+- `mode`:
+    - is optional
+    - `default` (在`chunks`配置中配置资源) | `html` (在html文中配置资源)
 - `filename`: 
     - is required
     - 生成的html文件名
@@ -260,7 +288,7 @@ plugins: [
     - is required
     - html模板来源
 - `chunks`: 
-    - is required
+    - is required 如果 `mode` 是 `default`, is not required 如果 `mode` 是 `html`
     - [Array|Object]
     - 注入的chunks
     - examples:
@@ -323,6 +351,9 @@ plugins: [
 - `templateContent`: 
     - is optional
     - 这里可提供给开发者在输出前修改html内容。 this.options和this.webpackOptions在这里也可以被使用
+- `cssPublicPath`:
+    - is optional
+    - css的具体路径，默认使用webpack的配置`output.publicPath`
 
 ## 写在最后
 为了保证稳定性和可靠性，我添加了测试用例。我早已开始在我自己的开发项目中使用。
@@ -339,3 +370,4 @@ plugins: [
 - v0.0.7 compatible with webpack2.0 [README](https://github.com/lcxfs1991/html-res-webpack-plugin/blob/v0.0.7/README_ZH.md)
 - v1.0.0 重构及添加测试用例
 - v1.0.1 允许外部资源注入
+- v1.1.0 允许在html中写入资源配置

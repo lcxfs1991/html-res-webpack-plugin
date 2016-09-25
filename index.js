@@ -16,11 +16,13 @@ function HtmlResWebpackPlugin(options) {
 
 	// user input options
 	this.options = _.extend({
+		mode: options.mode || 'default', // default => 配置 html => 写在html中
 		filename: options.filename || '',
 		chunks: options.chunks || [],
 		htmlMinify: options.htmlMinify || false,
 		favicon: options.favicon || false,
-		templateContent: options.templateContent || function(tpl) { return tpl }
+		templateContent: options.templateContent || function(tpl) { return tpl },
+		cssPublicPath: options.cssPublicPath || null,
 	}, options);
 
 	this.checkRequiredOptions(this.options);
@@ -54,6 +56,11 @@ HtmlResWebpackPlugin.prototype.checkRequiredOptions = function(options) {
 	}
 };
 
+/**
+ * [plugin init]
+ * @param  {[type]}   compiler [compiler]
+ * @param  {Function} callback [async callback]
+ */
 HtmlResWebpackPlugin.prototype.apply = function(compiler, callback) {
 
   	compiler.plugin("make", function(compilation, callback) {
@@ -76,10 +83,16 @@ HtmlResWebpackPlugin.prototype.apply = function(compiler, callback) {
 	    // webpack options
 	    this.webpackOptions = compilation.options;
 
-	    this.buildStats(compilation);
-
-	    // start injecting resource into html
-	    this.injectAssets(compilation);
+	    if (this.options.mode === 'default') {
+	    	this.buildStats(compilation);
+		    // start injecting resource into html
+		    this.injectAssets(compilation);
+		}
+		else if (this.options.mode === 'html') {
+			this.buildStatsHtmlMode(compilation);
+			// process
+			this.processAssets(compilation);
+		}
 
 	    // compress html content
 	    this.options.htmlMinify && this.compressHtml(compilation);
@@ -87,6 +100,12 @@ HtmlResWebpackPlugin.prototype.apply = function(compiler, callback) {
 	    callback();
 	});
 
+};
+
+HtmlResWebpackPlugin.prototype.buildStatsHtmlMode = function(compilation) {
+	compilation.chunks.map((chunk, key) => {
+		this.stats.assets[chunk.name] = chunk.files;
+	});
 };
 
 /**
@@ -127,6 +146,108 @@ HtmlResWebpackPlugin.prototype.buildStats = function(compilation) {
 	});
 
 	// console.log(this.stats.assets);
+};
+
+/**
+ * [process html script/link tags]
+ * @param  {[type]} compilation [compilation]
+ */
+HtmlResWebpackPlugin.prototype.processAssets = function(compilation) {
+	var htmlContent = compilation.assets[this.options.htmlFileName].source(),
+		publicPath = this.webpackOptions.output.publicPath;
+
+	// console.log(this.stats.assets);
+	// console.log(htmlContent);
+	
+	// css inline
+	let styleInlineRegex = new RegExp("<link.*href=[\"|\']*(.+)[\?]\_\_inline.*?[\"|\']>", "ig");
+	htmlContent = this.inlineHtmlRes(htmlContent, styleInlineRegex, compilation, 'css'); 
+
+	// js liline
+	let scriptInlineRegex = new RegExp("<script.*src=[\"|\']*(.+)[\?]\_\_inline.*?[\"|\']><\/script>", "ig");
+	htmlContent = this.inlineHtmlRes(htmlContent, scriptInlineRegex, compilation, 'js');
+
+	// css
+	let styleMd5Regex = new RegExp("<link.*href=[\"|\']*(.+).*?[\"|\']>", "ig");
+	let cssPublicPath = this.options.cssPublicPath || publicPath;
+	htmlContent = this.md5HtmlRes(htmlContent, styleMd5Regex, cssPublicPath, "css");
+
+	// favico
+	htmlContent = this.md5HtmlRes(htmlContent, styleMd5Regex, publicPath, "ico");
+	
+	// js
+	let scriptMd5Regex = new RegExp("<script.*src=[\"|\']*(.+).*?[\"|\']><\/script>", "ig");
+	htmlContent = this.md5HtmlRes(htmlContent, scriptMd5Regex, publicPath, "js");
+
+	compilation.assets[this.options.htmlFileName].source = () => {
+		return this.options.templateContent.bind(this)(htmlContent);
+	};
+};
+
+HtmlResWebpackPlugin.prototype.md5HtmlRes = function(htmlContent, reg, publicPath, extension) {
+	let _this = this;
+
+	htmlContent = htmlContent.replace(reg, function(tag, route) {
+		
+		if (extension === "ico" && !!~route.indexOf("." + extension)) {
+			tag = tag.replace(route, publicPath + route);
+			return tag;
+		}
+
+		var assets = _this.stats.assets[route] || [],
+			file = "";
+
+		if (!assets.length) {
+			return tag;
+		}
+
+		assets.forEach(function(item, index) {
+			if (!!~item.indexOf("." + extension)) {
+				file = item;
+			}
+		});
+
+		tag = tag.replace(route, publicPath + file);
+
+		return tag;
+	});
+
+	return htmlContent;
+};
+
+HtmlResWebpackPlugin.prototype.inlineHtmlRes = function(htmlContent, reg, compilation, extension) {
+	let _this = this;
+
+	htmlContent = htmlContent.replace(reg, function(tag, route) {
+		// console.log(tag, route);
+		var assets = _this.stats.assets[route] || [],
+			file = "";
+
+		if (!assets.length) {
+			return tag;
+		}
+
+		assets.forEach(function(item, index) {
+
+			if (!!~item.indexOf("." + extension) && extension === "js") {
+				file = "<script>" + compilation.assets[item].source() + "</script>";
+			}
+			else if (!!~item.indexOf("." + extension) && extension === "css") {
+				file = "";
+				let cssContent = "";
+				compilation.assets[item].children.forEach(function(item, key) {
+					cssContent += item._value;
+				}) ;
+				file = "<style>" + cssContent + "</style>";
+			}
+		});
+
+		tag = tag.replace(tag, file);
+
+		return tag;
+	});
+
+	return htmlContent;
 };
 
 /**

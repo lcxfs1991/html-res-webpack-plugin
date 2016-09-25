@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="zh">
+<head>
+    <meta charset="utf-8">
+    <title>Tencent QQ</title>
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+	<link rel="icon" type="image/x-icon" href="favicon.ico">
+    <script src="libs/react"></script>
+    <link rel="stylesheet" href="js/index">
+</head>
+<body>
+	<div id="pages" class="qq-ui"></div>
+
+
+
+	<script src="js/index"></script>
+</body>
+</html>
