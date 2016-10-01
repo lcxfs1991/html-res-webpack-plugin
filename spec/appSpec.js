@@ -173,6 +173,18 @@ describe("resource-copy-plugin-2", function() {
     });
 });
 
+describe("resource-copy-plugin-3", function() {
+    it("=> html mode usage with copy-webpack-plugin with attributes", function() {
+      let distHtml = path.resolve('specWebpack/dist/resource-copy-plugin-3/index.html'),
+        resultHtml = path.resolve('specWebpack/result/resource-copy-plugin-3/index.html');
+
+      let distContent = fs.readFileSync(distHtml).toString(),
+        resultContent = fs.readFileSync(resultHtml).toString();
+
+      expect(true).toBe(distContent === resultContent);
+    });
+});
+
 describe("resource-external-1", function() {
     it("=> external resource", function() {
       let distHtml = path.resolve('specWebpack/dist/resource-external-1/index.html'),

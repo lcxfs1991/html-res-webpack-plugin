@@ -10,7 +10,7 @@ I rencently notice that webpack is based itself on chunks. Therefore, writing pl
 ## Basic Concpets: `chunks` and `assets`
 In webpack, the basic element is `chunks`. The values in `entry` of webpack config are `chunks`. For instance, `index` and `detail` in the following entry config are chunks' names; In most cases, chunk is a js file. But if you require stylesheet or other files in js, a js chunk will include not only js file but also the files you require.
 
-```
+```javascript
 entry: {
     index: xxx
     detail: xxx
@@ -26,7 +26,7 @@ src/index.html
 --> 
 dist/index.html
 
-```
+```javascript
 <!DOCTYPE html>
 <html lang="en" id="html">
 
@@ -45,7 +45,7 @@ dist/index.html
 src/page/preview/main.js
 -->
 dist/js/preview/preview.js
-```
+```javascript
 require('./index.scss');
 
 var init = function() {
@@ -56,7 +56,7 @@ var init = function() {
 src/page/preview/index.scss
 -->
 dist/css/preview/preview.css
-```
+```javascript
 html, body {
     margin: 0;
 }
@@ -64,7 +64,7 @@ html, body {
 ```
 
 webpack.config.js
-```
+```javascript
     var config = {
         hash: "-[hash:6]",
         chunkhash: "-[chunkhash:6]",
@@ -115,7 +115,7 @@ webpack.config.js
 ```
 
 package.json
-```
+```javascript
 "scripts": {
     "dev": "webpack --progress --colors --watch",
     "publish-mac": "export NODE_ENV=prod&&webpack -p --progress --colors",
@@ -132,7 +132,7 @@ Another thing worth being noticed is the order of `chunks`. The order of resourc
 ## Inject External Resource
 Sometimes, you may need to use external common resources. If this is the case, please write options like following:
 
-```
+```javascript
 chunks:{
     'qreport': {
         external: true,                                 // tell the plugin not to append publicPath
@@ -147,7 +147,7 @@ chunks:{
 
 ## Multiple Html Page
 Sometimes there are more than one html pages in your projects. In this situation, please use similar iteration code to add plugins for different html pages
-```
+```javascript
 var config = {
     hash: "-[hash:6]",
     chunkhash: "-[chunkhash:6]",
@@ -199,7 +199,7 @@ route.html.forEach(function(page) {
 ## Favicon
 
 webpack.config.js 
-```
+```javascript
 new HtmlResWebpackPlugin({
     filename: "index.html",
     template: "xxx/index.html",
@@ -212,7 +212,7 @@ new HtmlResWebpackPlugin({
 
 ## Modify Html Content Before Output
 
-```
+```javascript
 new HtmlResWebpackPlugin({
     filename: "index.html",
     template: "src/index.html",
@@ -230,7 +230,7 @@ new HtmlResWebpackPlugin({
 In version 0.0.7 and before, we support writing assets in html files which is intuitive for developers. We drop this feature in v1.0 but not it is back in v1.1 but there are a few differences.
 
 For example, if the config for entry is like following:
-```
+```javascript
 entry: {
     'index': xxx,
     'detail': xxx,
@@ -238,15 +238,26 @@ entry: {
 }
 ```
 Then, the settings for assets in html can be like this. That is to say, we put the key value of entry in asset route in order for the plugin to replace with the correct value for convenience.
-```
+```javascript
 <script src="libs/react"></script>
 <link rel="stylesheet" href="index">
 <script src="index"></script>
 ```
 But for favico, we can directly write like this:
-```
+```javascript
 <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
 <link rel="icon" type="image/x-icon" href="favicon.ico">
+```
+
+If you have no idea about the chunk name, you can try running webpack, the plugin will print chunk names available for usage.
+
+```javascript
+=====html-res-webapck-plugin=====
+chunk1: commons
+chunk2: js/index
+chunk3: js/list
+chunk4: js/detail
+chunk5: libs/react
 ```
 
 
@@ -255,7 +266,7 @@ But for favico, we can directly write like this:
 
 If you use copy-webpack-plugin for example, you can use `html-res-webpack-plugin` easily. For example, if you copy `/xxx/libs` folder to `libs/`. If the folder contains `react` and `react-dom`, you can add chunks `libs/react/` and `libs/react-dom` in `html-res-webpack-plugin`.
 
-```
+```javascript
 plugins: [
     new CopyWebpackPlugin([
         {
@@ -294,7 +305,7 @@ plugins: [
     - examples:
 
 [Array]
-```
+```javascript
     entry: {
         'index': xxx,
         'detail': xxx,
@@ -315,7 +326,7 @@ plugins: [
 ```
 [Object]
 
-```
+```javascript
     plugins: [
         new HtmlResWebpackPlugin({
             /** other config */
@@ -372,3 +383,4 @@ If you still don't understand README, you can checkout examples in specWepback w
 - v1.0.0 rewrite the whole thing and add testing function
 - v1.0.1 allow external resource to be injected
 - v1.1.0 support writing assets in html
+- v1.1.1 print chunk name in runtime

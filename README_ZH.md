@@ -248,6 +248,18 @@ entry: {
 <link rel="icon" type="image/x-icon" href="favicon.ico">
 ```
 
+If you have no idea about the chunk name, you can try running webpack, the plugin will print chunk names available for usage.
+如果你不知道chunka的名字，你可以尝试运行webpack，插件会打印出可用的chunk的名字
+
+```
+=====html-res-webapck-plugin=====
+chunk1: commons
+chunk2: js/index
+chunk3: js/list
+chunk4: js/detail
+chunk5: libs/react
+```
+
 
 ## 与 ```copy-webpack-plugin-hash```插件搭配使用
 [copy-webpack-plugin-hash](https://www.npmjs.com/package/copy-webpack-plugin-hash) 是一个帮助直接复制文件的webpack插件。 我添加了一个`namePattern`的选项目，这样能够让复制的文件也带上hash（一旦主要的repo接受了我的request，我可能会删掉这个临时的repo）
@@ -371,3 +383,4 @@ plugins: [
 - v1.0.0 重构及添加测试用例
 - v1.0.1 允许外部资源注入
 - v1.1.0 允许在html中写入资源配置
+- v1.1.1 在运行时打印出chunk的名字

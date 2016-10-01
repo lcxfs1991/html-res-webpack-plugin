@@ -106,6 +106,23 @@ HtmlResWebpackPlugin.prototype.buildStatsHtmlMode = function(compilation) {
 	compilation.chunks.map((chunk, key) => {
 		this.stats.assets[chunk.name] = chunk.files;
 	});
+
+	let assets = Object.keys(compilation.assets) || [];
+
+	assets.map((asset, key) => {
+		let chunkName = compilation.assets[asset].chunk || null;
+		if (chunkName) {
+			if (!!~chunkName.indexOf(".")) {
+				chunkName = chunkName.substr(0, chunkName.lastIndexOf('.'));
+			}
+			this.stats.assets[chunkName] = [asset];
+		}
+	});
+
+	console.log("=====html-res-webapck-plugin=====");
+	Object.keys(this.stats.assets).map((chunk, key) => {
+		console.log("chunk" + (key + 1) + ": " + chunk);
+	});
 };
 
 /**
