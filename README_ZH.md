@@ -10,7 +10,7 @@
 ## 基本概念：`chunks`和`assets`
 在webpack里，基本的要素就是`chunks`。`entry`配置项中的值其实就是chunks。例如下面的`entry`配置中的`index`和`detail`都是`chunks`的名字。大多数情况下，chunk都是一个js文件。但如果你在js文件里引入样式或者其它文件，那么一个js的chunk除了包括js文件以外，还会包括你引入的那些文件。
 
-```
+```javascript
 entry: {
     index: xxx
     detail: xxx
@@ -26,7 +26,7 @@ src/index.html
 --> 
 dist/index.html
 
-```
+```javascript
 <!DOCTYPE html>
 <html lang="en" id="html">
 
@@ -45,7 +45,7 @@ dist/index.html
 src/page/preview/main.js
 -->
 dist/js/preview/preview.js
-```
+```javascript
 require('./index.scss');
 
 var init = function() {
@@ -56,7 +56,7 @@ var init = function() {
 src/page/preview/index.scss
 -->
 dist/css/preview/preview.css
-```
+```javascript
 html, body {
     margin: 0;
 }
@@ -64,7 +64,7 @@ html, body {
 ```
 
 webpack.config.js
-```
+```javascript
     var config = {
         hash: "-[hash:6]",
         chunkhash: "-[chunkhash:6]",
@@ -115,7 +115,7 @@ webpack.config.js
 ```
 
 package.json
-```
+```javascript
 "scripts": {
     "dev": "webpack --progress --colors --watch",
     "publish-mac": "export NODE_ENV=prod&&webpack -p --progress --colors",
@@ -131,7 +131,7 @@ package.json
 ## 注入外部资源
 有时候你可能需要使用外部的公共资源。如果是这样，请仿照以下的配置写法：
 
-```
+```javascript
 chunks:{
     'qreport': {
         external: true,                                 // 告诉插件不要带上publicPath
@@ -145,7 +145,7 @@ chunks:{
 
 ## 多html页面
 有时候，一个项目会有多于一个html文件。这种情况下，请对每个html文件添加对应的一个HtmlResWebacpk插件。
-```
+```javascript
 var config = {
     hash: "-[hash:6]",
     chunkhash: "-[chunkhash:6]",
@@ -197,7 +197,7 @@ route.html.forEach(function(page) {
 ## Favicon
 
 webpack.config.js 
-```
+```javascript
 new HtmlResWebpackPlugin({
     filename: "index.html",
     template: "xxx/index.html",
@@ -210,7 +210,7 @@ new HtmlResWebpackPlugin({
 
 ## 输出前修改Html内容
 
-```
+```javascript
 new HtmlResWebpackPlugin({
     filename: "index.html",
     template: "src/index.html",
@@ -228,7 +228,7 @@ new HtmlResWebpackPlugin({
 在0.0.7版本及之前，我们支持在html文件中配置资源，这是一种对开发者来说比较直观的方式。这个功能在1.0版本去掉，但在1.1版本回归了。但使用方法会稍微有点不同。
 
 例如，若entry配置中如下：
-```
+```javascript
 entry: {
     'index': xxx,
     'detail': xxx,
@@ -236,14 +236,14 @@ entry: {
 }
 ```
 那么html中的资源可以这样写，也就是将entry的key值，放在资源路径中，以便插件方便进行替换。
-```
+```javascript
 <script src="libs/react"></script>
 <link rel="stylesheet" href="index">
 <script src="index"></script>
 ```
 
 而favico则直接配置:
-```
+```javascript
 <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
 <link rel="icon" type="image/x-icon" href="favicon.ico">
 ```
@@ -251,7 +251,7 @@ entry: {
 If you have no idea about the chunk name, you can try running webpack, the plugin will print chunk names available for usage.
 如果你不知道chunka的名字，你可以尝试运行webpack，插件会打印出可用的chunk的名字
 
-```
+```javascript
 =====html-res-webapck-plugin=====
 chunk1: commons
 chunk2: js/index
@@ -267,7 +267,7 @@ chunk5: libs/react
 如果你使用`copy-webpack-plugin-hash`，你也可以轻松使用`html-res-webpack-plugin`。例如，你想复制`/xxx/libs`文件夹到`libs/`。若你的文件夹包含`react`和`react-dom`，你可以添加chunks `libs/react/`和`libs/react-dom`到`html-res-webpack-plugin`中。
 
 
-```
+```javascript
 plugins: [
     new CopyWebpackPlugin([
         {
@@ -306,7 +306,7 @@ plugins: [
     - examples:
 
 [Array]
-```
+```javascript
     entry: {
         'index': xxx,
         'detail': xxx,
@@ -327,7 +327,7 @@ plugins: [
 ```
 [Object]
 
-```
+```javascript
     plugins: [
         new HtmlResWebpackPlugin({
             /** other config */
