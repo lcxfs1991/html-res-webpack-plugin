@@ -25,6 +25,8 @@ function HtmlResWebpackPlugin(options) {
 		cssPublicPath: options.cssPublicPath || null,
 	}, options);
 
+	this.logChunkName = true;
+
 	this.checkRequiredOptions(this.options);
 
 	// html scripts/css/favicon assets
@@ -119,6 +121,11 @@ HtmlResWebpackPlugin.prototype.buildStatsHtmlMode = function(compilation) {
 		}
 	});
 
+	if (!this.logChunkName) {
+		return;
+	}
+
+	this.logChunkName = false;
 	console.log("=====html-res-webapck-plugin=====");
 	Object.keys(this.stats.assets).map((chunk, key) => {
 		console.log("chunk" + (key + 1) + ": " + chunk);
@@ -219,7 +226,7 @@ HtmlResWebpackPlugin.prototype.md5HtmlRes = function(htmlContent, reg, publicPat
 		}
 
 		assets.forEach(function(item, index) {
-			if (!!~item.indexOf("." + extension)) {
+			if (!!~item.indexOf("." + extension) && !file) {
 				file = item;
 			}
 		});

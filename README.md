@@ -383,4 +383,5 @@ If you still don't understand README, you can checkout examples in specWepback w
 - v1.0.0 rewrite the whole thing and add testing function
 - v1.0.1 allow external resource to be injected
 - v1.1.0 support writing assets in html
-- v1.1.1 print chunk name in runtime
+- v1.1.2 print chunk name in runtime
+- v1.1.3 fix bug for using hot update
