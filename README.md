@@ -298,6 +298,10 @@ plugins: [
 - `template`: 
     - is required
     - template source
+- `entryLog`:
+    - is optional
+    - [Boolean]
+    - default `false`, if you use `html` `mode`, you can enable this to show entry names and use example
 - `chunks`: 
     - is required if `mode` is `default`, is not required if `mode` is `html`
     - [Array|Object]

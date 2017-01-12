@@ -299,6 +299,10 @@ plugins: [
 - `template`: 
     - is required
     - html模板来源
+- `entryLog`:
+    - is optional
+    - [Boolean]
+    - 默认值 `false`, 如果你使用 `html` `mode`, 你可以设置此值为`true`, 便可以看到`chunkName`以及其如何在`html`文件中占位的使用办法
 - `chunks`: 
     - is required 如果 `mode` 是 `default`, is not required 如果 `mode` 是 `html`
     - [Array|Object]
