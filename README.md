@@ -385,3 +385,4 @@ If you still don't understand README, you can checkout examples in specWepback w
 - v1.1.0 support writing assets in html
 - v1.1.2 print chunk name in runtime
 - v1.1.3 fix bug for using hot update
+- v1.2.0 support using loader and image in html

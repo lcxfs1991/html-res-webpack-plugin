@@ -1,4 +1,9 @@
 "use strict";
+/**
+ * @plugin html-res-webpack-plugin
+ * @author  heyli
+ * @reference: https://github.com/ampedandwired/html-webpack-plugin
+ */
 
 // debug mode
 const isDebug = false,
@@ -6,8 +11,11 @@ const isDebug = false,
 
 const fs = require('fs'),
 	_ = require('lodash'),
+	vm = require('vm'),
 	path = require('path'),
+	Promise = require('bluebird'),
 	minify = require('html-minifier').minify,
+	childCompiler = require('./libs/compiler'),
 	utils = require('./libs/utils'),
 	errors = require('./libs/errors'),
 	loaderUtils = require('loader-utils');
@@ -23,6 +31,7 @@ function HtmlResWebpackPlugin(options) {
 		favicon: options.favicon || false,
 		templateContent: options.templateContent || function(tpl) { return tpl },
 		cssPublicPath: options.cssPublicPath || null,
+		entryLog: options.entryLog || false,
 	}, options);
 
 	this.logChunkName = true;
@@ -65,8 +74,16 @@ HtmlResWebpackPlugin.prototype.checkRequiredOptions = function(options) {
  */
 HtmlResWebpackPlugin.prototype.apply = function(compiler, callback) {
 
-  	compiler.plugin("make", function(compilation, callback) {
+	// format: loader!fiename
+	this.options.templateLoaderName = this.getFullTemplatePath(this.options.template);
+
+	var compilationPromise = null;
+
+  	compiler.plugin("make", (compilation, callback) => {
 	    isDebug && console.log("==================make================");
+
+	    compilationPromise = childCompiler.compileTemplate(this.options.templateLoaderName, compiler.context, this.options.filename, compilation);
+
 	    callback();
 	});
 
@@ -74,32 +91,46 @@ HtmlResWebpackPlugin.prototype.apply = function(compiler, callback) {
   	// right after emit, files will be generated
 	compiler.plugin("emit", (compilation, callback) => {
 	    isDebug && console.log("===================emit===============");
-	    // return basename, ie, /xxx/xxx.html return xxx.html
-	    this.options.htmlFileName = this.addFileToWebpackAsset(compilation, this.options.template, utils.getBaseName(this.options.template, this.options.filename), IS_TO_STR);
 
-	    // inject favicon
-	    if (this.options.favicon) {
-	    	this.options.faviconFileName = this.addFileToWebpackAsset(compilation, this.options.template, utils.getBaseName(this.options.favicon, null));
-	    }
+	    Promise.resolve()
+	    	.then(() => {
+        		return compilationPromise;
+      		})
+      		.then((compiledTemplate) => {
+      			return this.evaluateCompilationResult(compilation, compiledTemplate.content);
+      		}).
+      		then((compiledResult) => {
 
-	    // webpack options
-	    this.webpackOptions = compilation.options;
+      			// return basename, ie, /xxx/xxx.html return xxx.html
+			    this.options.htmlFileName = this.addFileToWebpackAsset(compilation, this.options.template, utils.getBaseName(this.options.template, this.options.filename), IS_TO_STR, compiledResult);
 
-	    if (this.options.mode === 'default') {
-	    	this.buildStats(compilation);
-		    // start injecting resource into html
-		    this.injectAssets(compilation);
-		}
-		else if (this.options.mode === 'html') {
-			this.buildStatsHtmlMode(compilation);
-			// process
-			this.processAssets(compilation);
-		}
+			    // inject favicon
+			    if (this.options.favicon) {
+			    	this.options.faviconFileName = this.addFileToWebpackAsset(compilation, this.options.template, utils.getBaseName(this.options.favicon, null));
+			    }
 
-	    // compress html content
-	    this.options.htmlMinify && this.compressHtml(compilation);
-	    
-	    callback();
+			    // webpack options
+			    this.webpackOptions = compilation.options;
+
+			    if (this.options.mode === 'default') {
+			    	this.buildStats(compilation);
+				    // start injecting resource into html
+				    this.injectAssets(compilation);
+				}
+				else if (this.options.mode === 'html') {
+					this.buildStatsHtmlMode(compilation);
+					// process
+					this.processAssets(compilation);
+				}
+
+			    // compress html content
+			    this.options.htmlMinify && this.compressHtml(compilation);
+			    
+			    callback();
+
+      			// console.log(compiledResult);
+
+      		});
 	});
 
 };
@@ -126,10 +157,50 @@ HtmlResWebpackPlugin.prototype.buildStatsHtmlMode = function(compilation) {
 	}
 
 	this.logChunkName = false;
-	console.log("=====html-res-webapck-plugin=====");
-	Object.keys(this.stats.assets).map((chunk, key) => {
-		console.log("chunk" + (key + 1) + ": " + chunk);
+	this.printChunkName(this.stats.assets);
+	
+};
+
+HtmlResWebpackPlugin.prototype.printChunkName = function(assets) {
+
+	let assetsArray = Object.keys(assets);
+
+	if (!assetsArray.length || !this.options.entryLog) {
+		return;
+	}
+
+	utils.alert('=====html-res-webapck-plugin=====');
+	utils.alert('assets used like:');
+	utils.alert('<link rel="stylesheet" href="' + assetsArray[0] + '">');
+	utils.alert('<script src="' + assetsArray[0] + '"></script>');
+
+	assetsArray.map((chunk, key) => {
+		utils.info("chunk" + (key + 1) + ": " + chunk);
 	});
+};
+
+HtmlResWebpackPlugin.prototype.evaluateCompilationResult = function(compilation, source) {
+	if (!source) {
+	    return Promise.reject('The child compilation didn\'t provide a result');
+	  }
+
+	  // The LibraryTemplatePlugin stores the template result in a local variable.
+	  // To extract the result during the evaluation this part has to be removed.
+	  source = source.replace('var HTML_RES_WEBPACK_PLUGIN_RESULT =', '');
+	  var template = this.options.templateLoaderName.replace(/^.+!/, '').replace(/\?.+$/, '');
+	  var vmContext = vm.createContext(_.extend({HTML_WEBPACK_PLUGIN: true, require: require}, global));
+	  var vmScript = new vm.Script(source, {filename: template});
+	  // console.log(vmScript);
+	  // Evaluate code and cast to string
+	  var newSource;
+	  try {
+	    newSource = vmScript.runInContext(vmContext);
+	  } catch (e) {
+	    return Promise.reject(e);
+	  }
+	  return typeof newSource === 'string' || typeof newSource === 'function'
+	    ? Promise.resolve(newSource)
+	    : Promise.reject('The loader "' + this.options.templateLoaderName + '" didn\'t return html.');
 };
 
 /**
@@ -383,13 +454,13 @@ HtmlResWebpackPlugin.prototype.inlineRes = function(compilation, chunk, file, fi
  * @param {[type]}  template    [description]
  * @param {Boolean} isToStr     [description]
  */
-HtmlResWebpackPlugin.prototype.addFileToWebpackAsset = function(compilation, template, basename, isToStr) {
+HtmlResWebpackPlugin.prototype.addFileToWebpackAsset = function(compilation, template, basename, isToStr, source) {
 	var filename = path.resolve(template);
 	
     compilation.fileDependencies.push(filename);
     compilation.assets[basename] = {
     	source: () => {
-    		let fileContent = (isToStr) ? fs.readFileSync(filename).toString() : fs.readFileSync(filename);
+    		let fileContent = (isToStr) ? source : fs.readFileSync(filename);
       		return fileContent;
       	},
       	size: () => {
@@ -398,6 +469,23 @@ HtmlResWebpackPlugin.prototype.addFileToWebpackAsset = function(compilation, tem
     };
 
     return basename;
+};
+
+/**
+ * Helper to return the absolute template path with a fallback loader
+ */
+HtmlResWebpackPlugin.prototype.getFullTemplatePath = function (template, context) {
+  // If the template doesn't use a loader use the lodash template loader
+  if (template.indexOf('!') === -1) {
+    template = require.resolve('./libs/loader.js') + '!' + template;
+  }
+  // Resolve template path
+
+  return template.replace(
+    /([!])([^\/\\][^!\?]+|[^\/\\!?])($|\?.+$)/,
+    function (match, prefix, filepath, postfix) {
+      return prefix + path.resolve(filepath) + postfix;
+    });
 };
 
 /**

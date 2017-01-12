@@ -1,6 +1,7 @@
 'use strict';
 
-const path = require('path');
+const path = require('path'),
+	  colors = require('colors');
 
 
 module.exports = {
@@ -17,7 +18,7 @@ module.exports = {
 	},
 
 	/**
-	 * [description]
+	 * [get file basename]
 	 * @param  {[type]} template [模版位置]
 	 * @param  {[type]} dest     [目标位置]
 	 * @return {[type]}          []
@@ -27,5 +28,23 @@ module.exports = {
 		var basename = dest || path.basename(filename);
 		
 		return basename;
+	},
+
+	/**
+	 * [print info level message]
+	 * @param  {[type]} msg [description]
+	 * @return {[type]}     [description]
+	 */
+	info: function(msg) {
+		console.log(msg.green);
+	},
+
+	/**
+	 * [print info alert message]
+	 * @param  {[type]} msg [description]
+	 * @return {[type]}     [description]
+	 */
+	alert: function(msg) {
+		console.log(msg.yellow);
 	}
 };

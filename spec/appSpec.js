@@ -196,3 +196,28 @@ describe("resource-external-1", function() {
       expect(true).toBe(distContent === resultContent);
     });
 });
+
+describe("image-in-html", function() {
+    it("=> image in html", function() {
+      let distHtml = path.resolve('specWebpack/dist/image-in-html/index.html'),
+        resultHtml = path.resolve('specWebpack/result/image-in-html/index.html');
+
+      let distContent = fs.readFileSync(distHtml).toString(),
+        resultContent = fs.readFileSync(resultHtml).toString();
+
+
+      let stats = fs.readdirSync(path.resolve('specWebpack/dist/image-in-html/img'));
+
+      let checkImage = false;
+
+      if (stats.length) {
+        let images = stats[0];
+        
+        if (!!~distContent.indexOf(images)) {
+          checkImage = true;
+        }
+      }
+
+      expect(true).toBe(distContent === resultContent && checkImage);
+    });
+});
