@@ -1,6 +1,6 @@
 {
   "name": "html-res-webpack-plugin",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "html generation and resource inline or md5 for webpack",
   "keywords": [
     "front-end",
@@ -28,9 +28,9 @@
     "test": "jasmine"
   },
   "dependencies": {
-    "lodash": "^3.10.1",
     "html-minifier": "^1.1.1",
-    "loader-utils": "^0.2.15"
+    "loader-utils": "^0.2.15",
+    "lodash": "^3.10.1"
   },
   "devDependencies": {
     "async": "^2.0.0-rc.6",
@@ -41,7 +41,7 @@
     "colors": "^1.1.2",
     "copy-webpack-plugin-hash": "^3.0.2",
     "css-loader": "^0.22.0",
-    "extract-text-webpack-plugin": "github:lcxfs1991/extract-text-webpack-plugin",
+    "extract-text-webpack-plugin-steamer": "^1.0.1",
     "file-loader": "^0.8.4",
     "fs-extra": "^0.30.0",
     "html-loader": "^0.3.0",
@@ -50,7 +50,7 @@
     "less-loader": "^2.2.3",
     "style-loader": "^0.13.0",
     "url-loader": "^0.5.6",
-    "webpack": "^1.13.1"
+    "webpack": "^1.14.0"
   },
   "license": "MIT",
   "engines": {

@@ -76,7 +76,7 @@
 /******/ 			script.charset = 'utf-8';
 /******/ 			script.async = true;
 
-/******/ 			script.src = __webpack_require__.p + "chunk/" + ({"1":"js/index","2":"js/list","3":"js/detail","4":"libs/react"}[chunkId]||chunkId) + "-" + {"1":"b942de","2":"6d994e","3":"ff5ac7","4":"fb6122"}[chunkId] + ".js";
+/******/ 			script.src = __webpack_require__.p + "chunk/" + ({"1":"js/index","2":"js/list","3":"js/detail","4":"libs/react"}[chunkId]||chunkId) + "-" + {"1":"f53214","2":"6d994e","3":"ff5ac7","4":"fb6122"}[chunkId] + ".js";
 /******/ 			head.appendChild(script);
 /******/ 		}
 /******/ 	};

@@ -5,7 +5,7 @@ var webpack = require('webpack'),
 	 nodeModulesPath = path.resolve('../node_modules');
 
 var HtmlResWebpackPlugin = require('../../../index'),
-	ExtractTextPlugin = require("extract-text-webpack-plugin");
+	ExtractTextPlugin = require("extract-text-webpack-plugin-steamer");
 
 module.exports = {
 	entry: {

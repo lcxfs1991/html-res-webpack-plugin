@@ -6,7 +6,7 @@ var webpack = require('webpack'),
 
 
 var HtmlResWebpackPlugin = require('../../../index'),
-	ExtractTextPlugin = require("extract-text-webpack-plugin"),
+	ExtractTextPlugin = require("extract-text-webpack-plugin-steamer"),
     CopyWebpackPlugin = require('copy-webpack-plugin-hash');
 
 module.exports = {
