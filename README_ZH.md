@@ -390,4 +390,4 @@ plugins: [
 - v1.1.2 在运行时打印出chunk的名字
 - v1.1.3 修复使用热替换时的bug
 - v1.2.0 支持对html使用loader以及支持image插入到html中
-
+- v1.2.2 修复uglify js引入的，去掉引号无法匹配问题

@@ -250,40 +250,63 @@ HtmlResWebpackPlugin.prototype.buildStats = function(compilation) {
 HtmlResWebpackPlugin.prototype.processAssets = function(compilation) {
 	var htmlContent = compilation.assets[this.options.htmlFileName].source(),
 		publicPath = this.webpackOptions.output.publicPath;
-
-	// console.log(this.stats.assets);
-	// console.log(htmlContent);
 	
-	// css inline
-	let styleInlineRegex = new RegExp("<link.*href=[\"|\']*(.+)[\?]\_\_inline.*?[\"|\']>", "ig");
-	htmlContent = this.inlineHtmlRes(htmlContent, styleInlineRegex, compilation, 'css'); 
-
-	// js liline
-	let scriptInlineRegex = new RegExp("<script.*src=[\"|\']*(.+)[\?]\_\_inline.*?[\"|\']><\/script>", "ig");
-	htmlContent = this.inlineHtmlRes(htmlContent, scriptInlineRegex, compilation, 'js');
-
-	// css
-	let styleMd5Regex = new RegExp("<link.*href=[\"|\']*(.+).*?[\"|\']>", "ig");
-	let cssPublicPath = this.options.cssPublicPath || publicPath;
-	htmlContent = this.md5HtmlRes(htmlContent, styleMd5Regex, cssPublicPath, "css");
-
-	// favico
-	htmlContent = this.md5HtmlRes(htmlContent, styleMd5Regex, publicPath, "ico");
-	
-	// js
-	let scriptMd5Regex = new RegExp("<script.*src=[\"|\']*(.+).*?[\"|\']><\/script>", "ig");
-	htmlContent = this.md5HtmlRes(htmlContent, scriptMd5Regex, publicPath, "js");
+	htmlContent = this.checkResource(htmlContent, publicPath, compilation);
 
 	compilation.assets[this.options.htmlFileName].source = () => {
 		return this.options.templateContent.bind(this)(htmlContent);
 	};
 };
 
-HtmlResWebpackPlugin.prototype.md5HtmlRes = function(htmlContent, reg, publicPath, extension) {
+HtmlResWebpackPlugin.prototype.checkResource = function(htmlContent, publicPath, compilation) {
+	let linkRegex = new RegExp("(<link[^>]*href=([\'\"]*)(.*?)([\'\"]*).*?\>)", "ig"),
+		scriptRegex = new RegExp("(<script[^>]*src=([\'\"]*)(.*?)([\'\"]*).*?\>(<\/script>)?)", "ig");
+
+	htmlContent = htmlContent.replace(linkRegex, (route) => {
+		if (!!~route.indexOf("__inline")) {
+			// css inline
+			let styleInlineRegex = new RegExp("<link.*href=(\s*?)*(.+)[\?]\_\_inline.*?(\s*?)>", "ig");
+			route = this.inlineHtmlRes(route, styleInlineRegex, compilation, 'css'); 
+		}
+		else {
+			// css md5
+			let styleMd5Regex = new RegExp("<link.*href=(\s*?)*(.+).*?(\s*?)>", "ig");
+			let cssPublicPath = this.options.cssPublicPath || publicPath;
+			route = this.md5HtmlRes(route, styleMd5Regex, cssPublicPath, "css");
+
+			route = this.md5HtmlRes(route, styleMd5Regex, publicPath, "ico");
+		}
+
+		return route;
+	});
+
+	htmlContent = htmlContent.replace(scriptRegex, (route) => {
+		if (!!~route.indexOf("__inline")) {
+			// js inline
+			let scriptInlineRegex = new RegExp("<script.*src=(\s*?)*(.+)[\?]\_\_inline.*?(\s*?)><\/script>", "ig");
+			route = this.inlineHtmlRes(route, scriptInlineRegex, compilation, 'js');
+		}
+		else {
+			// js md5
+			let scriptMd5Regex = new RegExp("<script.*src=(\s*?)*(.+).*?(\s*?)><\/script>", "ig");
+			route = this.md5HtmlRes(route, scriptMd5Regex, publicPath, "js");
+		}
+
+		return route;
+	});
+
+	return htmlContent;
+};
+
+
+HtmlResWebpackPlugin.prototype.md5HtmlRes = function(routeStr, reg, publicPath, extension) {
 	let _this = this;
 
-	htmlContent = htmlContent.replace(reg, function(tag, route) {
-		
+	routeStr = routeStr.replace(reg, function(tag, gap, route) {
+
+		route = route.replace(/[\"|']/g, "");
+		// console.log(tag, gap, route);
+
 		if (extension === "ico" && !!~route.indexOf("." + extension)) {
 			tag = tag.replace(route, publicPath + route);
 			return tag;
@@ -307,14 +330,15 @@ HtmlResWebpackPlugin.prototype.md5HtmlRes = function(htmlContent, reg, publicPat
 		return tag;
 	});
 
-	return htmlContent;
+	return routeStr;
 };
 
-HtmlResWebpackPlugin.prototype.inlineHtmlRes = function(htmlContent, reg, compilation, extension) {
+HtmlResWebpackPlugin.prototype.inlineHtmlRes = function(routeStr, reg, compilation, extension) {
 	let _this = this;
 
-	htmlContent = htmlContent.replace(reg, function(tag, route) {
-		// console.log(tag, route);
+	routeStr = routeStr.replace(reg, function(tag, gap, route) {
+		route = route.replace(/[\"|']/g, "");
+		// console.log(tag, gap, route);
 		var assets = _this.stats.assets[route] || [],
 			file = "";
 
@@ -323,7 +347,6 @@ HtmlResWebpackPlugin.prototype.inlineHtmlRes = function(htmlContent, reg, compil
 		}
 
 		assets.forEach(function(item, index) {
-
 			if (!!~item.indexOf("." + extension) && extension === "js") {
 				file = "<script>" + compilation.assets[item].source() + "</script>";
 			}
@@ -342,7 +365,7 @@ HtmlResWebpackPlugin.prototype.inlineHtmlRes = function(htmlContent, reg, compil
 		return tag;
 	});
 
-	return htmlContent;
+	return routeStr;
 };
 
 /**

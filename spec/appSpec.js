@@ -101,6 +101,18 @@ describe("resource-md5-3", function() {
     });
 });
 
+describe("resource-md5-4", function() {
+    it("=> html mode md5 with compression", function() {
+      let distHtml = path.resolve('specWebpack/dist/resource-md5-4/index.html'),
+        resultHtml = path.resolve('specWebpack/result/resource-md5-4/index.html');
+
+      let distContent = fs.readFileSync(distHtml).toString(),
+        resultContent = fs.readFileSync(resultHtml).toString();
+
+      expect(true).toBe(distContent === resultContent);
+    });
+});
+
 describe("resource-favico", function() {
   	it("=> generate favicon", function() {
     	let distHtml = path.resolve('specWebpack/dist/resource-favico/index.html'),
