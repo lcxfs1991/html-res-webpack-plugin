@@ -94,10 +94,10 @@ module.exports.compileTemplate = function compileTemplate(template, context, out
 };
 
 /**
- * Returns the child compiler name e.g. 'html-webpack-plugin for "index.html"'
+ * Returns the child compiler name e.g. 'html-res-webpack-plugin for "index.html"'
  */
 function getCompilerName (context, filename) {
 	var absolutePath = path.resolve(context, filename);
   	var relativePath = path.relative(context, absolutePath);
-  	return 'html-webpack-plugin for "' + (absolutePath.length < relativePath.length ? absolutePath : relativePath) + '"';
+  	return 'html-res-webpack-plugin for "' + (absolutePath.length < relativePath.length ? absolutePath : relativePath) + '"';
 }
