@@ -233,3 +233,15 @@ describe("image-in-html", function() {
       expect(true).toBe(distContent === resultContent && checkImage);
     });
 });
+
+describe("resource-attr-1", function() {
+    it("=> resource atribute", function() {
+      let distHtml = path.resolve('specWebpack/dist/resource-attr-1/index.html'),
+        resultHtml = path.resolve('specWebpack/result/resource-attr-1/index.html');
+
+      let distContent = fs.readFileSync(distHtml).toString(),
+        resultContent = fs.readFileSync(resultHtml).toString();
+
+      expect(true).toBe(distContent === resultContent);
+    });
+});

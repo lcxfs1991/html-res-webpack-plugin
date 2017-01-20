@@ -242,6 +242,12 @@ entry: {
 <script src="index"></script>
 ```
 
+如果你想给资源添加属性，请在`src`与`rel`之前添加。
+```javascript
+<script asycn defer src="libs/react"></script>
+<link asycn defer rel="stylesheet" href="index">
+```
+
 而favico则直接配置:
 ```javascript
 <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
@@ -392,3 +398,4 @@ plugins: [
 - v1.2.0 支持对html使用loader以及支持image插入到html中
 - v1.2.2 修复uglify js引入的，去掉引号无法匹配问题
 - v1.2.3 改了点小文案而已
+- v1.2.4 给资源属性添加文档与测试用例

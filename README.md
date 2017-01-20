@@ -243,6 +243,14 @@ Then, the settings for assets in html can be like this. That is to say, we put t
 <link rel="stylesheet" href="index">
 <script src="index"></script>
 ```
+
+If you hope to add attribute to the resource, please add it right before `src` or `rel`.
+
+```javascript
+<script asycn defer src="libs/react"></script>
+<link asycn defer rel="stylesheet" href="index">
+```
+
 But for favico, we can directly write like this:
 ```javascript
 <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
@@ -392,3 +400,4 @@ If you still don't understand README, you can checkout examples in specWepback w
 - v1.2.0 support using loader and image in html
 - v1.2.2 fix bug from uglify js which remove quotes
 - v1.2.3 just chanage a few text
+- v1.2.4 add doc and test for resource attribute

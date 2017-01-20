@@ -28,6 +28,7 @@ var webpackConfig = [
 	require(basePath + '/resource-copy-plugin-3/webpack.config.js'), // html mode usage with copy-webpack-plugin
 	require(basePath + '/resource-external-1/webpack.config.js'), //  external resource
 	require(basePath + '/image-in-html/webpack.config.js'), //  image in html
+	require(basePath + '/resource-attr-1/webpack.config.js'), //  resource attribute
 ];
 
 fs.removeSync(path.resolve('./specWebpack/dist/'));
