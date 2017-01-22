@@ -400,4 +400,4 @@ If you still don't understand README, you can checkout examples in specWepback w
 - v1.2.0 support using loader and image in html
 - v1.2.2 fix bug from uglify js which remove quotes
 - v1.2.3 just chanage a few text
-- v1.2.5 add doc and test for resource attribute
+- v1.2.6 add doc and test for resource attribute
