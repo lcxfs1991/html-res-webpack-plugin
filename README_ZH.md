@@ -274,6 +274,7 @@ chunk5: libs/react
 
 
 ```javascript
+// copy-webpack-plugin-hash@3.x
 plugins: [
     new CopyWebpackPlugin([
         {
@@ -283,6 +284,25 @@ plugins: [
     ], {
         namePattern: "[name]-[contenthash:6].js"
     }),
+    new HtmlResWebpackPlugin({
+        filename: "index.html",
+        template: config.path.src + "/resource-copy-plugin-1/index.html",
+        chunks:[
+            'libs/react',
+            'libs/react-dom',
+            'js/index',
+        ],
+    }),
+]
+
+// copy-webpack-plugin-hash@4.x
+plugins: [
+    new CopyWebpackPlugin([
+        {
+            from: '/xxx/libs/',
+            to: 'libs/[name]-[hash:6].[ext]'
+        }
+    ]),
     new HtmlResWebpackPlugin({
         filename: "index.html",
         template: config.path.src + "/resource-copy-plugin-1/index.html",

@@ -68,11 +68,9 @@ module.exports = {
         new CopyWebpackPlugin([
             {
                 from: config.path.src + '/resource-copy-plugin-3/libs/',
-                to: 'libs/'
+                to: 'libs/[name]' + config.hash + '.[ext]'
             }
-        ], {
-            namePattern: "[name]-[contenthash:6].js"
-        }),
+        ]),
         new HtmlResWebpackPlugin({
             mode: "html",
         	filename: "index.html",

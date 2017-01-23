@@ -275,6 +275,7 @@ chunk5: libs/react
 If you use copy-webpack-plugin for example, you can use `html-res-webpack-plugin` easily. For example, if you copy `/xxx/libs` folder to `libs/`. If the folder contains `react` and `react-dom`, you can add chunks `libs/react/` and `libs/react-dom` in `html-res-webpack-plugin`.
 
 ```javascript
+// copy-webpack-plugin-hash@3.x
 plugins: [
     new CopyWebpackPlugin([
         {
@@ -284,6 +285,25 @@ plugins: [
     ], {
         namePattern: "[name]-[contenthash:6].js"
     }),
+    new HtmlResWebpackPlugin({
+        filename: "index.html",
+        template: config.path.src + "/resource-copy-plugin-1/index.html",
+        chunks:[
+            'libs/react',
+            'libs/react-dom',
+            'js/index',
+        ],
+    }),
+]
+
+// copy-webpack-plugin-hash@4.x
+plugins: [
+    new CopyWebpackPlugin([
+        {
+            from: '/xxx/libs/',
+            to: 'libs/[name]-[hash:6].[ext]'
+        }
+    ]),
     new HtmlResWebpackPlugin({
         filename: "index.html",
         template: config.path.src + "/resource-copy-plugin-1/index.html",
