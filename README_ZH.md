@@ -419,3 +419,4 @@ plugins: [
 - v1.2.2 修复uglify js引入的，去掉引号无法匹配问题
 - v1.2.3 改了点小文案而已
 - v1.2.6 给资源属性添加文档与测试用例
+- v1.3.0 将 `copy-webpack-plugin-hash` 从3.x 升级至 4.x
