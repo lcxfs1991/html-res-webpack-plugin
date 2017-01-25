@@ -106,7 +106,7 @@ HtmlResWebpackPlugin.prototype.apply = function(compiler, callback) {
 
 			    // inject favicon
 			    if (this.options.favicon) {
-			    	this.options.faviconFileName = this.addFileToWebpackAsset(compilation, this.options.template, utils.getBaseName(this.options.favicon, null));
+			    	this.options.faviconFileName = this.addFileToWebpackAsset(compilation, this.options.favicon, utils.getBaseName(this.options.favicon, null));
 			    }
 
 			    // webpack options
@@ -479,7 +479,7 @@ HtmlResWebpackPlugin.prototype.inlineRes = function(compilation, chunk, file, fi
  */
 HtmlResWebpackPlugin.prototype.addFileToWebpackAsset = function(compilation, template, basename, isToStr, source) {
 	var filename = path.resolve(template);
-	
+	// console.log(isToStr, filename);
     compilation.fileDependencies.push(filename);
     compilation.assets[basename] = {
     	source: () => {
