@@ -423,3 +423,4 @@ If you still don't understand README, you can checkout examples in specWepback w
 - v1.2.6 add doc and test for resource attribute
 - v1.3.0 upgrade `copy-webpack-plugin-hash` from 3.x to 4.x
 - v1.3.1 fix favicon copy bug
+- v1.3.2 compatible with link closing tag

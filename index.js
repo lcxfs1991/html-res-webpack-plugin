@@ -303,8 +303,8 @@ HtmlResWebpackPlugin.prototype.md5HtmlRes = function(routeStr, reg, publicPath, 
 	let _this = this;
 
 	routeStr = routeStr.replace(reg, function(tag, gap, route) {
-
-		route = route.replace(/[\"|']/g, "");
+		
+		route = route.replace(/[\"|']/g, "").replace(/[ ]* \//g, "");
 		// console.log(tag, gap, route);
 
 		if (extension === "ico" && !!~route.indexOf("." + extension)) {

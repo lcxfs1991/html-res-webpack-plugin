@@ -421,3 +421,4 @@ plugins: [
 - v1.2.6 给资源属性添加文档与测试用例
 - v1.3.0 将 `copy-webpack-plugin-hash` 从3.x 升级至 4.x
 - v1.3.1 修复 favicon 复制的 bug
+- v1.3.2 兼容link闭合写法
