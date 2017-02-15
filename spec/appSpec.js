@@ -1,7 +1,7 @@
 "use strict";
 
 const path = require('path'),
-	  fs = require('fs');
+	  fs = require('fs-extra');
 
 
 describe("resource-dev", function() {
@@ -37,6 +37,11 @@ describe("resource-inline-1", function() {
   		let distContent = fs.readFileSync(distHtml).toString(),
   			resultContent = fs.readFileSync(resultHtml).toString();
 
+        let folder = fs.readdirSync('specWebpack/dist/resource-inline-1/');
+
+        expect(folder.length).toBe(1);
+        expect(folder[0]).toBe('index.html');
+
     	expect(true).toBe(distContent === resultContent);
   	});
 });
@@ -49,17 +54,27 @@ describe("resource-inline-2", function() {
   		let distContent = fs.readFileSync(distHtml).toString(),
   			resultContent = fs.readFileSync(resultHtml).toString();
 
+        let folder = fs.readdirSync('specWebpack/dist/resource-inline-2/');
+
+        expect(folder.length).toBe(1);
+        expect(folder[0]).toBe('index.html');
+
     	expect(true).toBe(distContent === resultContent);
   	});
 });
 
 describe("resource-inline-3", function() {
   it("=> html mode inline with compression", function() {
-      let distHtml = path.resolve('specWebpack/dist/resource-inline-3/index.html'),
-        resultHtml = path.resolve('specWebpack/result/resource-inline-3/index.html');
+        let distHtml = path.resolve('specWebpack/dist/resource-inline-3/index.html'),
+            resultHtml = path.resolve('specWebpack/result/resource-inline-3/index.html');
 
-      let distContent = fs.readFileSync(distHtml).toString(),
-        resultContent = fs.readFileSync(resultHtml).toString();
+        let distContent = fs.readFileSync(distHtml).toString(),
+            resultContent = fs.readFileSync(resultHtml).toString();
+
+        let folder = fs.readdirSync('specWebpack/dist/resource-inline-3/');
+
+        expect(folder.length).toBe(1);
+        expect(folder[0]).toBe('index.html');
 
       expect(true).toBe(distContent === resultContent);
     });

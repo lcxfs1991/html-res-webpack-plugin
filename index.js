@@ -349,6 +349,7 @@ HtmlResWebpackPlugin.prototype.inlineHtmlRes = function(routeStr, reg, compilati
 		assets.forEach(function(item, index) {
 			if (!!~item.indexOf("." + extension) && extension === "js") {
 				file = "<script>" + compilation.assets[item].source() + "</script>";
+				_this.removeInlineRes(compilation, item);
 			}
 			else if (!!~item.indexOf("." + extension) && extension === "css") {
 				file = "";
@@ -357,6 +358,7 @@ HtmlResWebpackPlugin.prototype.inlineHtmlRes = function(routeStr, reg, compilati
 					cssContent += item._value;
 				}) ;
 				file = "<style>" + cssContent + "</style>";
+				_this.removeInlineRes(compilation, item);
 			}
 		});
 
@@ -367,6 +369,11 @@ HtmlResWebpackPlugin.prototype.inlineHtmlRes = function(routeStr, reg, compilati
 
 	return routeStr;
 };
+
+HtmlResWebpackPlugin.prototype.removeInlineRes = function(compilation, key) {
+	delete compilation.assets[key];
+};
+
 
 /**
  * inject assets into html file
@@ -406,6 +413,9 @@ HtmlResWebpackPlugin.prototype.injectAssets = function(compilation) {
 					scriptContent += (jsInline) ? 
 									('<script ' + jsAttr + ' >' + jsInline + '</script>')
 									: ('<script ' + jsAttr + ' type="text/javascript" src="' + srcPath + '"></script>\n');
+					
+					this.removeInlineRes(compilation, file);
+					
 					break;
 				case 'css':
 					let styleInline = false;
@@ -418,6 +428,9 @@ HtmlResWebpackPlugin.prototype.injectAssets = function(compilation) {
 					styleContent += (styleInline) ? 
 									('<style ' + styleAttr + '>' + styleInline + '</style>')
 									: ('<link ' + styleAttr + ' rel="stylesheet" href="' + hrefPath + '">\n');
+					
+					this.removeInlineRes(compilation, file);
+
 					break;
 				case 'ico':
 					break;

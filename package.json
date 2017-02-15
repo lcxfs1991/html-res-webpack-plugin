@@ -1,6 +1,6 @@
 {
   "name": "html-res-webpack-plugin",
-  "version": "1.3.2",
+  "version": "1.3.3",
   "description": "html generation and resource inline or md5 for webpack",
   "keywords": [
     "front-end",
@@ -43,9 +43,10 @@
     "css-loader": "^0.22.0",
     "extract-text-webpack-plugin-steamer": "^1.0.1",
     "file-loader": "^0.8.4",
-    "fs-extra": "^0.30.0",
-    "html-loader": "^0.3.0",
+    "fs-extra": "^2.0.0",
+    "html-loader": "^0.4.4",
     "jasmine": "^2.4.1",
+    "klaw": "^1.3.1",
     "less": "^2.2.3",
     "less-loader": "^2.2.3",
     "style-loader": "^0.13.0",
