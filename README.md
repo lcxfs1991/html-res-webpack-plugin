@@ -21,7 +21,7 @@ What about assets? Assets are files will be exported by webpack. They can be any
 
 
 ## Require html-loader
-[html-loader](https://github.com/webpack/html-loader) is required after `v1.1.3`, an example option is follow:
+[html-loader](https://github.com/webpack/html-loader) is required after `v1.1.3`, an example option is as follows:
 
 ```javascript
 loaders: [
