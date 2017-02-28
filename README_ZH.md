@@ -20,10 +20,24 @@ entry: {
 那么`assets`呢？`Assets`是那些将要被webpack输出的文件。它们可以是任何类型的文件，比如样式、图片或者html文件。
 
 
+## 依赖html-loader
+自`v1.1.3`以后，webpack配置中需要包含[html-loader](https://github.com/webpack/html-loader)的配置，例如：
+
+```javascript
+loaders: [
+    // some other loaders
+    {
+      test: /\.html$/,
+      loader: 'html-loader'
+    }
+]
+```
+
+
 ## 如何开始
 
 src/index.html
---> 
+-->
 dist/index.html
 
 ```javascript
@@ -49,7 +63,7 @@ dist/js/preview/preview.js
 require('./index.scss');
 
 var init = function() {
-    // some code here   
+    // some code here
 };
 ```
 
@@ -86,7 +100,7 @@ webpack.config.js
             path: path.join(config.path.dist),
             filename: "js/[name]" + config.chunkhash + ".js"
         },
-    
+
         .
         .
         .
@@ -191,12 +205,12 @@ route.html.forEach(function(page) {
         favicon: "src/favicon.ico",
         chunks: pageMapping[page],
     });
-}); 
+});
 ```
 
 ## Favicon
 
-webpack.config.js 
+webpack.config.js
 ```javascript
 new HtmlResWebpackPlugin({
     filename: "index.html",
@@ -319,17 +333,17 @@ plugins: [
 - `mode`:
     - is optional
     - `default` (在`chunks`配置中配置资源) | `html` (在html文中配置资源)
-- `filename`: 
+- `filename`:
     - is required
     - 生成的html文件名
-- `template`: 
+- `template`:
     - is required
     - html模板来源
 - `entryLog`:
     - is optional
     - [Boolean]
     - 默认值 `false`, 如果你使用 `html` `mode`, 你可以设置此值为`true`, 便可以看到`chunkName`以及其如何在`html`文件中占位的使用办法
-- `chunks`: 
+- `chunks`:
     - is required 如果 `mode` 是 `default`, is not required 如果 `mode` 是 `html`
     - [Array|Object]
     - 注入的chunks
@@ -384,13 +398,13 @@ plugins: [
     ]
 ```
 
-- `htmlMinify`: 
+- `htmlMinify`:
     - is optional
     - 请查看 [html-minifier](https://github.com/kangax/html-minifier) to see detail options. 如果设为false | null, html文件则不会被压缩
-- `favicon`: 
+- `favicon`:
     - is optional
     - favicon路径, 如: "src/favicon.ico"
-- `templateContent`: 
+- `templateContent`:
     - is optional
     - 这里可提供给开发者在输出前修改html内容。 this.options和this.webpackOptions在这里也可以被使用
 - `cssPublicPath`:
