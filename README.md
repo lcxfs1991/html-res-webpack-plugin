@@ -17,13 +17,27 @@ entry: {
 }
 ```
 
-What about assets? Assets are files will be exported by webpack. They can be any file types like stylesheets, images, html and so on. 
+What about assets? Assets are files will be exported by webpack. They can be any file types like stylesheets, images, html and so on.
+
+
+## Require html-loader
+[html-loader](https://github.com/webpack/html-loader) is required after `v1.1.3`, an example option is as follows:
+
+```javascript
+loaders: [
+    // some other loaders
+    {
+      test: /\.html$/,
+      loader: 'html-loader'
+    }
+]
+```
 
 
 ## How to start
 
 src/index.html
---> 
+-->
 dist/index.html
 
 ```javascript
@@ -49,7 +63,7 @@ dist/js/preview/preview.js
 require('./index.scss');
 
 var init = function() {
-    // some code here   
+    // some code here
 };
 ```
 
@@ -86,7 +100,7 @@ webpack.config.js
             path: path.join(config.path.dist),
             filename: "js/[name]" + config.chunkhash + ".js"
         },
-    
+
         .
         .
         .
@@ -193,12 +207,12 @@ route.html.forEach(function(page) {
         favicon: "src/favicon.ico",
         chunks: pageMapping[page],
     });
-}); 
+});
 ```
 
 ## Favicon
 
-webpack.config.js 
+webpack.config.js
 ```javascript
 new HtmlResWebpackPlugin({
     filename: "index.html",
@@ -320,17 +334,17 @@ plugins: [
 - `mode`:
     - is optional
     - `default` (write assets in config `chunks`) | `html` (write assets in html)
-- `filename`: 
+- `filename`:
     - is required
     - generated filename
-- `template`: 
+- `template`:
     - is required
     - template source
 - `entryLog`:
     - is optional
     - [Boolean]
     - default `false`, if you use `html` `mode`, you can enable this to show entry names and use example
-- `chunks`: 
+- `chunks`:
     - is required if `mode` is `default`, is not required if `mode` is `html`
     - [Array|Object]
     - injected chunks
@@ -385,13 +399,13 @@ plugins: [
     ]
 ```
 
-- `htmlMinify`: 
+- `htmlMinify`:
     - is optional
     - please checkout [html-minifier](https://github.com/kangax/html-minifier) to see detail options. If set false | null, html files won't be compressed.
-- `favicon`: 
+- `favicon`:
     - is optional
     - favicon path, for example, "src/favicon.ico"
-- `templateContent`: 
+- `templateContent`:
     - is optional
     - a point for developer to modify html content before output. `this.options` and `this.webpackOptions`can be used in such a function.
 - `cssPublicPath`:
@@ -424,4 +438,6 @@ If you still don't understand README, you can checkout examples in specWepback w
 - v1.3.0 upgrade `copy-webpack-plugin-hash` from 3.x to 4.x
 - v1.3.1 fix favicon copy bug
 - v1.3.2 compatible with link closing tag
-- v1.3.4 remove inline resource
+- v1.3.3 remove inline resource
+- v1.3.4 fix removeing inline resource bug
+
