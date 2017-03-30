@@ -72,6 +72,7 @@ module.exports = {
         }),
         new HtmlResWebpackPlugin({
             mode: "html",
+            entryLog: true,
         	filename: "index.html",
 	        template: config.path.src + "/resource-md5-4/index.html",
 	        htmlMinify: null

@@ -72,11 +72,12 @@ describe("resource-inline-3", function() {
             resultContent = fs.readFileSync(resultHtml).toString();
 
         let folder = fs.readdirSync('specWebpack/dist/resource-inline-3/');
+        
+        expect(folder.length).toBe(3);
+        expect(folder[0]).toBe('detail.html');
+        expect(folder[1]).toBe('index.html');
 
-        expect(folder.length).toBe(1);
-        expect(folder[0]).toBe('index.html');
-
-      expect(true).toBe(distContent === resultContent);
+        expect(true).toBe(distContent === resultContent);
     });
 });
 

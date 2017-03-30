@@ -9,7 +9,8 @@ var HtmlResWebpackPlugin = require('../../../index'),
 
 module.exports = {
 	entry: {
-        index: [path.join(config.path.src, "/resource-inline-3/index")]
+        index: [path.join(config.path.src, "/resource-inline-3/index")],
+        'common': [path.join(config.path.src, "/resource-inline-3/common")],
     },
     output: {
         publicPath: config.defaultPath,
@@ -64,18 +65,6 @@ module.exports = {
             mode: "html",
         	filename: "index.html",
             template: config.path.src + "/resource-inline-3/index.html",
-            // chunks:{
-            //     'index': {
-            //         attr: {
-            //             js: "async=\"true\"",
-            //             css: "offline",
-            //         },
-            //         inline: {
-            //             js: true,
-            //             css: true
-            //         }
-            //     }
-            // },
 	        templateContent: function(tpl) {
 	            // 生产环境不作处理
 	            if (!this.webpackOptions.watch) {
@@ -91,10 +80,26 @@ module.exports = {
 	            });
 	            return tpl;
 	        }, 
-	        // htmlMinify: {
-         //        removeComments: true,
-         //        collapseWhitespace: true,
-         //    }
+        }),
+        new HtmlResWebpackPlugin({
+            mode: "html",
+            filename: "detail.html",
+            template: config.path.src + "/resource-inline-3/detail.html",
+            templateContent: function(tpl) {
+                // 生产环境不作处理
+                if (!this.webpackOptions.watch) {
+                    return tpl;
+                }
+                // 开发环境先去掉外链react.js
+                var regex = new RegExp("<script.*src=[\"|\']*(.+).*?[\"|\']><\/script>", "ig");
+                tpl = tpl.replace(regex, function(script, route) {
+                    if (!!~script.indexOf('react.js') || !!~script.indexOf('react-dom.js')) {
+                        return '';
+                    }
+                    return script;
+                });
+                return tpl;
+            }, 
         })
     ],
 };

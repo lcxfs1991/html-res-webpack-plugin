@@ -10,15 +10,16 @@ const isDebug = false,
 	  IS_TO_STR = true; 
 
 const fs = require('fs'),
-	_ = require('lodash'),
-	vm = require('vm'),
-	path = require('path'),
-	Promise = require('bluebird'),
-	minify = require('html-minifier').minify,
-	childCompiler = require('./libs/compiler'),
-	utils = require('./libs/utils'),
-	errors = require('./libs/errors'),
-	loaderUtils = require('loader-utils');
+      rimraf = require('rimraf'),
+	  _ = require('lodash'),
+	  vm = require('vm'),
+	  path = require('path'),
+	  Promise = require('bluebird'),
+	  minify = require('html-minifier').minify,
+	  childCompiler = require('./libs/compiler'),
+	  utils = require('./libs/utils'),
+	  errors = require('./libs/errors'),
+	  loaderUtils = require('loader-utils');
 
 function HtmlResWebpackPlugin(options) {
 
@@ -41,6 +42,7 @@ function HtmlResWebpackPlugin(options) {
 	// html scripts/css/favicon assets
 	this.stats = {
 		assets: [],
+		inlineAssets: {}
 	};
 	this.webpackOptions = {};
 }
@@ -133,6 +135,31 @@ HtmlResWebpackPlugin.prototype.apply = function(compiler, callback) {
       		});
 	});
 
+	compiler.plugin('done', (stats) => {
+		let outputPath = this.webpackOptions.output.path;
+
+		Object.keys(this.stats.inlineAssets).forEach((file) => {
+			let filePath = path.join(outputPath, file),
+				dirPath = path.dirname(filePath);
+
+			if (fs.existsSync(filePath)) {
+				fs.unlinkSync(filePath);
+			}
+
+			if (fs.existsSync(dirPath)) {
+				let files = fs.readdirSync(dirPath);
+
+				if (!files.length) {
+					rimraf(dirPath, function() {
+
+					});
+				}
+			}
+		});
+
+
+	});
+
 };
 
 HtmlResWebpackPlugin.prototype.buildStatsHtmlMode = function(compilation) {
@@ -169,7 +196,7 @@ HtmlResWebpackPlugin.prototype.printChunkName = function(assets) {
 		return;
 	}
 
-	utils.alert('=====html-res-webapck-plugin=====');
+	utils.alert('html-res-webapck-plugin: ');
 	utils.alert('assets used like:');
 	utils.alert('<link rel="stylesheet" href="' + assetsArray[0] + '">');
 	utils.alert('<script src="' + assetsArray[0] + '"></script>');
@@ -371,7 +398,8 @@ HtmlResWebpackPlugin.prototype.inlineHtmlRes = function(routeStr, reg, compilati
 };
 
 HtmlResWebpackPlugin.prototype.removeInlineRes = function(compilation, key) {
-	delete compilation.assets[key];
+	// delete compilation.assets[key];
+	this.stats.inlineAssets[key] = true;
 };
 
 
