@@ -444,9 +444,7 @@ HtmlResWebpackPlugin.prototype.injectAssets = function(compilation) {
 					scriptContent += (jsInline) ? 
 									('<script ' + jsAttr + ' >' + jsInline + '</script>')
 									: ('<script ' + jsAttr + ' type="text/javascript" src="' + srcPath + '"></script>\n');
-					
-					this.storeInlineRes(compilation, file);
-					
+										
 					break;
 				}
 				case 'css': {
@@ -461,8 +459,6 @@ HtmlResWebpackPlugin.prototype.injectAssets = function(compilation) {
 									('<style ' + styleAttr + '>' + styleInline + '</style>')
 									: ('<link ' + styleAttr + ' rel="stylesheet" href="' + hrefPath + '">\n');
 					
-					this.storeInlineRes(compilation, file);
-
 					break;
 				}
 				case 'ico': {
@@ -514,6 +510,8 @@ HtmlResWebpackPlugin.prototype.inlineRes = function(compilation, chunk, file, fi
 	if (!chunk || !chunk.hasOwnProperty('inline') || !chunk.inline || !chunk.inline[fileType]) {
 		return false;
 	}
+
+	this.storeInlineRes(compilation, file);
 
 	return compilation.assets[file].source();
 };
