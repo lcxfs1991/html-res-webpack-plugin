@@ -444,4 +444,4 @@ If you still don't understand README, you can checkout examples in specWepback w
 - v1.3.2 compatible with link closing tag
 - v1.3.3 remove inline resource
 - v1.3.4 fix removeing inline resource bug
-
+- v2.0.0 upgrade some dependencies and improve test cases
