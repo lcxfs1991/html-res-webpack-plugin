@@ -65,7 +65,7 @@ module.exports = {
     },
     plugins: [
         new webpack.NoEmitOnErrorsPlugin(),
-        new ExtractTextPlugin({ filename: "./css/[name].css", disable: false}),
+        new ExtractTextPlugin({ filename: "css/[name].css", disable: false}),
         new HtmlResWebpackPlugin({
         	filename: "html/entry.html",
 	        template: config.path.src + "/resource-dev/index.html",

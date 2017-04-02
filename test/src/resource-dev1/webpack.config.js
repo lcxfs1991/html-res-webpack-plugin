@@ -5,9 +5,10 @@ var webpack = require('webpack'),
 	 nodeModulesPath = path.resolve('../node_modules');
 
 var HtmlResWebpackPlugin = require('../../../index'),
-	ExtractTextPlugin = require("extract-text-webpack-plugin-steamer");
+	ExtractTextPlugin = require("extract-text-webpack-plugin");
 
 module.exports = {
+    context: config.path.src,
 	entry: {
         'libs/react': [path.join(config.path.src, "/resource-dev1/libs/react")],
         'index': [path.join(config.path.src, "/resource-dev1/index")],
@@ -22,7 +23,7 @@ module.exports = {
         loaders: [
             { 
                 test: /\.js?$/,
-                loader: 'babel',
+                loader: 'babel-loader',
                 query: {
                     cacheDirectory: false,
                     presets: [
@@ -32,14 +33,21 @@ module.exports = {
                 exclude: /node_modules/,
             },
             {
-                test: /\.css$/,
-                loader: ExtractTextPlugin.extract("style-loader", "css-loader"),
-                include: path.resolve(config.path.src)
-            },
-            {
                 test: /\.less$/,
-                loader: ExtractTextPlugin.extract("style-loader", "css-loader!less-loader"),
-                include: [nodeModulesPath, path.resolve(config.path.src)]
+                loader: ExtractTextPlugin.extract({
+                    // fallback: 'style-loader', 
+                    use: [
+                        {
+                            loader: 'css-loader',
+                            options: {
+                                localIdentName: '[name]-[local]-[hash:base64:5]',
+                            }
+                        },
+                        {
+                            loader:  'less-loader',
+                        }
+                    ]
+                }),
             },
             {
                 test: /\.html$/,
@@ -53,47 +61,19 @@ module.exports = {
                 include: path.resolve(config.path.src)
             },
         ],
-        noParse: [
-            
-        ]
     },
     plugins: [
-        new webpack.optimize.OccurrenceOrderPlugin(),
-        new webpack.NoErrorsPlugin(),
-        new ExtractTextPlugin("./css/[name].css", {
+        new webpack.NoEmitOnErrorsPlugin(),
+        new ExtractTextPlugin({ 
+            filename: "css/[name].css", 
             publicPath: "//localhost:1111/",
+            disable: false
         }),
         new HtmlResWebpackPlugin({
             mode: 'html',
         	filename: "html/entry.html",
 	        template: config.path.src + "/resource-dev1/index.html",
             cssPublicPath: "//localhost:1111/",
-	        // chunks:{
-         //        'libs/react': {
-
-         //        },
-         //        'js/index': {
-         //            attr:{
-         //                js: "",
-         //                css: "offline",
-         //            }
-         //        },
-         //    },
-	        // templateContent: function(tpl) {
-	        //     // 生产环境不作处理
-	        //     if (!this.webpackOptions.watch) {
-	        //         return tpl;
-	        //     }
-	        //     // 开发环境先去掉外链react.js
-	        //     var regex = new RegExp("<script.*src=[\"|\']*(.+).*?[\"|\']><\/script>", "ig");
-	        //     tpl = tpl.replace(regex, function(script, route) {
-	        //         if (!!~script.indexOf('react.js') || !!~script.indexOf('react-dom.js')) {
-	        //             return '';
-	        //         }
-	        //         return script;
-	        //     });
-	        //     return tpl;
-	        // }, 
 	        htmlMinify: null
         })
     ],

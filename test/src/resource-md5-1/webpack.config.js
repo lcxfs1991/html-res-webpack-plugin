@@ -6,9 +6,11 @@ var webpack = require('webpack'),
 
 
 var HtmlResWebpackPlugin = require('../../../index'),
-	ExtractTextPlugin = require("extract-text-webpack-plugin-steamer");
+	ExtractTextPlugin = require("extract-text-webpack-plugin"),
+    WebpackAssetPipeline = require('webpack-asset-pipeline');
 
 module.exports = {
+    context: config.path.src,
 	entry: {
         'js/index': [path.join(config.path.src, "/resource-md5-1/index")],
         'libs/react': [path.join(config.path.src, "/resource-md5-1/libs/react")],
@@ -23,7 +25,7 @@ module.exports = {
         loaders: [
             { 
                 test: /\.js?$/,
-                loader: 'babel',
+                loader: 'babel-loader',
                 query: {
                     cacheDirectory: false,
                     presets: [
@@ -33,14 +35,21 @@ module.exports = {
                 exclude: /node_modules/,
             },
             {
-                test: /\.css$/,
-                loader: ExtractTextPlugin.extract("style-loader", "css-loader"),
-                include: path.resolve(config.path.src)
-            },
-            {
                 test: /\.less$/,
-                loader: ExtractTextPlugin.extract("style-loader", "css-loader!less-loader"),
-                include: [nodeModulesPath, path.resolve(config.path.src)]
+                loader: ExtractTextPlugin.extract({
+                    // fallback: 'style-loader', 
+                    use: [
+                        {
+                            loader: 'css-loader',
+                            options: {
+                                localIdentName: '[name]-[local]-[hash:base64:5]',
+                            }
+                        },
+                        {
+                            loader:  'less-loader',
+                        }
+                    ]
+                }),
             },
             {
                 test: /\.html$/,
@@ -54,17 +63,10 @@ module.exports = {
                 include: path.resolve(config.path.src)
             },
         ],
-        noParse: [
-            
-        ]
     },
     plugins: [
-        new webpack.optimize.OccurrenceOrderPlugin(),
-        new webpack.NoErrorsPlugin(),
-        new ExtractTextPlugin("./css/[name]-[contenthash:6].css", {filenamefilter: function(filename) {
-            // console.log(filename);
-            return filename.replace('/js', '');
-        }}),
+        new webpack.NoEmitOnErrorsPlugin(),
+        new ExtractTextPlugin({filename: "css/[name]-[contenthash:6].css", disable: false}),
         new HtmlResWebpackPlugin({
         	filename: "index.html",
 	        template: config.path.src + "/resource-md5-1/index.html",
@@ -92,5 +94,6 @@ module.exports = {
                 collapseWhitespace: true,
             }
         }),
+        new WebpackAssetPipeline(),
     ],
 };

@@ -26,7 +26,7 @@
   "scripts": {
     "pretest": "node ./test/runWebpack.js",
     "lint": "eslint index.js libs",
-    "test": "npm run lint && mocha",
+    "test": "mocha",
     "cover": "istanbul cover _mocha",
     "travis": "npm run cover -- --report lcovonly"
   },
@@ -62,7 +62,8 @@
     "sinon": "^2.1.0",
     "style-loader": "^0.16.1",
     "url-loader": "^0.5.8",
-    "webpack": "^2.3.2"
+    "webpack": "^2.3.2",
+    "webpack-asset-pipeline": "^1.1.1"
   },
   "peerDependencies": {
     "html-loader": "0.4.x"
