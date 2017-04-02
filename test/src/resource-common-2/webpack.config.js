@@ -1,3 +1,4 @@
+"use strict";
 const path = require('path');
 
 var webpack = require('webpack'),
