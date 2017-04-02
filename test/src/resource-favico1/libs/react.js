@@ -1,5 +1,0 @@
-var react = {
-	reactDom: function() {
-
-	}
-};

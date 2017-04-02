@@ -2,14 +2,45 @@ const path = require('path');
 
 var webpack = require('webpack'),
 	config = require('../../config/config'),
-	 nodeModulesPath = path.resolve('../node_modules');
+	nodeModulesPath = path.resolve('../node_modules'),
+    fs = require('fs');
 
 
 var HtmlResWebpackPlugin = require('../../../index'),
-	ExtractTextPlugin = require("extract-text-webpack-plugin-steamer"),
-    CopyWebpackPlugin = require('copy-webpack-plugin-hash');
+	ExtractTextPlugin = require("extract-text-webpack-plugin"),
+    CopyWebpackPlugin = require('copy-webpack-plugin-hash'),
+    WebpackAssetPipeline = require('webpack-asset-pipeline');
+
+function CopyAssetPlugin() {
+
+}
+
+CopyAssetPlugin.prototype.apply = function(compiler) {
+    compiler.plugin('after-emit', (compilation) => {
+        let assets = compilation.assets,
+           copyAssets = Object.keys(assets),
+           assetChunk = [];
+
+        copyAssets.forEach((file) => {
+            if (assets[file].chunk) {
+                assetChunk.push(file);
+            }
+        });
+
+        let manifest = path.join(config.path.dist, "/resource-copy-plugin-2/manifest.json");
+
+        let assetObject = JSON.parse(fs.readFileSync(manifest, "utf-8") || "");
+
+        assetChunk.forEach((file) => {
+            assetObject[assets[file].chunk] = file;
+        });   
+
+        fs.writeFileSync(manifest, JSON.stringify(assetObject, null, 4), "utf-8");    
+    });
+};
 
 module.exports = {
+    context: config.path.src,
 	entry: {
         'js/index': [path.join(config.path.src, "/resource-copy-plugin-2/index")],
     },
@@ -23,7 +54,7 @@ module.exports = {
         loaders: [
             { 
                 test: /\.js?$/,
-                loader: 'babel',
+                loader: 'babel-loader',
                 query: {
                     cacheDirectory: false,
                     presets: [
@@ -33,14 +64,21 @@ module.exports = {
                 exclude: /node_modules/,
             },
             {
-                test: /\.css$/,
-                loader: ExtractTextPlugin.extract("style-loader", "css-loader"),
-                include: path.resolve(config.path.src)
-            },
-            {
                 test: /\.less$/,
-                loader: ExtractTextPlugin.extract("style-loader", "css-loader!less-loader"),
-                include: [nodeModulesPath, path.resolve(config.path.src)]
+                loader: ExtractTextPlugin.extract({
+                    // fallback: 'style-loader', 
+                    use: [
+                        {
+                            loader: 'css-loader',
+                            options: {
+                                localIdentName: '[name]-[local]-[hash:base64:5]',
+                            }
+                        },
+                        {
+                            loader:  'less-loader',
+                        }
+                    ]
+                }),
             },
             {
                 test: /\.html$/,
@@ -54,17 +92,10 @@ module.exports = {
                 include: path.resolve(config.path.src)
             },
         ],
-        noParse: [
-            
-        ]
     },
     plugins: [
-        new webpack.optimize.OccurrenceOrderPlugin(),
-        new webpack.NoErrorsPlugin(),
-        new ExtractTextPlugin("./css/[name]-[contenthash:6].css", {filenamefilter: function(filename) {
-            // console.log(filename);
-            return filename.replace('/js', '');
-        }}),
+        new webpack.NoEmitOnErrorsPlugin(),
+        new ExtractTextPlugin({filename: "css/[name]-[contenthash:6].css", disable: false}),
         new CopyWebpackPlugin([
             {
                 from: config.path.src + '/resource-copy-plugin-2/libs/',
@@ -101,5 +132,7 @@ module.exports = {
 	        }, 
 	        htmlMinify: null
         }),
+        new WebpackAssetPipeline(),
+        new CopyAssetPlugin(),
     ],
 };

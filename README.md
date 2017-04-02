@@ -1,5 +1,9 @@
 # html-res-webpack-plugin
 
+[![NPM Version](https://img.shields.io/npm/v/html-res-webpack-plugin.svg?style=flat)](https://www.npmjs.com/package/html-res-webpack-plugin)
+[![Travis](https://img.shields.io/travis/lcxfs1991/html-res-webpack-plugin.svg)](https://travis-ci.org/lcxfs1991/html-res-webpack-plugin)
+[![Deps](https://david-dm.org/lcxfs1991/html-res-webpack-plugin.svg)](https://david-dm.org/lcxfs1991/html-res-webpack-plugin)
+
 ### [中文文档](https://github.com/lcxfs1991/html-res-webpack-plugin/blob/master/README_ZH.md)
 
 ## Why do I rewrite the whole thing

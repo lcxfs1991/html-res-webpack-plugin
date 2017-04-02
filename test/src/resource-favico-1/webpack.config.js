@@ -4,6 +4,7 @@ var webpack = require('webpack'),
 	config = require('../../config/config'),
 	 nodeModulesPath = path.resolve('../node_modules');
 
+
 var HtmlResWebpackPlugin = require('../../../index'),
 	ExtractTextPlugin = require("extract-text-webpack-plugin"),
     WebpackAssetPipeline = require('webpack-asset-pipeline');
@@ -11,13 +12,14 @@ var HtmlResWebpackPlugin = require('../../../index'),
 module.exports = {
     context: config.path.src,
 	entry: {
-        index: [path.join(config.path.src, "/resource-attr-1/index")]
+        'libs/react': [path.join(config.path.src, "/resource-favico-1/libs/react")],
+        'js/index': [path.join(config.path.src, "/resource-favico-1/index")],
     },
     output: {
         publicPath: config.defaultPath,
-        path: path.join(config.path.dist + '/resource-attr-1/'),
-        filename: "js/[name]" + config.chunkhash + ".js",
-        chunkFilename: "js/chunk/[name]" + config.chunkhash + ".js",
+        path: path.join(config.path.dist + '/resource-favico-1/'),
+        filename: "[name]" + config.chunkhash + ".js",
+        chunkFilename: "chunk/[name]" + config.chunkhash + ".js",
     },
     module: {
         loaders: [
@@ -60,15 +62,19 @@ module.exports = {
                 ],
                 include: path.resolve(config.path.src)
             },
-        ],
+        ]
     },
     plugins: [
         new webpack.NoEmitOnErrorsPlugin(),
-        new ExtractTextPlugin("css/[name]" + config.chunkhash + ".css"),
+        new ExtractTextPlugin({filename: "css/[name]-[contenthash:6].css", disable: false}),
         new HtmlResWebpackPlugin({
             mode: "html",
         	filename: "index.html",
-            template: config.path.src + "/resource-attr-1/index.html",
+	        template: config.path.src + "/resource-favico-1/index.html",
+            favicon: config.path.src + "/resource-favico-1/favicon.ico",
+	        templateContent: function(tpl) {
+	            return tpl;
+	        }, 
 	        htmlMinify: null
         }),
         new WebpackAssetPipeline(),

@@ -5,9 +5,11 @@ var webpack = require('webpack'),
 	 nodeModulesPath = path.resolve('../node_modules');
 
 var HtmlResWebpackPlugin = require('../../../index'),
-	ExtractTextPlugin = require("extract-text-webpack-plugin-steamer");
+	ExtractTextPlugin = require("extract-text-webpack-plugin"),
+    WebpackAssetPipeline = require('webpack-asset-pipeline');
 
 module.exports = {
+    context: config.path.src,
 	entry: {
         index: [path.join(config.path.src, "/image-in-html/index")]
     },
@@ -21,7 +23,7 @@ module.exports = {
         loaders: [
             { 
                 test: /\.js?$/,
-                loader: 'babel',
+                loader: 'babel-loader',
                 query: {
                     cacheDirectory: false,
                     presets: [
@@ -31,14 +33,21 @@ module.exports = {
                 exclude: /node_modules/,
             },
             {
-                test: /\.css$/,
-                loader: ExtractTextPlugin.extract("style-loader", "css-loader"),
-                include: path.resolve(config.path.src)
-            },
-            {
                 test: /\.less$/,
-                loader: ExtractTextPlugin.extract("style-loader", "css-loader!less-loader"),
-                include: [nodeModulesPath, path.resolve(config.path.src)]
+                loader: ExtractTextPlugin.extract({
+                    // fallback: 'style-loader', 
+                    use: [
+                        {
+                            loader: 'css-loader',
+                            options: {
+                                localIdentName: '[name]-[local]-[hash:base64:5]',
+                            }
+                        },
+                        {
+                            loader:  'less-loader',
+                        }
+                    ]
+                }),
             },
             {
                 test: /\.html$/,
@@ -51,20 +60,17 @@ module.exports = {
                 ],
                 include: path.resolve(config.path.src)
             },
-        ],
-        noParse: [
-            
         ]
     },
     plugins: [
-        new webpack.optimize.OccurrenceOrderPlugin(),
-        new webpack.NoErrorsPlugin(),
-        new ExtractTextPlugin("./css/[name]" + config.chunkhash + ".css"),
+        new webpack.NoEmitOnErrorsPlugin(),
+        new ExtractTextPlugin("css/[name]" + config.chunkhash + ".css"),
         new HtmlResWebpackPlugin({
             mode: "html",
         	filename: "index.html",
             template: config.path.src + "/image-in-html/index.html",
 	        htmlMinify: null
-        })
+        }),
+        new WebpackAssetPipeline(),
     ],
 };
