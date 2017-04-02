@@ -5,9 +5,10 @@ var webpack = require('webpack'),
 	 nodeModulesPath = path.resolve('../node_modules');
 
 var HtmlResWebpackPlugin = require('../../../index'),
-	ExtractTextPlugin = require("extract-text-webpack-plugin-steamer");
+	ExtractTextPlugin = require("extract-text-webpack-plugin");
 
 module.exports = {
+    context: config.path.src,
 	entry: {
         'libs/react': [path.join(config.path.src, "/resource-dev/libs/react")],
         'js/index': [path.join(config.path.src, "/resource-dev/index")],
@@ -19,27 +20,35 @@ module.exports = {
         chunkFilename: "chunk/[name].js",
     },
     module: {
-        loaders: [
+        rules: [
             { 
                 test: /\.js?$/,
-                loader: 'babel',
-                query: {
-                    cacheDirectory: false,
+                loader: 'babel-loader',
+                options: {
+                    // verbose: false,
+                    cacheDirectory: './.webpack_cache/',
                     presets: [
-                        'es2015', 
+                        ["es2015", {"loose": true}],
                     ]
                 },
                 exclude: /node_modules/,
             },
             {
-                test: /\.css$/,
-                loader: ExtractTextPlugin.extract("style-loader", "css-loader"),
-                include: path.resolve(config.path.src)
-            },
-            {
                 test: /\.less$/,
-                loader: ExtractTextPlugin.extract("style-loader", "css-loader!less-loader"),
-                include: [nodeModulesPath, path.resolve(config.path.src)]
+                loader: ExtractTextPlugin.extract({
+                    // fallback: 'style-loader', 
+                    use: [
+                        {
+                            loader: 'css-loader',
+                            options: {
+                                localIdentName: '[name]-[local]-[hash:base64:5]',
+                            }
+                        },
+                        {
+                            loader:  'less-loader',
+                        }
+                    ]
+                }),
             },
             {
                 test: /\.html$/,
@@ -52,22 +61,16 @@ module.exports = {
                 ],
                 include: path.resolve(config.path.src)
             },
-        ],
-        noParse: [
-            
         ]
     },
     plugins: [
-        new webpack.optimize.OccurrenceOrderPlugin(),
-        new webpack.NoErrorsPlugin(),
-        new ExtractTextPlugin("./css/[name].css"),
+        new webpack.NoEmitOnErrorsPlugin(),
+        new ExtractTextPlugin({ filename: "./css/[name].css", disable: false}),
         new HtmlResWebpackPlugin({
         	filename: "html/entry.html",
 	        template: config.path.src + "/resource-dev/index.html",
 	        chunks:{
-                'libs/react': {
-
-                },
+                'libs/react': null,
                 'js/index': {
                     attr:{
                         js: "",
@@ -93,5 +96,13 @@ module.exports = {
 	        htmlMinify: null
         })
     ],
-    watch: true,
+    resolve: {
+        modules: [
+            config.path.src,
+            "node_modules",
+        ],
+        extensions: [".js", ".jsx", ".css", ".scss", ".less", ".styl", ".png", ".jpg", ".jpeg", ".ico", ".ejs", ".pug", ".handlebars", "swf"],
+        alias: {}
+    },
+    // watch: true,
 };

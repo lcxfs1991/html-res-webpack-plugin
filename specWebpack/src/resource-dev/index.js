@@ -1,4 +1,5 @@
+"use strict";
 
-require('./index.less');
+import './index.less';
 
 var a = "hello world!";

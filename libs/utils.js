@@ -1,7 +1,6 @@
 'use strict';
 
-const path = require('path'),
-	  colors = require('colors');
+const path = require('path');
 
 
 module.exports = {
