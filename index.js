@@ -166,9 +166,7 @@ HtmlResWebpackPlugin.prototype.buildStatsHtmlMode = function(compilation) {
 };
 
 HtmlResWebpackPlugin.prototype.printChunkName = function(assets) {
-
 	let assetsArray = Object.keys(assets);
-
 	if (!assetsArray.length || !this.options.entryLog) {
 		return;
 	}
@@ -178,7 +176,7 @@ HtmlResWebpackPlugin.prototype.printChunkName = function(assets) {
 	utils.alert('<link rel="stylesheet" href="' + assetsArray[0] + '">');
 	utils.alert('<script src="' + assetsArray[0] + '"></script>');
 
-	assetsArray.map((chunk, key) => {
+	assetsArray.map((chunk, key) => {		
 		utils.info("chunk" + (key + 1) + ": " + chunk);
 	});
 };
@@ -445,8 +443,6 @@ HtmlResWebpackPlugin.prototype.injectAssets = function(compilation) {
 									('<script ' + jsAttr + ' >' + jsInline + '</script>')
 									: ('<script ' + jsAttr + ' type="text/javascript" src="' + srcPath + '"></script>\n');
 					
-					this.storeInlineRes(compilation, file);
-					
 					break;
 				}
 				case 'css': {
@@ -461,8 +457,6 @@ HtmlResWebpackPlugin.prototype.injectAssets = function(compilation) {
 									('<style ' + styleAttr + '>' + styleInline + '</style>')
 									: ('<link ' + styleAttr + ' rel="stylesheet" href="' + hrefPath + '">\n');
 					
-					this.storeInlineRes(compilation, file);
-
 					break;
 				}
 				case 'ico': {
@@ -514,6 +508,8 @@ HtmlResWebpackPlugin.prototype.inlineRes = function(compilation, chunk, file, fi
 	if (!chunk || !chunk.hasOwnProperty('inline') || !chunk.inline || !chunk.inline[fileType]) {
 		return false;
 	}
+
+	this.storeInlineRes(compilation, file);
 
 	return compilation.assets[file].source();
 };
