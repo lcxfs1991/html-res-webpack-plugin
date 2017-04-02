@@ -18,8 +18,7 @@ const fs = require('fs'),
 	  minify = require('html-minifier').minify,
 	  childCompiler = require('./libs/compiler'),
 	  utils = require('./libs/utils'),
-	  errors = require('./libs/errors'),
-	  loaderUtils = require('loader-utils');
+	  errors = require('./libs/errors');
 
 function HtmlResWebpackPlugin(options) {
 
@@ -30,7 +29,7 @@ function HtmlResWebpackPlugin(options) {
 		chunks: options.chunks || [],
 		htmlMinify: options.htmlMinify || false,
 		favicon: options.favicon || false,
-		templateContent: options.templateContent || function(tpl) { return tpl },
+		templateContent: options.templateContent || function(tpl) { return tpl; },
 		cssPublicPath: options.cssPublicPath || null,
 		entryLog: options.entryLog || false,
 	}, options);
@@ -74,7 +73,7 @@ HtmlResWebpackPlugin.prototype.checkRequiredOptions = function(options) {
  * @param  {[type]}   compiler [compiler]
  * @param  {Function} callback [async callback]
  */
-HtmlResWebpackPlugin.prototype.apply = function(compiler, callback) {
+HtmlResWebpackPlugin.prototype.apply = function(compiler) {
 
 	// format: loader!fiename
 	this.options.templateLoaderName = this.getFullTemplatePath(this.options.template);
@@ -102,7 +101,6 @@ HtmlResWebpackPlugin.prototype.apply = function(compiler, callback) {
       			return this.evaluateCompilationResult(compilation, compiledTemplate.content);
       		}).
       		then((compiledResult) => {
-
       			// return basename, ie, /xxx/xxx.html return xxx.html
 			    this.options.htmlFileName = this.addFileToWebpackAsset(compilation, this.options.template, utils.getBaseName(this.options.template, this.options.filename), IS_TO_STR, compiledResult);
 
@@ -135,41 +133,20 @@ HtmlResWebpackPlugin.prototype.apply = function(compiler, callback) {
       		});
 	});
 
-	compiler.plugin('done', (stats) => {
-		let outputPath = this.webpackOptions.output.path;
-
-		Object.keys(this.stats.inlineAssets).forEach((file) => {
-			let filePath = path.join(outputPath, file),
-				dirPath = path.dirname(filePath);
-
-			if (fs.existsSync(filePath)) {
-				fs.unlinkSync(filePath);
-			}
-
-			if (fs.existsSync(dirPath)) {
-				let files = fs.readdirSync(dirPath);
-
-				if (!files.length) {
-					rimraf(dirPath, function() {
-
-					});
-				}
-			}
-		});
-
-
+	compiler.plugin('done', () => {
+		this.removeInlineRes();
 	});
 
 };
 
 HtmlResWebpackPlugin.prototype.buildStatsHtmlMode = function(compilation) {
-	compilation.chunks.map((chunk, key) => {
+	compilation.chunks.map((chunk) => {
 		this.stats.assets[chunk.name] = chunk.files;
 	});
 
 	let assets = Object.keys(compilation.assets) || [];
 
-	assets.map((asset, key) => {
+	assets.map((asset) => {
 		let chunkName = compilation.assets[asset].chunk || null;
 		if (chunkName) {
 			if (!!~chunkName.indexOf(".")) {
@@ -240,12 +217,12 @@ HtmlResWebpackPlugin.prototype.buildStats = function(compilation) {
 	let optionChunks = this.options.chunks,
 		injectChunks = _.isArray(optionChunks) ? optionChunks : Object.keys(optionChunks);
 
-	compilation.chunks.map((chunk, key) => {
+	compilation.chunks.map((chunk) => {
 		if (!!~injectChunks.indexOf(chunk.name)) {
 			this.stats.assets[chunk.name] = chunk.files;
 		}
 	});
-
+	
 	/**
 	 * compatible with copy-webpack-plugin / copy-webpack-plugin-hash                                 [description]
 	 */
@@ -254,7 +231,7 @@ HtmlResWebpackPlugin.prototype.buildStats = function(compilation) {
 		return;
 	}
 
-	Object.keys(compilation.assets).map((assetKey, key) => {
+	Object.keys(compilation.assets).map((assetKey) => {
 		let files = [],
 			asset = compilation.assets[assetKey],
 			chunk = (asset.hasOwnProperty('chunk')) ? asset.chunk : "",
@@ -346,7 +323,7 @@ HtmlResWebpackPlugin.prototype.md5HtmlRes = function(routeStr, reg, publicPath, 
 			return tag;
 		}
 
-		assets.forEach(function(item, index) {
+		assets.forEach(function(item) {
 			if (!!~item.indexOf("." + extension) && !file) {
 				file = item;
 			}
@@ -373,19 +350,19 @@ HtmlResWebpackPlugin.prototype.inlineHtmlRes = function(routeStr, reg, compilati
 			return tag;
 		}
 
-		assets.forEach(function(item, index) {
+		assets.forEach(function(item) {
 			if (!!~item.indexOf("." + extension) && extension === "js") {
 				file = "<script>" + compilation.assets[item].source() + "</script>";
-				_this.removeInlineRes(compilation, item);
+				_this.storeInlineRes(compilation, item);
 			}
 			else if (!!~item.indexOf("." + extension) && extension === "css") {
 				file = "";
 				let cssContent = "";
-				compilation.assets[item].children.forEach(function(item, key) {
+				compilation.assets[item].children.forEach(function(item) {
 					cssContent += item._value;
 				}) ;
 				file = "<style>" + cssContent + "</style>";
-				_this.removeInlineRes(compilation, item);
+				_this.storeInlineRes(compilation, item);
 			}
 		});
 
@@ -397,9 +374,36 @@ HtmlResWebpackPlugin.prototype.inlineHtmlRes = function(routeStr, reg, compilati
 	return routeStr;
 };
 
-HtmlResWebpackPlugin.prototype.removeInlineRes = function(compilation, key) {
-	// delete compilation.assets[key];
+HtmlResWebpackPlugin.prototype.storeInlineRes = function(compilation, key) {
 	this.stats.inlineAssets[key] = true;
+};
+
+HtmlResWebpackPlugin.prototype.removeInlineRes = function() {
+	
+	if (!this.webpackOptions || !this.webpackOptions.output) {
+		return;
+	}
+
+	let outputPath = this.webpackOptions.output.path;
+
+	Object.keys(this.stats.inlineAssets).forEach((file) => {
+		let filePath = path.join(outputPath, file),
+			dirPath = path.dirname(filePath);
+
+		if (fs.existsSync(filePath)) {
+			fs.unlinkSync(filePath);
+		}
+
+		if (fs.existsSync(dirPath)) {
+			let files = fs.readdirSync(dirPath);
+
+			if (!files.length) {
+				rimraf(dirPath, function() {
+
+				});
+			}
+		}
+	});
 };
 
 
@@ -417,20 +421,19 @@ HtmlResWebpackPlugin.prototype.injectAssets = function(compilation) {
 		optionChunks = this.options.chunks,
 		injectChunks = _.isArray(optionChunks) ? optionChunks : Object.keys(optionChunks);
 
-	let loopKeys = Object.keys(this.stats.assets);
 	// use injectChunks in order to allow user to control occurences of file order
-	injectChunks.map((chunkKey, key1) => {
+	injectChunks.map((chunkKey) => {
 		
 		if (!this.stats.assets.hasOwnProperty(chunkKey)) {
 			this.stats.assets[chunkKey] = [optionChunks[chunkKey].res];
 		}
 		// console.log(this.stats.assets);
-		this.stats.assets[chunkKey].map((file, key2) => {
+		this.stats.assets[chunkKey].map((file) => {
 			let fileType = utils.getFileType(file),
 				isExternal = (optionChunks[chunkKey] && optionChunks[chunkKey].external) || false;
 			
 			switch(fileType) {
-				case 'js':
+				case 'js': {
 					let jsInline = false;
 					if (!_.isArray(optionChunks)) {
 						jsInline = this.inlineRes(compilation, optionChunks[chunkKey], file, fileType);
@@ -442,10 +445,11 @@ HtmlResWebpackPlugin.prototype.injectAssets = function(compilation) {
 									('<script ' + jsAttr + ' >' + jsInline + '</script>')
 									: ('<script ' + jsAttr + ' type="text/javascript" src="' + srcPath + '"></script>\n');
 					
-					this.removeInlineRes(compilation, file);
+					this.storeInlineRes(compilation, file);
 					
 					break;
-				case 'css':
+				}
+				case 'css': {
 					let styleInline = false;
 					if (!_.isArray(optionChunks)) {
 						styleInline = this.inlineRes(compilation, optionChunks[chunkKey], file, fileType);
@@ -457,11 +461,13 @@ HtmlResWebpackPlugin.prototype.injectAssets = function(compilation) {
 									('<style ' + styleAttr + '>' + styleInline + '</style>')
 									: ('<link ' + styleAttr + ' rel="stylesheet" href="' + hrefPath + '">\n');
 					
-					this.removeInlineRes(compilation, file);
+					this.storeInlineRes(compilation, file);
 
 					break;
-				case 'ico':
+				}
+				case 'ico': {
 					break;
+				}
 			}
 		});
 	});
@@ -469,7 +475,7 @@ HtmlResWebpackPlugin.prototype.injectAssets = function(compilation) {
 	// inject favicon
 	if (this.options.favicon) {
 		faviconContent = '<link rel="shortcut icon" type="image/x-icon" href="' + publicPath + this.options.faviconFileName + '">\n'
-    				      + '<link rel="icon" type="image/x-icon" href="' + publicPath + this.options.faviconFileName + '">\n'
+    				      + '<link rel="icon" type="image/x-icon" href="' + publicPath + this.options.faviconFileName + '">\n';
 	}
 	// console.log(compilation.assets[this.options.htmlFileName].source());
 	htmlContent = htmlContent.replace("</head>", faviconContent + "</head>").replace("</head>", styleContent + "</head>").replace("</body>", scriptContent + "</body>");
@@ -538,7 +544,7 @@ HtmlResWebpackPlugin.prototype.addFileToWebpackAsset = function(compilation, tem
 /**
  * Helper to return the absolute template path with a fallback loader
  */
-HtmlResWebpackPlugin.prototype.getFullTemplatePath = function (template, context) {
+HtmlResWebpackPlugin.prototype.getFullTemplatePath = function (template) {
   // If the template doesn't use a loader use the lodash template loader
   if (template.indexOf('!') === -1) {
     template = require.resolve('./libs/loader.js') + '!' + template;
