@@ -1,8 +1,7 @@
 'use strict';
 
 const path = require('path'),
-	  colors = require('colors');
-
+      chalk = require('chalk');
 
 module.exports = {
 
@@ -36,7 +35,7 @@ module.exports = {
 	 * @return {[type]}     [description]
 	 */
 	info: function(msg) {
-		console.log(msg.green);
+		console.log(chalk.green(msg));
 	},
 
 	/**
@@ -45,6 +44,6 @@ module.exports = {
 	 * @return {[type]}     [description]
 	 */
 	alert: function(msg) {
-		console.log(msg.yellow);
+		console.log(chalk.yellow(msg));
 	}
 };

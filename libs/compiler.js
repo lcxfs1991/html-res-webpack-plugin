@@ -15,8 +15,7 @@ module.exports.compileTemplate = function compileTemplate(template, context, out
 	    filename: outputFilename,
 	    publicPath: compilation.outputOptions.publicPath
 	};
-
-	// console.log(outputOptions);
+	
 	// Store the result of the parent compilation before we start the child compilation
 	var assetsBeforeCompilation = _.assign({}, compilation.assets[outputOptions.filename]);
 	// Create an additional child compiler which takes the template
