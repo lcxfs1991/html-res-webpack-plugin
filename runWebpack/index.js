@@ -15,6 +15,8 @@ var webpackConfig = [
 	require(basePath + '/resource-inline-1/webpack.config.js'),	// inline without compression
 	require(basePath + '/resource-inline-2/webpack.config.js'),	// inline with compression
 	require(basePath + '/resource-inline-3/webpack.config.js'),		// html mode inline without compression
+	require(basePath + '/resource-inline-4/webpack.config.js'),		// html mode inline without compression in dev mode
+	require(basePath + '/resource-inline-5/webpack.config.js'),		// inline without compression in dev mode 
 	require(basePath + '/resource-md5-1/webpack.config.js'),		// md5 with compression / index chunk before react
 	require(basePath + '/resource-md5-2/webpack.config.js'),	    // md5 without compression  / react chunk before index
 	require(basePath + '/resource-md5-3/webpack.config.js'),		// html mode md5 without compression

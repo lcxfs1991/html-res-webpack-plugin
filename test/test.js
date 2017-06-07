@@ -105,6 +105,42 @@ describe("resource-inline-3", function() {
     });
 });
 
+describe("resource-inline-4", function() {
+    it("=> html mode inline without compression in dev mode", function() {
+        let distHtml = path.join(TEST, 'dist/resource-inline-4/index.html'),
+            resultHtml = path.join(TEST, 'result/resource-inline-4/index.html');
+
+        let distContent = fs.readFileSync(distHtml).toString(),
+            resultContent = fs.readFileSync(resultHtml).toString();
+
+        let folder =  path.join(TEST, 'dist/resource-inline-4');
+        let folderInfo = fs.readdirSync(folder);
+
+        expect(folderInfo.length).to.be(3);
+        expect(folderInfo[1]).to.be('index.html');
+
+        expect(true).to.be(distContent === resultContent);
+    });
+});
+
+describe("resource-inline-5", function() {
+    it("=> inline without compression in dev mode ", function() {
+        let distHtml = path.join(TEST, 'dist/resource-inline-5/index.html'),
+            resultHtml = path.join(TEST, 'result/resource-inline-5/index.html');
+
+        let distContent = fs.readFileSync(distHtml).toString(),
+            resultContent = fs.readFileSync(resultHtml).toString();
+
+        let folder =  path.join(TEST, 'dist/resource-inline-5');
+        let folderInfo = fs.readdirSync(folder);
+
+        expect(folderInfo.length).to.be(3);
+        expect(folderInfo[1]).to.be('index.html');
+
+        expect(true).to.be(distContent === resultContent);
+    });
+});
+
 describe("resource-md5-1", function() {
   	it("=> md5 with compression / index chunk before react", function() {
         let distHtml = path.join(TEST, 'dist/resource-md5-1/index.html'),

@@ -25,6 +25,7 @@ function HtmlResWebpackPlugin(options) {
 	// user input options
 	this.options = _.extend({
 		mode: options.mode || 'default', // default => 配置 html => 写在html中
+		env: options.env || 'production',
 		filename: options.filename || '',
 		chunks: options.chunks || [],
 		htmlMinify: options.htmlMinify || false,
@@ -268,7 +269,7 @@ HtmlResWebpackPlugin.prototype.checkResource = function(htmlContent, publicPath,
 		if (!!~route.indexOf("__inline")) {
 			// css inline
 			let styleInlineRegex = new RegExp("<link.*href=(\s*?)*(.+)[\?]\_\_inline.*?(\s*?)>", "ig");
-			route = this.inlineHtmlRes(route, styleInlineRegex, compilation, 'css'); 
+			route = this.inlineHtmlRes(route, styleInlineRegex, publicPath, compilation, 'css'); 
 		}
 		else {
 			// css md5
@@ -286,7 +287,7 @@ HtmlResWebpackPlugin.prototype.checkResource = function(htmlContent, publicPath,
 		if (!!~route.indexOf("__inline")) {
 			// js inline
 			let scriptInlineRegex = new RegExp("<script.*src=(\s*?)*(.+)[\?]\_\_inline.*?(\s*?)><\/script>", "ig");
-			route = this.inlineHtmlRes(route, scriptInlineRegex, compilation, 'js');
+			route = this.inlineHtmlRes(route, scriptInlineRegex, publicPath, compilation, 'js');
 		}
 		else {
 			// js md5
@@ -335,7 +336,8 @@ HtmlResWebpackPlugin.prototype.md5HtmlRes = function(routeStr, reg, publicPath, 
 	return routeStr;
 };
 
-HtmlResWebpackPlugin.prototype.inlineHtmlRes = function(routeStr, reg, compilation, extension) {
+HtmlResWebpackPlugin.prototype.inlineHtmlRes = function(routeStr, reg, publicPath, compilation, extension) {
+
 	let _this = this;
 
 	routeStr = routeStr.replace(reg, function(tag, gap, route) {
@@ -348,23 +350,38 @@ HtmlResWebpackPlugin.prototype.inlineHtmlRes = function(routeStr, reg, compilati
 			return tag;
 		}
 
-		assets.forEach(function(item) {
-			if (!!~item.indexOf("." + extension) && extension === "js") {
-				file = "<script>" + compilation.assets[item].source() + "</script>";
-				_this.storeInlineRes(compilation, item);
-			}
-			else if (!!~item.indexOf("." + extension) && extension === "css") {
-				file = "";
-				let cssContent = "";
-				compilation.assets[item].children.forEach(function(item) {
-					cssContent += item._value;
-				}) ;
-				file = "<style>" + cssContent + "</style>";
-				_this.storeInlineRes(compilation, item);
-			}
-		});
+		if (_this.options.env === 'development') {
+			route = route.replace(/[\"|']/g, "").replace(/[ ]* \//g, "");
 
-		tag = tag.replace(tag, file);
+			assets.forEach(function(item) {
+				if (!!~item.indexOf("." + extension) && !file) {
+					file = item;
+				}
+			});
+
+			tag = tag.replace(route, publicPath + file);
+		}
+		else {
+			assets.forEach(function(item) {
+				if (!!~item.indexOf("." + extension) && extension === "js") {
+					file = "<script>" + compilation.assets[item].source() + "</script>";
+					_this.storeInlineRes(compilation, item);
+				}
+				else if (!!~item.indexOf("." + extension) && extension === "css") {
+					file = "";
+					let cssContent = "";
+					compilation.assets[item].children.forEach(function(item) {
+						cssContent += item._value;
+					}) ;
+					file = "<style>" + cssContent + "</style>";
+					_this.storeInlineRes(compilation, item);
+				}
+			});
+
+			tag = tag.replace(tag, file);
+		}
+
+		
 
 		return tag;
 	});
@@ -505,7 +522,8 @@ HtmlResWebpackPlugin.prototype.injectAssetsAttr = function(chunk, fileType) {
  * @return {[type]}             [description]
  */
 HtmlResWebpackPlugin.prototype.inlineRes = function(compilation, chunk, file, fileType) {
-	if (!chunk || !chunk.hasOwnProperty('inline') || !chunk.inline || !chunk.inline[fileType]) {
+	if (!chunk || !chunk.hasOwnProperty('inline') || !chunk.inline 
+		|| !chunk.inline[fileType] || this.options.env === 'development') {
 		return false;
 	}
 

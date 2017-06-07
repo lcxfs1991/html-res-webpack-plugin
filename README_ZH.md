@@ -337,6 +337,9 @@ plugins: [
 - `mode`:
     - is optional
     - `default` (在`chunks`配置中配置资源) | `html` (在html文中配置资源)
+- `env`
+    - is optional
+    - `production` (生产环境) | `development`  (开发环境, 支持不内联元素)
 - `filename`:
     - is required
     - 生成的html文件名
@@ -443,3 +446,4 @@ plugins: [
 - v1.3.3 去除inline的资源
 - v1.3.4 修复去除inline的资源带来的bug
 - v2.0.0 升级部份依赖，以及优化测试用例
+- v2.0.1 开发模式下，支持不内联资源

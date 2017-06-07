@@ -338,6 +338,9 @@ plugins: [
 - `mode`:
     - is optional
     - `default` (write assets in config `chunks`) | `html` (write assets in html)
+- `env`
+    - is optional
+    - `production` (production env) | `development`  (development env, not inline resource)
 - `filename`:
     - is required
     - generated filename
@@ -445,3 +448,4 @@ If you still don't understand README, you can checkout examples in specWepback w
 - v1.3.3 remove inline resource
 - v1.3.4 fix removeing inline resource bug
 - v2.0.0 upgrade some dependencies and improve test cases
+- v2.0.1 not inline when in dev mode
