@@ -44,6 +44,27 @@ describe("resource-dev1", function() {
     });
 });
 
+describe("resource-dev2", function() {
+    it("=> html mode dev environment with extension", function() {
+        let distHtml = path.join(TEST, 'dist/resource-dev2/html/entry.html'),
+            resultHtml = path.join(TEST, '/result/resource-dev2/index.html');
+
+        let distContent = fs.readFileSync(distHtml).toString(),
+            resultContent = fs.readFileSync(resultHtml).toString();
+
+        expect(true).to.be(distContent === resultContent);
+
+        let folder =  path.join(TEST, 'dist/resource-dev2');
+        let fileInfo = fs.readdirSync(folder);
+        expect(fileInfo).to.eql([ 'css', 'html', 'js']);
+
+        let jsfolder = path.join(TEST, 'dist/resource-dev2/js');
+        let jsInfo = fs.readdirSync(jsfolder);
+        expect(jsInfo).to.eql(['index.js', 'libs']);
+
+    });
+});
+
 
 describe("resource-inline-1", function() {
 	it("=> inline without compression", function() {
@@ -141,6 +162,18 @@ describe("resource-inline-5", function() {
     });
 });
 
+describe("resource-inline-6", function() {
+    it("=> inline without compression with extension", function() {
+        let distHtml = path.join(TEST, 'dist/resource-inline-6/index.html'),
+            resultHtml = path.join(TEST, 'result/resource-inline-6/index.html');
+
+        let distContent = fs.readFileSync(distHtml).toString(),
+            resultContent = fs.readFileSync(resultHtml).toString();
+
+        expect(true).to.be(distContent === resultContent);
+    });
+});
+
 describe("resource-md5-1", function() {
   	it("=> md5 with compression / index chunk before react", function() {
         let distHtml = path.join(TEST, 'dist/resource-md5-1/index.html'),
@@ -212,6 +245,29 @@ describe("resource-md5-4", function() {
         expect(true).to.be(distContent === resultContent);
 
         let cdnFolder = path.join(TEST, 'dist/resource-md5-4/cdn'),
+            cdnInfo = fs.readdirSync(cdnFolder);
+
+        expect(cdnInfo).to.eql(['css', 'js']);
+    });
+});
+
+describe("resource-md5-5", function() {
+    it("=> html mode md5 without compression with extension", function() {
+        let distHtml = path.join(TEST, 'dist/resource-md5-5/index.html'),
+            resultHtml = path.join(TEST, 'result/resource-md5-5/index.html');
+
+        let distContent = fs.readFileSync(distHtml).toString(),
+            resultContent = fs.readFileSync(resultHtml).toString();
+
+        let assets = JSON.parse(fs.readFileSync(path.join(TEST, 'dist/resource-md5-5/manifest.json'), "utf-8") || "");
+
+        Object.keys(assets).forEach((file) => {
+            resultContent = resultContent.replace("[" + file + "]", assets[file]);
+        });
+
+        expect(true).to.be(distContent === resultContent);
+
+        let cdnFolder = path.join(TEST, 'dist/resource-md5-5/cdn'),
             cdnInfo = fs.readdirSync(cdnFolder);
 
         expect(cdnInfo).to.eql(['css', 'js']);

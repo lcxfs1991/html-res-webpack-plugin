@@ -308,14 +308,18 @@ HtmlResWebpackPlugin.prototype.md5HtmlRes = function(routeStr, reg, publicPath, 
 	routeStr = routeStr.replace(reg, function(tag, gap, route) {
 		
 		route = route.replace(/[\"|']/g, "").replace(/[ ]* \//g, "");
-		// console.log(tag, gap, route);
 
 		if (extension === "ico" && !!~route.indexOf("." + extension)) {
 			tag = tag.replace(route, publicPath + route);
 			return tag;
 		}
 
-		var assets = _this.stats.assets[route] || [],
+		// compatible with syntax: src="index.js"
+		extension = path.extname(route).replace(".", "") || extension;
+		
+		let newRoute = route.replace("." + extension, "");
+		
+		let assets = _this.stats.assets[newRoute] || [],
 			file = "";
 
 		if (!assets.length) {
@@ -342,8 +346,13 @@ HtmlResWebpackPlugin.prototype.inlineHtmlRes = function(routeStr, reg, publicPat
 
 	routeStr = routeStr.replace(reg, function(tag, gap, route) {
 		route = route.replace(/[\"|']/g, "");
-		// console.log(tag, gap, route);
-		var assets = _this.stats.assets[route] || [],
+		
+		// compatible with syntax: src="index.js"
+		extension = path.extname(route).replace(".", "") || extension;
+		
+		let newRoute = route.replace("." + extension, "");
+		
+		var assets = _this.stats.assets[newRoute] || [],
 			file = "";
 
 		if (!assets.length) {

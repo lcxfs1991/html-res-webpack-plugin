@@ -284,6 +284,13 @@ chunk4: js/detail
 chunk5: libs/react
 ```
 
+一些开发者常错手将文件后缀名也写到 chunk 后面，插件也支持这种情况的资源匹配，如：
+
+```html
+<script asycn defer src="libs/react.js"></script>
+<link asycn defer rel="stylesheet" href="index.css">
+```
+
 
 ## 与 ```copy-webpack-plugin-hash```插件搭配使用
 [copy-webpack-plugin-hash](https://www.npmjs.com/package/copy-webpack-plugin-hash) 是一个帮助直接复制文件的webpack插件。 我添加了一个`namePattern`的选项目，这样能够让复制的文件也带上hash（一旦主要的repo接受了我的request，我可能会删掉这个临时的repo）
@@ -447,3 +454,4 @@ plugins: [
 - v1.3.4 修复去除inline的资源带来的bug
 - v2.0.0 升级部份依赖，以及优化测试用例
 - v2.0.1 开发模式下，支持不内联资源
+- v2.0.2 支持在资源末尾添加后缀名
