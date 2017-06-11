@@ -358,6 +358,7 @@ plugins: [
     }),
 ]
 ```
+
 If you prefer writing assets in html files, it works too! Each file copied by the plugin will be regarded as a chunk, like `libs/react`, `libs/react-dom`, `js/index`. You can use these chunk names for `html-res-webpack-plugin` to match resource in html files which makes you easier to inline or md5 resources.
 
 ## Options
