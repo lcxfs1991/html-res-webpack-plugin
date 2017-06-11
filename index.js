@@ -9,7 +9,7 @@
 const isDebug = false,
 	  IS_TO_STR = true; 
 
-const fs = require('fs'),
+const fs = require('fs-extra'),
       rimraf = require('rimraf'),
 	  _ = require('lodash'),
 	  vm = require('vm'),
@@ -78,6 +78,8 @@ HtmlResWebpackPlugin.prototype.apply = function(compiler) {
 
 	// format: loader!fiename
 	this.options.templateLoaderName = this.getFullTemplatePath(this.options.template);
+	this.options.templateDir = path.dirname(this.options.template); // template directory
+	this.options.distPath = compiler.options.output.path; // destination path
 
 	var compilationPromise = null;
 
@@ -177,7 +179,7 @@ HtmlResWebpackPlugin.prototype.printChunkName = function(assets) {
 	utils.alert('<link rel="stylesheet" href="' + assetsArray[0] + '">');
 	utils.alert('<script src="' + assetsArray[0] + '"></script>');
 
-	assetsArray.map((chunk, key) => {		
+	assetsArray.map((chunk, key) => {	
 		utils.info("chunk" + (key + 1) + ": " + chunk);
 	});
 };
@@ -346,7 +348,6 @@ HtmlResWebpackPlugin.prototype.inlineHtmlRes = function(routeStr, reg, publicPat
 
 	routeStr = routeStr.replace(reg, function(tag, gap, route) {
 		route = route.replace(/[\"|']/g, "");
-		
 		// compatible with syntax: src="index.js"
 		extension = path.extname(route).replace(".", "") || extension;
 		
@@ -356,41 +357,59 @@ HtmlResWebpackPlugin.prototype.inlineHtmlRes = function(routeStr, reg, publicPat
 			file = "";
 
 		if (!assets.length) {
-			return tag;
-		}
+			let resFile = path.resolve(_this.options.templateDir, route);
 
-		if (_this.options.env === 'development') {
-			route = route.replace(/[\"|']/g, "").replace(/[ ]* \//g, "");
-
-			assets.forEach(function(item) {
-				if (!!~item.indexOf("." + extension) && !file) {
-					file = item;
+			if (fs.existsSync(resFile)) {
+				let fileContent = fs.readFileSync(resFile, "utf-8");
+				
+				if (extension === 'js') {
+					file = "<script>" + fileContent + "</script>";
 				}
-			});
+				else if (extension === 'css') {
+					file = "<style>" + fileContent + "</style>";
+				}
 
-			tag = tag.replace(route, publicPath + file);
+				if (file) {
+					tag = tag.replace(tag, file);
+				}
+			}
 		}
 		else {
-			assets.forEach(function(item) {
-				if (!!~item.indexOf("." + extension) && extension === "js") {
-					file = "<script>" + compilation.assets[item].source() + "</script>";
-					_this.storeInlineRes(compilation, item);
-				}
-				else if (!!~item.indexOf("." + extension) && extension === "css") {
-					file = "";
-					let cssContent = "";
-					compilation.assets[item].children.forEach(function(item) {
-						cssContent += item._value;
-					}) ;
-					file = "<style>" + cssContent + "</style>";
-					_this.storeInlineRes(compilation, item);
-				}
-			});
+			if (_this.options.env === 'development') {
+				route = route.replace(/[\"|']/g, "").replace(/[ ]* \//g, "");
 
-			tag = tag.replace(tag, file);
+				assets.forEach(function(item) {
+					if (!!~item.indexOf("." + extension) && !file) {
+						file = item;
+					}
+				});
+
+				if (file) {
+					tag = tag.replace(route, publicPath + file);
+				}
+			}
+			else {
+				assets.forEach(function(item) {
+					if (!!~item.indexOf("." + extension) && extension === "js") {
+						file = "<script>" + compilation.assets[item].source() + "</script>";
+						_this.storeInlineRes(compilation, item);
+					}
+					else if (!!~item.indexOf("." + extension) && extension === "css") {
+						file = "";
+						let cssContent = "";
+						compilation.assets[item].children.forEach(function(item) {
+							cssContent += item._value;
+						}) ;
+						file = "<style>" + cssContent + "</style>";
+						_this.storeInlineRes(compilation, item);
+					}
+				});
+				// if file is not null, then replace
+				if (file) {
+					tag = tag.replace(tag, file);
+				}
+			}
 		}
-
-		
 
 		return tag;
 	});

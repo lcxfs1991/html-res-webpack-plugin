@@ -291,6 +291,24 @@ chunk5: libs/react
 <link asycn defer rel="stylesheet" href="index.css">
 ```
 
+如果你想内联一些不需要经过 webpack 打包的资源，你既可以通过 `copy-webpack-plugin-hash` (下一部份提及），也可以通过插件达成。例如，如果项目的目录结构如下：
+
+```javascript
+-- src
+  |-- index.html
+  |-- libs
+  |    |-- react.js
+  |-- css
+  |    |-- index.css
+```
+
+那么，你可以将在 `index.html` 中的资源匹配写成这样：
+
+```html
+<script asycn defer src="./libs/react.js?__inline"></script>
+<link asycn defer rel="stylesheet" href="./css/index.css?__inline">
+```
+
 
 ## 与 ```copy-webpack-plugin-hash```插件搭配使用
 [copy-webpack-plugin-hash](https://www.npmjs.com/package/copy-webpack-plugin-hash) 是一个帮助直接复制文件的webpack插件。 我添加了一个`namePattern`的选项目，这样能够让复制的文件也带上hash（一旦主要的repo接受了我的request，我可能会删掉这个临时的repo）
@@ -455,3 +473,4 @@ plugins: [
 - v2.0.0 升级部份依赖，以及优化测试用例
 - v2.0.1 开发模式下，支持不内联资源
 - v2.0.2 支持在资源末尾添加后缀名
+- v2.0.3 支持内联不经webpack编译的资源
