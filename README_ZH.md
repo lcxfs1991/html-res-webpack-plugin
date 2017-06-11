@@ -357,7 +357,7 @@ plugins: [
     }),
 ]
 ```
-如果你倾向于在 html 文件中写资源，那也可以！每一个被插件拷贝的文件都将会被看作一个 chunk， 如 `libs/react`, `libs/react-dom`, `js/index`。你可以用这些 chunk 名字给 `html-res-webpack-plugin` 用于在 html 文件中匹配资源。
+如果你倾向于在 html 文件中写资源，那也可以！每一个被插件拷贝的文件都将会被看作一个 chunk， 如 `libs/react`, `libs/react-dom`, `js/index`。你可以用这些 chunk 名字给 `html-res-webpack-plugin` 用于在 html 文件中匹配资源，那你便可以轻松进行资源内联或者md5了！
 
 ## Options
 - `mode`:
