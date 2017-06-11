@@ -358,6 +358,7 @@ plugins: [
     }),
 ]
 ```
+If you prefer writing assets in html files, it works too! Each file copied by the plugin will be regarded as a chunk, like `libs/react`, `libs/react-dom`, `js/index`. You can use these chunk names for `html-res-webpack-plugin` to match resource in html files which makes you easier to inline or md5 resources.
 
 ## Options
 - `mode`:
@@ -475,4 +476,4 @@ If you still don't understand README, you can checkout examples in specWepback w
 - v2.0.0 upgrade some dependencies and improve test cases
 - v2.0.1 not inline when in dev mode
 - v2.0.2 appending extension to chunk in resource is also supported
-- v2.0.3 support inline resource without webpack parse
+- v2.0.3 support inline resource without webpack compilation
