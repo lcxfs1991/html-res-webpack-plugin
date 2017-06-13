@@ -325,7 +325,7 @@ HtmlResWebpackPlugin.prototype.md5HtmlRes = function(routeStr, reg, publicPath, 
 		
 		//let newRoute = route.replace("." + extension, "");
 
-		let newRoute = route
+		let newRoute = route;
 
 		if(endsWith(route,'.'+extension)) {
 			newRoute = route.replace(new RegExp('(.*)\.' + extension, 'g'), '$1');
