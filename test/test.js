@@ -6,15 +6,19 @@ const path = require('path'),
 
 const TEST = path.resolve('test');
 
+function trimString(str) {
+    return str.replace(/(\r\n|\n|\r)/gm,"");
+}
+
 describe("resource-dev", function() {
   	it("=> dev environment && custom html path", function() {
   		let distHtml = path.join(TEST, 'dist/resource-dev/html/entry.html'),
   			resultHtml = path.join(TEST, '/result/resource-dev/index.html');
 
-  		let distContent = fs.readFileSync(distHtml).toString(),
-  			resultContent = fs.readFileSync(resultHtml).toString();
-        
-    	expect(true).to.be(distContent === resultContent);
+  		let distContent = trimString(fs.readFileSync(distHtml, "utf-8")),
+  			resultContent = trimString(fs.readFileSync(resultHtml, "utf-8"));
+
+    	expect(resultContent).to.be(distContent);
 
         let folder =  path.join(TEST, 'dist/resource-dev');
         let fileInfo = fs.readdirSync(folder);
@@ -28,8 +32,8 @@ describe("resource-dev1", function() {
         let distHtml = path.join(TEST, 'dist/resource-dev1/html/entry.html'),
             resultHtml = path.join(TEST, '/result/resource-dev1/index.html');
 
-        let distContent = fs.readFileSync(distHtml).toString(),
-            resultContent = fs.readFileSync(resultHtml).toString();
+        let distContent = trimString(fs.readFileSync(distHtml, "utf-8")),
+            resultContent = trimString(fs.readFileSync(resultHtml, "utf-8"));
 
         expect(true).to.be(distContent === resultContent);
 
@@ -49,8 +53,8 @@ describe("resource-dev2", function() {
         let distHtml = path.join(TEST, 'dist/resource-dev2/html/entry.html'),
             resultHtml = path.join(TEST, '/result/resource-dev2/index.html');
 
-        let distContent = fs.readFileSync(distHtml).toString(),
-            resultContent = fs.readFileSync(resultHtml).toString();
+        let distContent = trimString(fs.readFileSync(distHtml, 'utf-8')),
+            resultContent = trimString(fs.readFileSync(resultHtml, 'utf-8'));
 
         expect(true).to.be(distContent === resultContent);
 
@@ -71,8 +75,8 @@ describe("resource-inline-1", function() {
     	let distHtml = path.join(TEST, 'dist/resource-inline-1/index.html'),
   			resultHtml = path.join(TEST, 'result/resource-inline-1/index.html');
 
-  		let distContent = fs.readFileSync(distHtml).toString(),
-  			resultContent = fs.readFileSync(resultHtml).toString();
+  		let distContent = trimString(fs.readFileSync(distHtml, 'utf-8')),
+  			resultContent = trimString(fs.readFileSync(resultHtml, 'utf-8'));
 
         let folder =  path.join(TEST, 'dist/resource-inline-1');
         let folderInfo = fs.readdirSync(folder);
@@ -89,8 +93,8 @@ describe("resource-inline-2", function() {
     	let distHtml = path.join(TEST, 'dist/resource-inline-2/index.html'),
             resultHtml = path.join(TEST, 'result/resource-inline-2/index.html');
 
-  		let distContent = fs.readFileSync(distHtml).toString(),
-  			resultContent = fs.readFileSync(resultHtml).toString();
+  		let distContent = trimString(fs.readFileSync(distHtml, 'utf-8')),
+  			resultContent = trimString(fs.readFileSync(resultHtml, 'utf-8'));
 
         let folder =  path.join(TEST, 'dist/resource-inline-1');
         let folderInfo = fs.readdirSync(folder);
@@ -107,8 +111,8 @@ describe("resource-inline-3", function() {
         let distHtml = path.join(TEST, 'dist/resource-inline-3/index.html'),
             resultHtml = path.join(TEST, 'result/resource-inline-3/index.html');
 
-        let distContent = fs.readFileSync(distHtml).toString(),
-            resultContent = fs.readFileSync(resultHtml).toString();
+        let distContent = trimString(fs.readFileSync(distHtml, 'utf-8')),
+            resultContent = trimString(fs.readFileSync(resultHtml, 'utf-8'));
 
         let folder =  path.join(TEST, 'dist/resource-inline-3');
         let folderInfo = fs.readdirSync(folder);
@@ -131,8 +135,8 @@ describe("resource-inline-4", function() {
         let distHtml = path.join(TEST, 'dist/resource-inline-4/index.html'),
             resultHtml = path.join(TEST, 'result/resource-inline-4/index.html');
 
-        let distContent = fs.readFileSync(distHtml).toString(),
-            resultContent = fs.readFileSync(resultHtml).toString();
+        let distContent = trimString(fs.readFileSync(distHtml, 'utf-8')),
+            resultContent = trimString(fs.readFileSync(resultHtml, 'utf-8'));
 
         let folder =  path.join(TEST, 'dist/resource-inline-4');
         let folderInfo = fs.readdirSync(folder);
@@ -149,8 +153,8 @@ describe("resource-inline-5", function() {
         let distHtml = path.join(TEST, 'dist/resource-inline-5/index.html'),
             resultHtml = path.join(TEST, 'result/resource-inline-5/index.html');
 
-        let distContent = fs.readFileSync(distHtml).toString(),
-            resultContent = fs.readFileSync(resultHtml).toString();
+        let distContent = trimString(fs.readFileSync(distHtml, 'utf-8')),
+            resultContent = trimString(fs.readFileSync(resultHtml, 'utf-8'));
 
         let folder =  path.join(TEST, 'dist/resource-inline-5');
         let folderInfo = fs.readdirSync(folder);
@@ -167,8 +171,8 @@ describe("resource-inline-6", function() {
         let distHtml = path.join(TEST, 'dist/resource-inline-6/index.html'),
             resultHtml = path.join(TEST, 'result/resource-inline-6/index.html');
 
-        let distContent = fs.readFileSync(distHtml).toString(),
-            resultContent = fs.readFileSync(resultHtml).toString();
+        let distContent = trimString(fs.readFileSync(distHtml, 'utf-8')),
+            resultContent = trimString(fs.readFileSync(resultHtml, 'utf-8'));
 
         expect(true).to.be(distContent === resultContent);
     });
@@ -179,8 +183,8 @@ describe("resource-inline-7", function() {
         let distHtml = path.join(TEST, 'dist/resource-inline-7/index.html'),
             resultHtml = path.join(TEST, 'result/resource-inline-7/index.html');
 
-        let distContent = fs.readFileSync(distHtml).toString(),
-            resultContent = fs.readFileSync(resultHtml).toString();
+        let distContent = trimString(fs.readFileSync(distHtml, 'utf-8')),
+            resultContent = trimString(fs.readFileSync(resultHtml, 'utf-8'));
 
         expect(true).to.be(distContent === resultContent);
     });
@@ -191,8 +195,8 @@ describe("resource-md5-1", function() {
         let distHtml = path.join(TEST, 'dist/resource-md5-1/index.html'),
             resultHtml = path.join(TEST, 'result/resource-md5-1/index.html');
 
-  		let distContent = fs.readFileSync(distHtml).toString(),
-  			resultContent = fs.readFileSync(resultHtml).toString();
+  		let distContent = trimString(fs.readFileSync(distHtml, 'utf-8')),
+  			resultContent = trimString(fs.readFileSync(resultHtml, 'utf-8'));
 
         let assets = JSON.parse(fs.readFileSync(path.join(TEST, 'dist/resource-md5-1/manifest.json'), "utf-8") || "");
 
@@ -209,8 +213,8 @@ describe("resource-md5-2", function() {
     	let distHtml = path.join(TEST, 'dist/resource-md5-2/index.html'),
             resultHtml = path.join(TEST, 'result/resource-md5-2/index.html');
 
-        let distContent = fs.readFileSync(distHtml).toString(),
-            resultContent = fs.readFileSync(resultHtml).toString();
+        let distContent = trimString(fs.readFileSync(distHtml, 'utf-8')),
+            resultContent = trimString(fs.readFileSync(resultHtml, 'utf-8'));
 
         let assets = JSON.parse(fs.readFileSync(path.join(TEST, 'dist/resource-md5-2/manifest.json'), "utf-8") || "");
 
@@ -227,8 +231,8 @@ describe("resource-md5-3", function() {
         let distHtml = path.join(TEST, 'dist/resource-md5-3/index.html'),
             resultHtml = path.join(TEST, 'result/resource-md5-3/index.html');
 
-        let distContent = fs.readFileSync(distHtml).toString(),
-            resultContent = fs.readFileSync(resultHtml).toString();
+        let distContent = trimString(fs.readFileSync(distHtml, 'utf-8')),
+            resultContent = trimString(fs.readFileSync(resultHtml, 'utf-8'));
 
         let assets = JSON.parse(fs.readFileSync(path.join(TEST, 'dist/resource-md5-3/manifest.json'), "utf-8") || "");
 
@@ -245,8 +249,8 @@ describe("resource-md5-4", function() {
         let distHtml = path.join(TEST, 'dist/resource-md5-4/index.html'),
             resultHtml = path.join(TEST, 'result/resource-md5-4/index.html');
 
-        let distContent = fs.readFileSync(distHtml).toString(),
-            resultContent = fs.readFileSync(resultHtml).toString();
+        let distContent = trimString(fs.readFileSync(distHtml, 'utf-8')),
+            resultContent = trimString(fs.readFileSync(resultHtml, 'utf-8'));
 
         let assets = JSON.parse(fs.readFileSync(path.join(TEST, 'dist/resource-md5-4/manifest.json'), "utf-8") || "");
 
@@ -268,8 +272,8 @@ describe("resource-md5-5", function() {
         let distHtml = path.join(TEST, 'dist/resource-md5-5/index.html'),
             resultHtml = path.join(TEST, 'result/resource-md5-5/index.html');
 
-        let distContent = fs.readFileSync(distHtml).toString(),
-            resultContent = fs.readFileSync(resultHtml).toString();
+        let distContent = trimString(fs.readFileSync(distHtml, 'utf-8')),
+            resultContent = trimString(fs.readFileSync(resultHtml, 'utf-8'));
 
         let assets = JSON.parse(fs.readFileSync(path.join(TEST, 'dist/resource-md5-5/manifest.json'), "utf-8") || "");
 
@@ -291,8 +295,8 @@ describe("resource-favico", function() {
     	let distHtml = path.join(TEST, 'dist/resource-favico/index.html'),
             resultHtml = path.join(TEST, 'result/resource-favico/index.html');
 
-        let distContent = fs.readFileSync(distHtml).toString(),
-            resultContent = fs.readFileSync(resultHtml).toString();
+        let distContent = trimString(fs.readFileSync(distHtml, 'utf-8')),
+            resultContent = trimString(fs.readFileSync(resultHtml, 'utf-8'));
 
         let assets = JSON.parse(fs.readFileSync(path.join(TEST, 'dist/resource-favico/manifest.json'), "utf-8") || "");
 
@@ -315,8 +319,8 @@ describe("resource-favico1", function() {
         let distHtml = path.join(TEST, 'dist/resource-favico-1/index.html'),
             resultHtml = path.join(TEST, 'result/resource-favico-1/index.html');
 
-        let distContent = fs.readFileSync(distHtml).toString(),
-            resultContent = fs.readFileSync(resultHtml).toString();
+        let distContent = trimString(fs.readFileSync(distHtml, 'utf-8')),
+            resultContent = trimString(fs.readFileSync(resultHtml, 'utf-8'));
 
         let assets = JSON.parse(fs.readFileSync(path.join(TEST, 'dist/resource-favico-1/manifest.json'), "utf-8") || "");
 
@@ -338,8 +342,8 @@ describe("resource-common-1", function() {
         let distHtml = path.join(TEST, 'dist/resource-common-1/index.html'),
                 resultHtml = path.join(TEST, 'result/resource-common-1/index.html');
 
-        let distContent = fs.readFileSync(distHtml).toString(),
-            resultContent = fs.readFileSync(resultHtml).toString();
+        let distContent = trimString(fs.readFileSync(distHtml, 'utf-8')),
+            resultContent = trimString(fs.readFileSync(resultHtml, 'utf-8'));
 
         let assets = JSON.parse(fs.readFileSync(path.join(TEST, 'dist/resource-common-1/manifest.json'), "utf-8") || "{}");
 
@@ -364,8 +368,8 @@ describe("resource-common-2", function() {
         let distHtml = path.join(TEST, 'dist/resource-common-2/index.html'),
                 resultHtml = path.join(TEST, 'result/resource-common-2/index.html');
 
-        let distContent = fs.readFileSync(distHtml).toString(),
-            resultContent = fs.readFileSync(resultHtml).toString();
+        let distContent = trimString(fs.readFileSync(distHtml, 'utf-8')),
+            resultContent = trimString(fs.readFileSync(resultHtml, 'utf-8'));
 
         let assets = JSON.parse(fs.readFileSync(path.join(TEST, 'dist/resource-common-2/manifest.json'), "utf-8") || "");
 
@@ -390,8 +394,8 @@ describe("resource-copy-plugin-1", function() {
         let distHtml = path.join(TEST, 'dist/resource-copy-plugin-1/index.html'),
                 resultHtml = path.join(TEST, 'result/resource-copy-plugin-1/index.html');
 
-        let distContent = fs.readFileSync(distHtml).toString(),
-            resultContent = fs.readFileSync(resultHtml).toString();
+        let distContent = trimString(fs.readFileSync(distHtml, 'utf-8')),
+            resultContent = trimString(fs.readFileSync(resultHtml, 'utf-8'));
         
         let assets = JSON.parse(fs.readFileSync(path.join(TEST, 'dist/resource-copy-plugin-1/manifest.json'), "utf-8") || "");
 
@@ -417,8 +421,8 @@ describe("resource-copy-plugin-2", function() {
         let distHtml = path.join(TEST, 'dist/resource-copy-plugin-2/index.html'),
                 resultHtml = path.join(TEST, 'result/resource-copy-plugin-2/index.html');
 
-        let distContent = fs.readFileSync(distHtml).toString(),
-            resultContent = fs.readFileSync(resultHtml).toString();
+        let distContent = trimString(fs.readFileSync(distHtml, 'utf-8')),
+            resultContent = trimString(fs.readFileSync(resultHtml, 'utf-8'));
 
         let assets = JSON.parse(fs.readFileSync(path.join(TEST, 'dist/resource-copy-plugin-2/manifest.json'), "utf-8") || "");
 
@@ -443,8 +447,8 @@ describe("resource-copy-plugin-3", function() {
         let distHtml = path.join(TEST, 'dist/resource-copy-plugin-3/index.html'),
                 resultHtml = path.join(TEST, 'result/resource-copy-plugin-3/index.html');
 
-        let distContent = fs.readFileSync(distHtml).toString(),
-            resultContent = fs.readFileSync(resultHtml).toString();
+        let distContent = trimString(fs.readFileSync(distHtml, 'utf-8')),
+            resultContent = trimString(fs.readFileSync(resultHtml, 'utf-8'));
 
         let assets = JSON.parse(fs.readFileSync(path.join(TEST, 'dist/resource-copy-plugin-3/manifest.json'), "utf-8") || "");
 
@@ -469,8 +473,8 @@ describe("resource-external-1", function() {
         let distHtml = path.join(TEST, 'dist/resource-external-1/index.html'),
                 resultHtml = path.join(TEST, 'result/resource-external-1/index.html');
 
-        let distContent = fs.readFileSync(distHtml).toString(),
-            resultContent = fs.readFileSync(resultHtml).toString();
+        let distContent = trimString(fs.readFileSync(distHtml, 'utf-8')),
+            resultContent = trimString(fs.readFileSync(resultHtml, 'utf-8'));
 
         let assets = JSON.parse(fs.readFileSync(path.join(TEST, 'dist/resource-external-1/manifest.json'), "utf-8") || "");
 
@@ -488,13 +492,14 @@ describe("image-in-html", function() {
         let distHtml = path.join(TEST, 'dist/image-in-html/index.html'),
                 resultHtml = path.join(TEST, 'result/image-in-html/index.html');
 
-        let distContent = fs.readFileSync(distHtml).toString(),
-            resultContent = fs.readFileSync(resultHtml).toString();
+        let distContent = trimString(fs.readFileSync(distHtml, 'utf-8')),
+            resultContent = trimString(fs.readFileSync(resultHtml, 'utf-8'));
 
         let assets = JSON.parse(fs.readFileSync(path.join(TEST, 'dist/image-in-html/manifest.json'), "utf-8") || "");
 
         Object.keys(assets).forEach((file) => {
-            resultContent = resultContent.replace("[" + file + "]", assets[file]);
+            let newKey = file.split(path.sep).join('/'); // compatible with windows path sep
+            resultContent = resultContent.replace("[" + newKey + "]", assets[file]);
         });
 
         let stats = fs.readdirSync(path.join(TEST, 'dist/image-in-html/img'));
@@ -518,8 +523,8 @@ describe("resource-attr-1", function() {
         let distHtml = path.join(TEST, 'dist/resource-attr-1/index.html'),
                 resultHtml = path.join(TEST, 'result/resource-attr-1/index.html');
 
-        let distContent = fs.readFileSync(distHtml).toString(),
-            resultContent = fs.readFileSync(resultHtml).toString();
+        let distContent = trimString(fs.readFileSync(distHtml, 'utf-8')),
+            resultContent = trimString(fs.readFileSync(resultHtml, 'utf-8'));
 
         let assets = JSON.parse(fs.readFileSync(path.join(TEST, 'dist/resource-attr-1/manifest.json'), "utf-8") || "");
 
