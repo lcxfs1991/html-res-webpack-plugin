@@ -478,3 +478,4 @@ If you still don't understand README, you can checkout examples in specWepback w
 - v2.0.1 not inline when in dev mode
 - v2.0.2 appending extension to chunk in resource is also supported
 - v2.0.3 support inline resource without webpack compilation
+- v2.0.4 fix xxx.min files copied by `copy-webpack-plugin-hash` issue

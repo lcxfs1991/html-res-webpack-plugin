@@ -475,3 +475,4 @@ plugins: [
 - v2.0.1 开发模式下，支持不内联资源
 - v2.0.2 支持在资源末尾添加后缀名
 - v2.0.3 支持内联不经webpack编译的资源
+- v2.0.4 修复 xxx.min 文件被 `copy-webpack-plugin-hash` 插件拷贝的问题
