@@ -152,9 +152,9 @@ HtmlResWebpackPlugin.prototype.buildStatsHtmlMode = function(compilation) {
 	assets.map((asset) => {
 		let chunkName = compilation.assets[asset].chunk || null;
 		if (chunkName) {
-			if (!!~chunkName.indexOf(".")) {
-				chunkName = chunkName.substr(0, chunkName.lastIndexOf('.'));
-			}
+			//if (!!~chunkName.indexOf(".")) {
+			//	chunkName = chunkName.substr(0, chunkName.lastIndexOf('.'));
+			//}
 			this.stats.assets[chunkName] = [asset];
 		}
 	});
@@ -317,7 +317,7 @@ HtmlResWebpackPlugin.prototype.md5HtmlRes = function(routeStr, reg, publicPath, 
 		}
 
 		// compatible with syntax: src="index.js"
-		extension = path.extname(route).replace(".", "") || extension;
+		//extension = path.extname(route).replace(".", "") || extension;
 		
 		let newRoute = route.replace("." + extension, "");
 		
