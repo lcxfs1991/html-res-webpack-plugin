@@ -47,6 +47,10 @@ function HtmlResWebpackPlugin(options) {
 	this.webpackOptions = {};
 }
 
+function endsWith(str, suffix) {
+	return str.indexOf(suffix, str.length - suffix.length) !== -1;
+}
+
 /**
  * check required options
  * @param  {[type]} options [description]
@@ -319,8 +323,14 @@ HtmlResWebpackPlugin.prototype.md5HtmlRes = function(routeStr, reg, publicPath, 
 		// compatible with syntax: src="index.js"
 		//extension = path.extname(route).replace(".", "") || extension;
 		
-		let newRoute = route.replace("." + extension, "");
-		
+		//let newRoute = route.replace("." + extension, "");
+
+		let newRoute = route
+
+		if(endsWith(route,'.'+extension)) {
+			newRoute = route.replace(new RegExp('(.*)\.' + extension, 'g'), '$1');
+		}
+
 		let assets = _this.stats.assets[newRoute] || [],
 			file = "";
 
