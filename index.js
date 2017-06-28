@@ -47,8 +47,8 @@ function HtmlResWebpackPlugin(options) {
 	this.webpackOptions = {};
 }
 
-function endsWith(str, suffix) {
-	return str.indexOf(suffix, str.length - suffix.length) !== -1;
+function isType(type, obj) {
+	return Object.prototype.toString.call(obj) === '[object ' + type + ']';
 }
 
 /**
@@ -148,7 +148,16 @@ HtmlResWebpackPlugin.prototype.apply = function(compiler) {
 
 HtmlResWebpackPlugin.prototype.buildStatsHtmlMode = function(compilation) {
 	compilation.chunks.map((chunk) => {
-		this.stats.assets[chunk.name] = chunk.files;
+		if (isType('Array', chunk.files)) {
+			chunk.files.forEach((item) => {
+				let ext = path.extname(item);
+				this.stats.assets[chunk.name + ext] = [item];
+			});
+		}
+		else if (isType('String', chunk.files)) {
+			let ext = path.extname(chunk.files);
+			this.stats.assets[chunk.name + ext] = [chunk.files];
+		}
 	});
 
 	let assets = Object.keys(compilation.assets) || [];
@@ -156,10 +165,13 @@ HtmlResWebpackPlugin.prototype.buildStatsHtmlMode = function(compilation) {
 	assets.map((asset) => {
 		let chunkName = compilation.assets[asset].chunk || null;
 		if (chunkName) {
-			//if (!!~chunkName.indexOf(".")) {
-			//	chunkName = chunkName.substr(0, chunkName.lastIndexOf('.'));
-			//}
-			this.stats.assets[chunkName] = [asset];
+			
+			if (typeof this.stats.assets[chunkName] === 'undefined') {
+				this.stats.assets[chunkName] = [asset];
+			}
+			else if (isType("Array", this.stats.assets[chunkName])) {
+				this.stats.assets[chunkName] = this.stats.assets[chunkName].concat(asset);
+			}
 		}
 	});
 
@@ -320,16 +332,7 @@ HtmlResWebpackPlugin.prototype.md5HtmlRes = function(routeStr, reg, publicPath, 
 			return tag;
 		}
 
-		// compatible with syntax: src="index.js"
-		//extension = path.extname(route).replace(".", "") || extension;
-		
-		//let newRoute = route.replace("." + extension, "");
-
 		let newRoute = route;
-
-		if(endsWith(route,'.'+extension)) {
-			newRoute = route.replace(new RegExp('(.*)\.' + extension, 'g'), '$1');
-		}
 
 		let assets = _this.stats.assets[newRoute] || [],
 			file = "";
@@ -361,8 +364,8 @@ HtmlResWebpackPlugin.prototype.inlineHtmlRes = function(routeStr, reg, publicPat
 		// compatible with syntax: src="index.js"
 		extension = path.extname(route).replace(".", "") || extension;
 		
-		let newRoute = route.replace("." + extension, "");
-		
+		let newRoute = route;
+
 		var assets = _this.stats.assets[newRoute] || [],
 			file = "";
 

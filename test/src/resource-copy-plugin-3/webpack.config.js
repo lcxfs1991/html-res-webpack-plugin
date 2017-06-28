@@ -101,11 +101,12 @@ module.exports = {
         new CopyWebpackPlugin([
             {
                 from: config.path.src + '/resource-copy-plugin-3/libs/',
-                to: 'libs/[name]' + config.hash + '.[ext]'
+                to: 'libs/[path][name]' + config.hash + '.[ext]'
             }
         ]),
         new HtmlResWebpackPlugin({
             mode: "html",
+            entryLog: true,
         	filename: "index.html",
 	        template: config.path.src + "/resource-copy-plugin-3/index.html",
 	        chunks:{
