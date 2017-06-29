@@ -74,14 +74,10 @@ module.exports = {
 	        chunks:{
                 'libs/react.js': null,
                 'js/index.js': {
-                    attr:{
-                        js: "",
-                    }
+                    attr: ""
                 },
                 'js/index.css': {
-                    attr:{
-                        css: "offline",
-                    }
+                    attr: "offline",
                 },
             },
 	        templateContent: function(tpl) {

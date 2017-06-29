@@ -73,20 +73,16 @@ module.exports = {
         	filename: "index.html",
 	        template: config.path.src + "/resource-external-1/index.html",
 	        chunks:{
-                'common.js': {
+                'common.css': {
                     external: true,
                     res: "//s.url.cn/common.css",
-                    attr: {
-                        css: "offline"
-                    }
+                    attr: "offline"
                 },
                 'libs/react.js': null,
                 'qreport.js': {
                     external: true,
                     res:  "//s.url.cn/pub/js/qreport.js?_bid=2231",
-                    attr: {
-                        js: "async=\"true\"",
-                    }
+                    attr: "async=\"true\"",
                 },
                 'js/index.js': null,
                 'js/index.css': null,

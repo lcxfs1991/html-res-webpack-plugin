@@ -116,15 +116,12 @@ webpack.config.js
                 filename: "index.html",
                 template: "src/index.html",
                 chunks:{
-                    'index': {
-                        attr: {                     // attributes for index chunk
-                            js: "async=\"true\"",
-                            css: "offline",
-                        },
-                        inline: {                   // inline or not for index chunk
-                            js: true,
-                            css: true
-                        }
+                    'index.js': {
+                        attr: "async=\"true\"",  // attributes for js file in index chunk
+                        inline: true,                   // inline or not for index chunk
+                    },
+                    'index.css': {
+                        attr: "offline",  // attributes for css file in index chunk
                     }
                 },
             });
@@ -163,6 +160,7 @@ chunks:{
 
 ## 多html页面
 有时候，一个项目会有多于一个html文件。这种情况下，请对每个html文件添加对应的一个HtmlResWebacpk插件。
+
 ```javascript
 var config = {
     hash: "-[hash:6]",
@@ -181,19 +179,19 @@ var webapckConfig = {
 
 let pageMapping = {
     'detail': {
-        'js/detail': {
-            attr:{
-                js: "",
-                css: "",
-            }
+        'js/detail.js': {
+            attr: ""
+        },
+        'js/detail.css': {
+            attr: ""
         },
     },
     'index': {
-        'js/index': {
-            attr:{
-                js: "",
-                css: "",
-            }
+        'js/index.js': {
+            attr: ""
+        },
+        'js/index.css': {
+            attr: ""
         },
     }
 };
@@ -221,7 +219,8 @@ new HtmlResWebpackPlugin({
     template: "xxx/index.html",
     favicon: "xxx/favicon.ico",
     chunks:[
-        'js/index',
+        'js/index.js',
+        'js/index.css',
     ],
 }),
 ```
@@ -262,8 +261,9 @@ entry: {
 
 如果你想给资源添加属性，请在`src`与`rel`之前添加。
 ```javascript
-<script asycn defer src="libs/react"></script>
-<link asycn defer rel="stylesheet" href="index">
+<script src="libs/react.js"></script>
+<link rel="stylesheet" href="index.css">
+<script src="index.js"></script>
 ```
 
 而favico则直接配置:
@@ -277,18 +277,14 @@ If you have no idea about the chunk name, you can try running webpack, the plugi
 
 ```javascript
 =====html-res-webapck-plugin=====
-chunk1: commons
-chunk2: js/index
-chunk3: js/list
-chunk4: js/detail
-chunk5: libs/react
-```
-
-一些开发者常错手将文件后缀名也写到 chunk 后面，插件也支持这种情况的资源匹配，如：
-
-```html
-<script asycn defer src="libs/react.js"></script>
-<link asycn defer rel="stylesheet" href="index.css">
+chunk1: commons.js
+chunk2: js/index.js
+chunk3: js/index.css
+chunk4: js/list.js
+chunk5: js/list.css
+chunk6: js/detail.js
+chunk7: js/detail.css
+chunk8: libs/react
 ```
 
 如果你想内联一些不需要经过 webpack 打包的资源，你既可以通过 `copy-webpack-plugin-hash` (下一部份提及），也可以通过插件达成。例如，如果项目的目录结构如下：
@@ -317,7 +313,7 @@ chunk5: libs/react
 
 
 ```javascript
-// copy-webpack-plugin-hash@3.x
+// copy-webpack-plugin-hash@5.x
 plugins: [
     new CopyWebpackPlugin([
         {
@@ -331,14 +327,15 @@ plugins: [
         filename: "index.html",
         template: config.path.src + "/resource-copy-plugin-1/index.html",
         chunks:[
-            'libs/react',
-            'libs/react-dom',
-            'js/index',
+            'libs/react.js',
+            'libs/react-dom.js',
+            'js/index.js',
+            'js/index.css',
         ],
     }),
 ]
 
-// copy-webpack-plugin-hash@4.x
+// copy-webpack-plugin-hash@5.x
 plugins: [
     new CopyWebpackPlugin([
         {
@@ -350,9 +347,10 @@ plugins: [
         filename: "index.html",
         template: config.path.src + "/resource-copy-plugin-1/index.html",
         chunks:[
-            'libs/react',
-            'libs/react-dom',
-            'js/index',
+            'libs/react.js',
+            'libs/react-dom.js',
+            'js/index.js',
+            'js/index.css',
         ],
     }),
 ]
@@ -394,9 +392,11 @@ plugins: [
         new HtmlResWebpackPlugin({
             /** other config */
             chunks: [
-                'index',
-                'detail',
-                'libs/react'
+                'index.js',
+                'index.css',
+                'detail.js',
+                'detail.css',
+                'libs/react.js'
             ]
         })
     ]
@@ -409,23 +409,26 @@ plugins: [
         new HtmlResWebpackPlugin({
             /** other config */
             chunks: {
-                'qreport': {
+                'qreport.js': {
                     external: true              // 告诉插件不要带上publicPath
                     res: "xxx"                  // 资源路径
                 },
-                'index': {
-                    attr: {                     // index chunk注入的html标签属性
-                        js: "async=\"true\"",
+                'index.js': {
+                    attr: "async=\"true\"",    // index chunk 中 js 文件注入的html标签属性
+                        js: 
                         css: "offline",
                     },
                 },
-                'detail': {
-                    inline: {                   // detail chunk是否内联
-                        js: true,
-                        css: true
-                    }
+                'index.css': {
+                    attr: "offline",    // index chunk 中 css 文件注入的html标签属性
                 },
-                'libs/react': nulls
+                'detail.js': {
+                    inline: true,                 // detail chunk 中 js 文件是否内联
+                },
+                'detail.css': {
+                    inline: true,                 // detail chunk 中 css 文件是否内联
+                },
+                'libs/react.js': nulls
             }
         })
     ]
@@ -476,3 +479,4 @@ plugins: [
 - v2.0.2 支持在资源末尾添加后缀名
 - v2.0.3 支持内联不经webpack编译的资源
 - v2.0.4 修复 xxx.min 文件被 `copy-webpack-plugin-hash` 插件拷贝的问题
+- v3.0.0 [重大更新] 对于 `default` 或 `html` mode, `extention` （扩展名）需要用于匹配静态资源

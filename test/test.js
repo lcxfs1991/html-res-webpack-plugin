@@ -96,7 +96,7 @@ describe("resource-inline-2", function() {
   		let distContent = trimString(fs.readFileSync(distHtml, 'utf-8')),
   			resultContent = trimString(fs.readFileSync(resultHtml, 'utf-8'));
 
-        let folder =  path.join(TEST, 'dist/resource-inline-1');
+        let folder =  path.join(TEST, 'dist/resource-inline-2');
         let folderInfo = fs.readdirSync(folder);
 
         expect(folderInfo.length).to.be(1);

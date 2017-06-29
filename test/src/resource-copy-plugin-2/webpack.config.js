@@ -109,10 +109,7 @@ module.exports = {
 	        template: config.path.src + "/resource-copy-plugin-2/index.html",
 	        chunks:{
                 'libs/react.js': {
-                    attr: {
-                        js: "async=\"true\"",
-                        css: "offline",
-                    }
+                    attr: "async=\"true\"",
                 },
                 'libs/react-dom.js': null,
                 'js/index.js': null,

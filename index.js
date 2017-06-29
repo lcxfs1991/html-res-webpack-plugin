@@ -507,10 +507,10 @@ HtmlResWebpackPlugin.prototype.injectAssets = function(compilation) {
 				case 'js': {
 					let jsInline = false;
 					if (!_.isArray(optionChunks)) {
-						jsInline = this.inlineRes(compilation, optionChunks[chunkKey], file, fileType);
+						jsInline = this.inlineRes(compilation, optionChunks[chunkKey], file);
 					}
 
-					let jsAttr = (_.isArray(optionChunks)) ? '' :  this.injectAssetsAttr(optionChunks[chunkKey], fileType),
+					let jsAttr = (_.isArray(optionChunks)) ? '' :  this.injectAssetsAttr(optionChunks[chunkKey]),
 					    srcPath = (isExternal) ? file : publicPath + file;
 					scriptContent += (jsInline) ? 
 									('<script ' + jsAttr + ' >' + jsInline + '</script>')
@@ -521,10 +521,10 @@ HtmlResWebpackPlugin.prototype.injectAssets = function(compilation) {
 				case 'css': {
 					let styleInline = false;
 					if (!_.isArray(optionChunks)) {
-						styleInline = this.inlineRes(compilation, optionChunks[chunkKey], file, fileType);
+						styleInline = this.inlineRes(compilation, optionChunks[chunkKey], file);
 					}
 
-					let styleAttr = (_.isArray(optionChunks)) ? '' :  this.injectAssetsAttr(optionChunks[chunkKey], fileType),
+					let styleAttr = (_.isArray(optionChunks)) ? '' :  this.injectAssetsAttr(optionChunks[chunkKey]),
 						hrefPath = (isExternal) ? file : publicPath + file;
 					styleContent += (styleInline) ? 
 									('<style ' + styleAttr + '>' + styleInline + '</style>')
@@ -558,15 +558,14 @@ HtmlResWebpackPlugin.prototype.injectAssets = function(compilation) {
 /**
  * inject resource attributes
  * @param  {[type]} chunk    [description]
- * @param  {[type]} fileType [description]
  * @return {[type]}          [description]
  */
-HtmlResWebpackPlugin.prototype.injectAssetsAttr = function(chunk, fileType) {
+HtmlResWebpackPlugin.prototype.injectAssetsAttr = function(chunk) {
 	if (!chunk || !chunk.hasOwnProperty('attr') || !chunk.attr) {
 		return '';
 	}
 
-	return chunk.attr[fileType] || '';
+	return chunk.attr || '';
 };
 
 /**
@@ -574,12 +573,11 @@ HtmlResWebpackPlugin.prototype.injectAssetsAttr = function(chunk, fileType) {
  * @param  {[type]} compilation [description]
  * @param  {[type]} chunk       [description]
  * @param  {[type]} file        [description]
- * @param  {[type]} fileType    [description]
  * @return {[type]}             [description]
  */
-HtmlResWebpackPlugin.prototype.inlineRes = function(compilation, chunk, file, fileType) {
+HtmlResWebpackPlugin.prototype.inlineRes = function(compilation, chunk, file) {
 	if (!chunk || !chunk.hasOwnProperty('inline') || !chunk.inline 
-		|| !chunk.inline[fileType] || this.options.env === 'development') {
+		|| !chunk.inline || this.options.env === 'development') {
 		return false;
 	}
 
