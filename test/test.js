@@ -456,7 +456,6 @@ describe("resource-copy-plugin-3", function() {
             resultContent = resultContent.replace("[" + file + "]", assets[file]);
         });
 
-        console.log(resultContent);
         expect(true).to.be(distContent === resultContent);
 
         let folder = path.join(TEST, 'dist/resource-copy-plugin-3'),
@@ -465,7 +464,8 @@ describe("resource-copy-plugin-3", function() {
 
         let libFolder = path.join(TEST, 'dist/resource-copy-plugin-3/libs'),
             libInfo = fs.readdirSync(libFolder);
-        expect(libInfo.length).to.be(4);
+        
+        expect(libInfo.length).to.be(3);
     });
 });
 
