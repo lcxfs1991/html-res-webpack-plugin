@@ -14,5 +14,6 @@ module.exports = {
         "one-var-declaration-per-line": [2, "always"],
         "no-mixed-spaces-and-tabs": 0,
         "semi": 2,
+        "no-useless-escape": 0,
     }
 };

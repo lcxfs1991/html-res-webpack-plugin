@@ -6,6 +6,7 @@ const path = require('path'),
 module.exports = {
 
 	getFileType: (filename) => {
+		
 		let ext = path.extname(filename).replace(".", ""),
 			questionMark = ext.indexOf("?");
 

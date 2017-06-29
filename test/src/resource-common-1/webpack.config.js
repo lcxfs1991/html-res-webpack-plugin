@@ -87,11 +87,12 @@ module.exports = {
         	filename: "index.html",
 	        template: config.path.src + "/resource-common-1/index.html",
 	        chunks:[
-                'libs/react',
-                'commons',
-                'js/index',
-                'js/detail',
-                'js/list',
+                'libs/react.js',
+                'commons.js',
+                'js/index.js',
+                'js/index.css',
+                'js/detail.js',
+                'js/list.js',
             ],
 	        templateContent: function(tpl) {
 	            // 生产环境不作处理

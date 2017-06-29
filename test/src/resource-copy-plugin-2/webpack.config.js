@@ -108,14 +108,15 @@ module.exports = {
         	filename: "index.html",
 	        template: config.path.src + "/resource-copy-plugin-2/index.html",
 	        chunks:{
-                'libs/react': {
+                'libs/react.js': {
                     attr: {
                         js: "async=\"true\"",
                         css: "offline",
                     }
                 },
-                'libs/react-dom': null,
-                'js/index': null,
+                'libs/react-dom.js': null,
+                'js/index.js': null,
+                'js/index.css': null,
             },
 	        templateContent: function(tpl) {
 	            // 生产环境不作处理

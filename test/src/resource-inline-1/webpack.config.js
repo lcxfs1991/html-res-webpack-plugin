@@ -70,13 +70,19 @@ module.exports = {
         	filename: "index.html",
             template: config.path.src + "/resource-inline-1/index.html",
             chunks:{
-                'index': {
+                'index.js': {
                     attr: {
                         js: "async=\"true\"",
-                        css: "offline",
                     },
                     inline: {
                         js: true,
+                    }
+                },
+                'index.css': {
+                    attr: {
+                        css: "offline",
+                    },
+                    inline: {
                         css: true
                     }
                 }

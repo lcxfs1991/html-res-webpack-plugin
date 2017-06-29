@@ -72,10 +72,14 @@ module.exports = {
         	filename: "html/entry.html",
 	        template: config.path.src + "/resource-dev/index.html",
 	        chunks:{
-                'libs/react': null,
-                'js/index': {
+                'libs/react.js': null,
+                'js/index.js': {
                     attr:{
                         js: "",
+                    }
+                },
+                'js/index.css': {
+                    attr:{
                         css: "offline",
                     }
                 },

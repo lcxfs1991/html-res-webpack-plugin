@@ -73,22 +73,23 @@ module.exports = {
         	filename: "index.html",
 	        template: config.path.src + "/resource-external-1/index.html",
 	        chunks:{
-                'common': {
+                'common.js': {
                     external: true,
                     res: "//s.url.cn/common.css",
                     attr: {
                         css: "offline"
                     }
                 },
-                'libs/react': null,
-                'qreport': {
+                'libs/react.js': null,
+                'qreport.js': {
                     external: true,
                     res:  "//s.url.cn/pub/js/qreport.js?_bid=2231",
                     attr: {
                         js: "async=\"true\"",
                     }
                 },
-                'js/index': null,
+                'js/index.js': null,
+                'js/index.css': null,
             },
 	        templateContent: function(tpl) {
 	            // 生产环境不作处理

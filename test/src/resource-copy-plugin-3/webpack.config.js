@@ -109,16 +109,6 @@ module.exports = {
             entryLog: true,
         	filename: "index.html",
 	        template: config.path.src + "/resource-copy-plugin-3/index.html",
-	        chunks:{
-                'libs/react': {
-                    attr: {
-                        js: "async=\"true\"",
-                        css: "offline",
-                    }
-                },
-                'libs/react-dom': null,
-                'js/index': null,
-            },
 	        templateContent: function(tpl) {
 	            // 生产环境不作处理
 	            if (!this.webpackOptions.watch) {

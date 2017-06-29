@@ -110,9 +110,10 @@ module.exports = {
         	filename: "index.html",
 	        template: config.path.src + "/resource-copy-plugin-1/index.html",
 	        chunks:[
-                'libs/react',
-                'libs/react-dom',
-                'js/index',
+                'libs/react.js',
+                'libs/react-dom.js',
+                'js/index.js',
+                'js/index.css',
             ],
 	        templateContent: function(tpl) {
 	            // 生产环境不作处理

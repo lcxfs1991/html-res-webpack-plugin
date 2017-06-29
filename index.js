@@ -47,10 +47,6 @@ function HtmlResWebpackPlugin(options) {
 	this.webpackOptions = {};
 }
 
-function isType(type, obj) {
-	return Object.prototype.toString.call(obj) === '[object ' + type + ']';
-}
-
 /**
  * check required options
  * @param  {[type]} options [description]
@@ -71,6 +67,15 @@ HtmlResWebpackPlugin.prototype.checkRequiredOptions = function(options) {
 	if (count < requireOptions.length) {
 		throw new errors.optionRequredErr(requiredOption);
 	}
+
+	var injectChunks = _.isArray(options.chunks) ? options.chunks : Object.keys(options.chunks);
+
+	injectChunks.forEach((item) => {
+		if (!path.extname(item)) {
+			throw new errors.optionChunkExtention(item);
+		}
+	});
+
 };
 
 /**
@@ -148,13 +153,13 @@ HtmlResWebpackPlugin.prototype.apply = function(compiler) {
 
 HtmlResWebpackPlugin.prototype.buildStatsHtmlMode = function(compilation) {
 	compilation.chunks.map((chunk) => {
-		if (isType('Array', chunk.files)) {
+		if (_.isArray(chunk.files)) {
 			chunk.files.forEach((item) => {
 				let ext = path.extname(item);
 				this.stats.assets[chunk.name + ext] = [item];
 			});
 		}
-		else if (isType('String', chunk.files)) {
+		else if (_.isString(chunk.files)) {
 			let ext = path.extname(chunk.files);
 			this.stats.assets[chunk.name + ext] = [chunk.files];
 		}
@@ -169,7 +174,7 @@ HtmlResWebpackPlugin.prototype.buildStatsHtmlMode = function(compilation) {
 			if (typeof this.stats.assets[chunkName] === 'undefined') {
 				this.stats.assets[chunkName] = [asset];
 			}
-			else if (isType("Array", this.stats.assets[chunkName])) {
+			else if (_.isArray(this.stats.assets[chunkName])) {
 				this.stats.assets[chunkName] = this.stats.assets[chunkName].concat(asset);
 			}
 		}
@@ -235,8 +240,15 @@ HtmlResWebpackPlugin.prototype.buildStats = function(compilation) {
 		injectChunks = _.isArray(optionChunks) ? optionChunks : Object.keys(optionChunks);
 
 	compilation.chunks.map((chunk) => {
-		if (!!~injectChunks.indexOf(chunk.name)) {
-			this.stats.assets[chunk.name] = chunk.files;
+		if (_.isArray(chunk.files)) {
+			chunk.files.forEach((item) => {
+				let ext = path.extname(item);
+				this.stats.assets[chunk.name + ext] = [item];
+			});
+		}
+		else if (_.isString(chunk.files)) {
+			let ext = path.extname(chunk.files);
+			this.stats.assets[chunk.name + ext] = [chunk.files];
 		}
 	});
 	
@@ -249,15 +261,16 @@ HtmlResWebpackPlugin.prototype.buildStats = function(compilation) {
 	}
 
 	Object.keys(compilation.assets).map((assetKey) => {
-		let files = [],
-			asset = compilation.assets[assetKey],
-			chunk = (asset.hasOwnProperty('chunk')) ? asset.chunk : "",
-			ext = path.extname(chunk);
-		
-		chunk = chunk.replace(ext, "");
+		let asset = compilation.assets[assetKey],
+			chunkName = (asset.hasOwnProperty('chunk')) ? asset.chunk : "";
 
-		if (!!~injectChunks.indexOf(chunk)) {
-			this.stats.assets[chunk] = files.concat(assetKey);
+		if (!!~injectChunks.indexOf(chunkName)) {
+			if (typeof this.stats.assets[chunkName] === 'undefined') {
+				this.stats.assets[chunkName] = [assetKey];
+			}
+			else if (_.isArray(this.stats.assets[chunkName])) {
+				this.stats.assets[chunkName] = this.stats.assets[chunkName].concat(assetKey);
+			}
 		}
 	});
 
@@ -477,6 +490,8 @@ HtmlResWebpackPlugin.prototype.injectAssets = function(compilation) {
 		optionChunks = this.options.chunks,
 		injectChunks = _.isArray(optionChunks) ? optionChunks : Object.keys(optionChunks);
 
+	// console.log(injectChunks);
+	// console.log(this.stats.assets);
 	// use injectChunks in order to allow user to control occurences of file order
 	injectChunks.map((chunkKey) => {
 		

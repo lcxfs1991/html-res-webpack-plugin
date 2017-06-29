@@ -73,8 +73,9 @@ module.exports = {
         	filename: "index.html",
 	        template: config.path.src + "/resource-md5-2/index.html",
 	        chunks:[
-                'libs/react',
-                'js/index',
+                'libs/react.js',
+                'js/index.js',
+                'js/index.css',
             ],
 	        templateContent: function(tpl) {
 	            // 生产环境不作处理

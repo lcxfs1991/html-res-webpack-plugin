@@ -74,8 +74,9 @@ module.exports = {
 	        template: config.path.src + "/resource-favico/index.html",
             favicon: config.path.src + "/resource-favico/favicon.ico",
 	        chunks:[
-                'libs/react',
-                'js/index',
+                'libs/react.js',
+                'js/index.js',
+                'js/index.css',
             ],
 	        templateContent: function(tpl) {
 	            return tpl;
