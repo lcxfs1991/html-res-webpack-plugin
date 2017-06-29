@@ -464,7 +464,7 @@ describe("resource-copy-plugin-3", function() {
 
         let libFolder = path.join(TEST, 'dist/resource-copy-plugin-3/libs'),
             libInfo = fs.readdirSync(libFolder);
-        expect(libInfo.length).to.be(3);
+        expect(libInfo.length).to.be(4);
     });
 });
 
