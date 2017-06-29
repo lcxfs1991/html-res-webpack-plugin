@@ -456,6 +456,7 @@ describe("resource-copy-plugin-3", function() {
             resultContent = resultContent.replace("[" + file + "]", assets[file]);
         });
 
+        console.log(resultContent);
         expect(true).to.be(distContent === resultContent);
 
         let folder = path.join(TEST, 'dist/resource-copy-plugin-3'),
