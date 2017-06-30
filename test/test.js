@@ -190,6 +190,18 @@ describe("resource-inline-7", function() {
     });
 });
 
+describe("resource-inline-8", function() {
+    it("=> inline without compression with extension", function() {
+        let distHtml = path.join(TEST, 'dist/resource-inline-8/index.html'),
+            resultHtml = path.join(TEST, 'result/resource-inline-8/index.html');
+
+        let distContent = trimString(fs.readFileSync(distHtml, 'utf-8')),
+            resultContent = trimString(fs.readFileSync(resultHtml, 'utf-8'));
+
+        expect(true).to.be(distContent === resultContent);
+    });
+});
+
 describe("resource-md5-1", function() {
   	it("=> md5 with compression / index chunk before react", function() {
         let distHtml = path.join(TEST, 'dist/resource-md5-1/index.html'),

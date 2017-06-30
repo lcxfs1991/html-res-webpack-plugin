@@ -1,0 +1,332 @@
+<!doctype html>
+<html lang="zh">
+<head>
+    <meta charset="utf-8">
+    <title>Tencent QQ</title>
+    <style>.reset {
+	margin: 0;
+	padding: 0;
+}</style>
+    <link rel="stylesheet" href="index.css?__inline">
+</head>
+<body>
+	<div id="pages" class="qq-ui"></div>
+
+
+	<script>console.log('common');</script>
+	<script>/******/ (function(modules) { // webpackBootstrap
+/******/ 	// The module cache
+/******/ 	var installedModules = {};
+/******/
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/
+/******/ 		// Check if module is in cache
+/******/ 		if(installedModules[moduleId]) {
+/******/ 			return installedModules[moduleId].exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = installedModules[moduleId] = {
+/******/ 			i: moduleId,
+/******/ 			l: false,
+/******/ 			exports: {}
+/******/ 		};
+/******/
+/******/ 		// Execute the module function
+/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+/******/
+/******/ 		// Flag the module as loaded
+/******/ 		module.l = true;
+/******/
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/
+/******/
+/******/ 	// expose the modules object (__webpack_modules__)
+/******/ 	__webpack_require__.m = modules;
+/******/
+/******/ 	// expose the module cache
+/******/ 	__webpack_require__.c = installedModules;
+/******/
+/******/ 	// define getter function for harmony exports
+/******/ 	__webpack_require__.d = function(exports, name, getter) {
+/******/ 		if(!__webpack_require__.o(exports, name)) {
+/******/ 			Object.defineProperty(exports, name, {
+/******/ 				configurable: false,
+/******/ 				enumerable: true,
+/******/ 				get: getter
+/******/ 			});
+/******/ 		}
+/******/ 	};
+/******/
+/******/ 	// getDefaultExport function for compatibility with non-harmony modules
+/******/ 	__webpack_require__.n = function(module) {
+/******/ 		var getter = module && module.__esModule ?
+/******/ 			function getDefault() { return module['default']; } :
+/******/ 			function getModuleExports() { return module; };
+/******/ 		__webpack_require__.d(getter, 'a', getter);
+/******/ 		return getter;
+/******/ 	};
+/******/
+/******/ 	// Object.prototype.hasOwnProperty.call
+/******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
+/******/
+/******/ 	// __webpack_public_path__
+/******/ 	__webpack_require__.p = "//localhost:9000/";
+/******/
+/******/ 	// Load entry module and return exports
+/******/ 	return __webpack_require__(__webpack_require__.s = 0);
+/******/ })
+/************************************************************************/
+/******/ ([
+/* 0 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__(1);
+
+
+/***/ }),
+/* 1 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(module) {var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+/*!
+ *  AlloyLever v1.0.1 By dntzhang
+ *  Github: https://github.com/AlloyTeam/AlloyLever
+ *  MIT Licensed.
+ */
+;(function (root, factory) {
+    if (( false ? 'undefined' : _typeof(exports)) === 'object' && ( false ? 'undefined' : _typeof(module)) === 'object') module.exports = factory();else if (true) !(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
+				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));else if ((typeof exports === 'undefined' ? 'undefined' : _typeof(exports)) === 'object') exports["AlloyLever"] = factory();else root["AlloyLever"] = factory();
+})(undefined, function () {
+    var AlloyLever = {};
+    AlloyLever.settings = {
+        cdn: '//s.url.cn/qqun/qun/qqweb/m/qun/confession/js/vconsole.min.js',
+        reportUrl: null,
+        reportPrefix: '',
+        reportKey: 'msg',
+        otherReport: null,
+        entry: null
+    };
+
+    AlloyLever.store = [];
+
+    var methodList = ['log', 'info', 'warn', 'debug', 'error'];
+    methodList.forEach(function (item) {
+        var method = console[item];
+
+        console[item] = function () {
+            AlloyLever.store.push({
+                logType: item,
+                logs: arguments
+            });
+
+            method.apply(console, arguments);
+        };
+    });
+
+    AlloyLever.logs = [];
+    AlloyLever.config = function (config) {
+        for (var i in config) {
+            if (config.hasOwnProperty(i)) {
+                AlloyLever.settings[i] = config[i];
+            }
+        }
+
+        if (config.entry) {
+            document.addEventListener("DOMContentLoaded", function () {
+                AlloyLever.entry(config.entry);
+            });
+        }
+    };
+
+    AlloyLever.vConsole = function (show) {
+        loadScript(AlloyLever.settings.cdn, function () {
+
+            var i = 0,
+                len = AlloyLever.store.length;
+
+            for (; i < len; i++) {
+                var item = AlloyLever.store[i];
+                //console[item.type].apply(console, item.logs)
+                //prevent twice log
+                item.noOrigin = true;
+                vConsole.pluginList.default.printLog(item);
+            }
+
+            if (show) {
+                try {
+                    vConsole.show();
+                } catch (e) {}
+
+                window.addEventListener('load', function () {
+                    vConsole.show();
+                });
+            }
+        });
+    };
+
+    AlloyLever.entry = function (selector) {
+        var count = 0,
+            entry = document.querySelector(selector);
+        if (entry) {
+            entry.addEventListener('click', function () {
+                count++;
+                if (count > 5) {
+                    count = -10000;
+                    AlloyLever.vConsole(true);
+                }
+            });
+        }
+    };
+
+    window.onerror = function (msg, url, line, col, error) {
+        var newMsg = msg;
+
+        if (error && error.stack) {
+            newMsg = processStackMsg(error);
+        }
+
+        if (isOBJByType(newMsg, "Event")) {
+            newMsg += newMsg.type ? "--" + newMsg.type + "--" + (newMsg.target ? newMsg.target.tagName + "::" + newMsg.target.src : "") : "";
+        }
+
+        newMsg = (newMsg + "" || "").substr(0, 500);
+
+        AlloyLever.logs.push({
+            msg: newMsg,
+            target: url,
+            rowNum: line,
+            colNum: col
+        });
+
+        if (msg.toLowerCase().indexOf('script error') > -1) {
+            console.error('Script Error: See Browser Console for Detail');
+        } else {
+            console.error(newMsg);
+        }
+
+        var ss = AlloyLever.settings;
+        if (ss.reportUrl) {
+            var src = ss.reportUrl + '?' + ss.reportKey + '=' + (ss.reportPrefix ? '[' + ss.reportPrefix + ']' : '') + newMsg + '&t=' + new Date().getTime();
+            if (ss.otherReport) {
+                for (var i in ss.otherReport) {
+                    if (ss.otherReport.hasOwnProperty(i)) {
+                        src += '&' + i + '=' + ss.otherReport[i];
+                    }
+                }
+            }
+            new Image().src = src;
+        }
+    };
+
+    var parameter = getParameter('vconsole');
+
+    if (parameter) {
+        if (parameter === 'show') {
+            AlloyLever.vConsole(true);
+        } else {
+            AlloyLever.vConsole(false);
+        }
+    }
+
+    function loadScript(src, callback) {
+        var s, r, t;
+        r = false;
+        s = document.createElement('script');
+        s.type = 'text/javascript';
+        s.src = src;
+        s.onload = s.onreadystatechange = function () {
+            //console.log( this.readyState ); //uncomment this line to see which ready states are called.
+            if (!r && (!this.readyState || this.readyState == 'complete')) {
+                r = true;
+                callback();
+            }
+        };
+        t = document.getElementsByTagName('script')[0];
+        t.parentNode.insertBefore(s, t);
+    }
+
+    function getParameter(n) {
+        var m = window.location.hash.match(new RegExp('(?:#|&)' + n + '=([^&]*)(&|$)')),
+            result = !m ? '' : decodeURIComponent(m[1]);
+        return result || getParameterByName(n);
+    }
+
+    function getParameterByName(name, url) {
+        if (!url) url = window.location.href;
+        name = name.replace(/[\[\]]/g, "\\$&");
+        var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+            results = regex.exec(url);
+        if (!results) return null;
+        if (!results[2]) return '';
+        return decodeURIComponent(results[2].replace(/\+/g, " "));
+    }
+
+    function isOBJByType(o, type) {
+        return Object.prototype.toString.call(o) === "[object " + (type || "Object") + "]";
+    }
+
+    function processStackMsg(error) {
+        var stack = error.stack.replace(/\n/gi, "").split(/\bat\b/).slice(0, 9).join("@").replace(/\?[^:]+/gi, "");
+        var msg = error.toString();
+        if (stack.indexOf(msg) < 0) {
+            stack = msg + "@" + stack;
+        }
+        return stack;
+    }
+
+    function getCookie(name) {
+        var arr,
+            reg = new RegExp("(^| )" + name + "=([^;]*)(;|$)");
+
+        if (arr = document.cookie.match(reg)) return unescape(arr[2]);else return null;
+    }
+
+    AlloyLever.getCookie = getCookie;
+    AlloyLever.getParameter = getParameter;
+    AlloyLever.loadScript = loadScript;
+
+    return AlloyLever;
+});
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)(module)))
+
+/***/ }),
+/* 2 */
+/***/ (function(module, exports) {
+
+module.exports = function(module) {
+	if(!module.webpackPolyfill) {
+		module.deprecate = function() {};
+		module.paths = [];
+		// module.parent = undefined by default
+		if(!module.children) module.children = [];
+		Object.defineProperty(module, "loaded", {
+			enumerable: true,
+			get: function() {
+				return module.l;
+			}
+		});
+		Object.defineProperty(module, "id", {
+			enumerable: true,
+			get: function() {
+				return module.i;
+			}
+		});
+		module.webpackPolyfill = 1;
+	}
+	return module;
+};
+
+
+/***/ })
+/******/ ]);</script>
+</body>
+</html>

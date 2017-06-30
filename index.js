@@ -374,7 +374,6 @@ HtmlResWebpackPlugin.prototype.inlineHtmlRes = function(routeStr, reg, publicPat
 
 	routeStr = routeStr.replace(reg, function(tag, gap, route) {
 		route = route.replace(/[\"|']/g, "");
-		// compatible with syntax: src="index.js"
 		extension = path.extname(route).replace(".", "") || extension;
 		
 		let newRoute = route;
@@ -382,6 +381,7 @@ HtmlResWebpackPlugin.prototype.inlineHtmlRes = function(routeStr, reg, publicPat
 		var assets = _this.stats.assets[newRoute] || [],
 			file = "";
 
+		// try to find inline for relative route
 		if (!assets.length) {
 			let resFile = path.resolve(_this.options.templateDir, route);
 
@@ -396,10 +396,14 @@ HtmlResWebpackPlugin.prototype.inlineHtmlRes = function(routeStr, reg, publicPat
 				}
 
 				if (file) {
-					tag = tag.replace(tag, file);
+					// tag = tag.replace(tag, file);
+					tag = tag.replace(tag, function() {
+						return file;
+					});
 				}
 			}
 		}
+		// if asset is found in stats object
 		else {
 			if (_this.options.env === 'development') {
 				route = route.replace(/[\"|']/g, "").replace(/[ ]* \//g, "");
@@ -432,7 +436,10 @@ HtmlResWebpackPlugin.prototype.inlineHtmlRes = function(routeStr, reg, publicPat
 				});
 				// if file is not null, then replace
 				if (file) {
-					tag = tag.replace(tag, file);
+					// tag = tag.replace(tag, file);
+					tag = tag.replace(tag, function() {
+						return file;
+					});
 				}
 			}
 		}

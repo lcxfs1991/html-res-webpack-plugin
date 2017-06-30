@@ -480,3 +480,4 @@ plugins: [
 - v2.0.3 支持内联不经webpack编译的资源
 - v2.0.4 修复 xxx.min 文件被 `copy-webpack-plugin-hash` 插件拷贝的问题
 - v3.0.0 [重大更新] 对于 `default` 或 `html` mode, `extention` （扩展名）需要用于匹配静态资源
+- v3.0.1 修复 replace 函数在内容带有 $& 字符串的问题
