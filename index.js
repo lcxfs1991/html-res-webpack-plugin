@@ -300,15 +300,13 @@ HtmlResWebpackPlugin.prototype.checkResource = function(htmlContent, publicPath,
 		if (!!~route.indexOf("__inline")) {
 			// css inline
 			let styleInlineRegex = new RegExp("<link.*href=(\s*?)*(.+)[\?]\_\_inline.*?(\s*?)>", "ig");
-			route = this.inlineHtmlRes(route, styleInlineRegex, publicPath, compilation, 'css'); 
+			route = this.inlineHtmlRes(route, styleInlineRegex, publicPath, compilation); 
 		}
 		else {
 			// css md5
 			let styleMd5Regex = new RegExp("<link.*href=(\s*?)*(.+).*?(\s*?)>", "ig");
 			let cssPublicPath = this.options.cssPublicPath || publicPath;
-			route = this.md5HtmlRes(route, styleMd5Regex, cssPublicPath, "css");
-
-			route = this.md5HtmlRes(route, styleMd5Regex, publicPath, "ico");
+			route = this.md5HtmlRes(route, styleMd5Regex, cssPublicPath);
 		}
 
 		return route;
@@ -318,12 +316,12 @@ HtmlResWebpackPlugin.prototype.checkResource = function(htmlContent, publicPath,
 		if (!!~route.indexOf("__inline")) {
 			// js inline
 			let scriptInlineRegex = new RegExp("<script.*src=(\s*?)*(.+)[\?]\_\_inline.*?(\s*?)><\/script>", "ig");
-			route = this.inlineHtmlRes(route, scriptInlineRegex, publicPath, compilation, 'js');
+			route = this.inlineHtmlRes(route, scriptInlineRegex, publicPath, compilation);
 		}
 		else {
 			// js md5
 			let scriptMd5Regex = new RegExp("<script.*src=(\s*?)*(.+).*?(\s*?)><\/script>", "ig");
-			route = this.md5HtmlRes(route, scriptMd5Regex, publicPath, "js");
+			route = this.md5HtmlRes(route, scriptMd5Regex, publicPath);
 		}
 
 		return route;
@@ -333,15 +331,24 @@ HtmlResWebpackPlugin.prototype.checkResource = function(htmlContent, publicPath,
 };
 
 
-HtmlResWebpackPlugin.prototype.md5HtmlRes = function(routeStr, reg, publicPath, extension) {
+HtmlResWebpackPlugin.prototype.md5HtmlRes = function(routeStr, reg, publicPath) {
+
 	let _this = this;
 
 	routeStr = routeStr.replace(reg, function(tag, gap, route) {
 		
 		route = route.replace(/[\"|']/g, "").replace(/[ ]* \//g, "");
+		let extension = path.extname(route);
+		extension = (extension) ? extension.replace(".", "") : extension;
+
+		// extension required
+		if (!extension) {
+			throw new errors.extensionRequired(route);
+		}
 
 		if (extension === "ico" && !!~route.indexOf("." + extension)) {
 			tag = tag.replace(route, publicPath + route);
+			console.log(tag);
 			return tag;
 		}
 
@@ -368,13 +375,20 @@ HtmlResWebpackPlugin.prototype.md5HtmlRes = function(routeStr, reg, publicPath, 
 	return routeStr;
 };
 
-HtmlResWebpackPlugin.prototype.inlineHtmlRes = function(routeStr, reg, publicPath, compilation, extension) {
+HtmlResWebpackPlugin.prototype.inlineHtmlRes = function(routeStr, reg, publicPath, compilation) {
 
 	let _this = this;
 
 	routeStr = routeStr.replace(reg, function(tag, gap, route) {
 		route = route.replace(/[\"|']/g, "");
-		extension = path.extname(route).replace(".", "") || extension;
+		
+		let extension = path.extname(route);
+		extension = (extension) ? extension.replace(".", "") : extension;
+
+		// extension required
+		if (!extension) {
+			throw new errors.extensionRequired(route);
+		}
 		
 		let newRoute = route;
 

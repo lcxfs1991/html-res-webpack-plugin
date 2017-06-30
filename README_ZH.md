@@ -23,6 +23,9 @@ entry: {
 
 那么`assets`呢？`Assets`是那些将要被webpack输出的文件。它们可以是任何类型的文件，比如样式、图片或者html文件。
 
+## V3 重大更新
+
+从 V3 版本开始, 我们在使用 `default` 或 `html` mode 的时候，资源必须加上后缀名才可以正常注入或匹配。否则，它会报错。
 
 ## 依赖html-loader
 自`v1.1.3`以后，webpack配置中需要包含[html-loader](https://github.com/webpack/html-loader)的配置，例如：

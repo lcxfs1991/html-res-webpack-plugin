@@ -23,6 +23,10 @@ entry: {
 
 What about assets? Assets are files will be exported by webpack. They can be any file types like stylesheets, images, html and so on.
 
+## Breaking Change For V3
+
+Since V3, we must add extension for both `default` or `html` mode. Otherwise, it will prompt an error.
+
 
 ## Require html-loader
 [html-loader](https://github.com/webpack/html-loader) is required after `v1.1.3`, an example option is as follows:
