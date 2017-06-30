@@ -348,7 +348,6 @@ HtmlResWebpackPlugin.prototype.md5HtmlRes = function(routeStr, reg, publicPath) 
 
 		if (extension === "ico" && !!~route.indexOf("." + extension)) {
 			tag = tag.replace(route, publicPath + route);
-			console.log(tag);
 			return tag;
 		}
 
