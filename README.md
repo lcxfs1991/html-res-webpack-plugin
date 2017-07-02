@@ -485,3 +485,4 @@ If you still don't understand README, you can checkout examples in specWepback w
 - v2.0.4 fix xxx.min files copied by `copy-webpack-plugin-hash` issue
 - v3.0.0 [breaking change] for `default` or `html` mode, `extention` is needed for matching resources
 - v3.0.1 fix replace bug with special string $&
+- v3.0.2 fix hot update bug

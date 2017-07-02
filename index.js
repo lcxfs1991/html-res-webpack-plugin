@@ -156,7 +156,12 @@ HtmlResWebpackPlugin.prototype.buildStatsHtmlMode = function(compilation) {
 		if (_.isArray(chunk.files)) {
 			chunk.files.forEach((item) => {
 				let ext = path.extname(item);
-				this.stats.assets[chunk.name + ext] = [item];
+				if (!this.stats.assets[chunk.name + ext]) {
+					this.stats.assets[chunk.name + ext] = [item];
+				}
+				else {
+					this.stats.assets[chunk.name + ext] = this.stats.assets[chunk.name + ext].concat([item]);
+				}
 			});
 		}
 		else if (_.isString(chunk.files)) {
@@ -243,7 +248,12 @@ HtmlResWebpackPlugin.prototype.buildStats = function(compilation) {
 		if (_.isArray(chunk.files)) {
 			chunk.files.forEach((item) => {
 				let ext = path.extname(item);
-				this.stats.assets[chunk.name + ext] = [item];
+				if (!this.stats.assets[chunk.name + ext]) {
+					this.stats.assets[chunk.name + ext] = [item];
+				}
+				else {
+					this.stats.assets[chunk.name + ext] = this.stats.assets[chunk.name + ext].concat([item]);
+				}
 			});
 		}
 		else if (_.isString(chunk.files)) {
