@@ -548,4 +548,38 @@ describe("resource-attr-1", function() {
     });
 });
 
+describe("resource-remove", function() {
+    it("=> resource remove", function() {
+        let distHtml = path.join(TEST, 'dist/resource-remove/html/entry.html'),
+                resultHtml = path.join(TEST, 'result/resource-remove/index.html');
+
+        let distContent = trimString(fs.readFileSync(distHtml, 'utf-8')),
+            resultContent = trimString(fs.readFileSync(resultHtml, 'utf-8'));
+
+        expect(true).to.be(distContent === resultContent);
+    });
+});
+
+describe("resource-production", function() {
+    it("=> production environment", function() {
+        let distHtml = path.join(TEST, 'dist/resource-production/html/entry.html'),
+                resultHtml = path.join(TEST, 'result/resource-production/index.html');
+
+        let distContent = trimString(fs.readFileSync(distHtml, 'utf-8')),
+            resultContent = trimString(fs.readFileSync(resultHtml, 'utf-8'));
+
+        expect(true).to.be(distContent === resultContent);
+    });
+
+    it("=> development environment", function() {
+        let distHtml = path.join(TEST, 'dist/resource-production-1/html/entry.html'),
+                resultHtml = path.join(TEST, 'result/resource-production-1/index.html');
+
+        let distContent = trimString(fs.readFileSync(distHtml, 'utf-8')),
+            resultContent = trimString(fs.readFileSync(resultHtml, 'utf-8'));
+
+        expect(true).to.be(distContent === resultContent);
+    });
+});
+
 // fs.removeSync(path.resolve('./test/dist/'));

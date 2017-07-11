@@ -36,6 +36,9 @@ var webpackConfig = [
 	require(basePath + '/resource-external-1/webpack.config.js'), //  external resource
 	require(basePath + '/image-in-html/webpack.config.js'), //  image in html
 	require(basePath + '/resource-attr-1/webpack.config.js'), //  resource attribute
+	require(basePath + '/resource-remove/webpack.config.js'), //  remove asset if not found
+	require(basePath + '/resource-production/webpack.config.js'), //  keep asset only in production env -- production
+	require(basePath + '/resource-production-1/webpack.config.js'), //  keep asset only in production env -- development
 ];
 
 async.filter(webpackConfig, function(configPath, callback) {

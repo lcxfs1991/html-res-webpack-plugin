@@ -20,6 +20,20 @@ const fs = require('fs-extra'),
 	  utils = require('./libs/utils'),
 	  errors = require('./libs/errors');
 
+
+function hasProtocal(route) {
+	return route.indexOf('http://') === 0 || route.indexOf('https://') === 0 || route.indexOf('//') === 0;
+}
+
+function removeAsset(tag) {
+	utils.alert(tag + ' is removed because assets is not found.');
+	return '';
+}
+
+function replaceTag(removeUnMatchedAssets, route, tag) {
+	return (removeUnMatchedAssets && !hasProtocal(route)) ? removeAsset(tag) : tag;
+}
+
 function HtmlResWebpackPlugin(options) {
 
 	// user input options
@@ -32,7 +46,8 @@ function HtmlResWebpackPlugin(options) {
 		favicon: options.favicon || false,
 		templateContent: options.templateContent || function(tpl) { return tpl; },
 		cssPublicPath: options.cssPublicPath || null,
-		entryLog: options.entryLog || false,
+		entryLog: options.entryLog || true,
+		removeUnMatchedAssets: options.removeUnMatchedAssets || false, // if asset is unmatch, it will be removed
 	}, options);
 
 	this.logChunkName = true;
@@ -201,7 +216,7 @@ HtmlResWebpackPlugin.prototype.printChunkName = function(assets) {
 	}
 
 	utils.alert('html-res-webapck-plugin: ');
-	utils.alert('assets used like:');
+	utils.alert('assets used examples:');
 	utils.alert('<link rel="stylesheet" href="' + assetsArray[0] + '">');
 	utils.alert('<script src="' + assetsArray[0] + '"></script>');
 
@@ -303,10 +318,21 @@ HtmlResWebpackPlugin.prototype.processAssets = function(compilation) {
 };
 
 HtmlResWebpackPlugin.prototype.checkResource = function(htmlContent, publicPath, compilation) {
-	let linkRegex = new RegExp("(<link[^>]*href=([\'\"]*)(.*?)([\'\"]*).*?\>)", "ig"),
+	let isProduction = this.options.env === "production",
+		linkRegex = new RegExp("(<link[^>]*href=([\'\"]*)(.*?)([\'\"]*).*?\>)", "ig"),
 		scriptRegex = new RegExp("(<script[^>]*src=([\'\"]*)(.*?)([\'\"]*).*?\>(<\/script>)?)", "ig");
 
 	htmlContent = htmlContent.replace(linkRegex, (route) => {
+
+		// if ?__production is appended, then it will only show in production environment
+		if (!isProduction && !!~route.indexOf("__production")) {
+			route = this.setProductionAsset(); 
+			return route;
+		}
+		else {
+			route = route.replace('?__production', '');
+		}
+
 		if (!!~route.indexOf("__inline")) {
 			// css inline
 			let styleInlineRegex = new RegExp("<link.*href=(\s*?)*(.+)[\?]\_\_inline.*?(\s*?)>", "ig");
@@ -323,6 +349,16 @@ HtmlResWebpackPlugin.prototype.checkResource = function(htmlContent, publicPath,
 	});
 
 	htmlContent = htmlContent.replace(scriptRegex, (route) => {
+
+		if (!isProduction && !!~route.indexOf("__production")) {
+			route = this.setProductionAsset();
+			return route;
+		}
+		else {
+			route = route.replace('?__production', '');
+		}
+
+
 		if (!!~route.indexOf("__inline")) {
 			// js inline
 			let scriptInlineRegex = new RegExp("<script.*src=(\s*?)*(.+)[\?]\_\_inline.*?(\s*?)><\/script>", "ig");
@@ -340,6 +376,9 @@ HtmlResWebpackPlugin.prototype.checkResource = function(htmlContent, publicPath,
 	return htmlContent;
 };
 
+HtmlResWebpackPlugin.prototype.setProductionAsset = function() {
+	return '';
+};
 
 HtmlResWebpackPlugin.prototype.md5HtmlRes = function(routeStr, reg, publicPath) {
 
@@ -352,7 +391,7 @@ HtmlResWebpackPlugin.prototype.md5HtmlRes = function(routeStr, reg, publicPath) 
 		extension = (extension) ? extension.replace(".", "") : extension;
 
 		// extension required
-		if (!extension) {
+		if (!extension && !hasProtocal(route)) {
 			throw new errors.extensionRequired(route);
 		}
 
@@ -367,7 +406,7 @@ HtmlResWebpackPlugin.prototype.md5HtmlRes = function(routeStr, reg, publicPath) 
 			file = "";
 
 		if (!assets.length) {
-			return tag;
+			return replaceTag(_this.options.removeUnMatchedAssets, route, tag);
 		}
 
 		assets.forEach(function(item) {
@@ -395,7 +434,7 @@ HtmlResWebpackPlugin.prototype.inlineHtmlRes = function(routeStr, reg, publicPat
 		extension = (extension) ? extension.replace(".", "") : extension;
 
 		// extension required
-		if (!extension) {
+		if (!extension && !hasProtocal(route)) {
 			throw new errors.extensionRequired(route);
 		}
 		
@@ -424,6 +463,12 @@ HtmlResWebpackPlugin.prototype.inlineHtmlRes = function(routeStr, reg, publicPat
 						return file;
 					});
 				}
+				else {
+					return replaceTag(_this.options.removeUnMatchedAssets, newRoute, tag);
+				}
+			}
+			else {
+				return replaceTag(_this.options.removeUnMatchedAssets, newRoute, tag);
 			}
 		}
 		// if asset is found in stats object
@@ -439,6 +484,9 @@ HtmlResWebpackPlugin.prototype.inlineHtmlRes = function(routeStr, reg, publicPat
 
 				if (file) {
 					tag = tag.replace(route, publicPath + file);
+				}
+				else {
+					return replaceTag(_this.options.removeUnMatchedAssets, newRoute, tag);
 				}
 			}
 			else {
@@ -457,12 +505,16 @@ HtmlResWebpackPlugin.prototype.inlineHtmlRes = function(routeStr, reg, publicPat
 						_this.storeInlineRes(compilation, item);
 					}
 				});
+
 				// if file is not null, then replace
 				if (file) {
 					// tag = tag.replace(tag, file);
 					tag = tag.replace(tag, function() {
 						return file;
 					});
+				}
+				else {
+					return replaceTag(_this.options.removeUnMatchedAssets, newRoute, tag);
 				}
 			}
 		}

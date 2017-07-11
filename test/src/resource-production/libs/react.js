@@ -1,0 +1,5 @@
+var react = {
+	reactDom: function() {
+
+	}
+};

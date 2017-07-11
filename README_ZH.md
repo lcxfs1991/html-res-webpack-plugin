@@ -308,6 +308,13 @@ chunk8: libs/react
 <link asycn defer rel="stylesheet" href="./css/index.css?__inline">
 ```
 
+如果你想某些资源只在生产环境里显示，你需要设置 `env` 为 `production`，然后 html 的资源匹配写成这样：
+
+```html
+<script asycn defer src="./libs/react.js?__production"></script>
+<link asycn defer rel="stylesheet" href="./css/index.css?__production">
+```
+
 
 ## 与 ```copy-webpack-plugin-hash```插件搭配使用
 [copy-webpack-plugin-hash](https://www.npmjs.com/package/copy-webpack-plugin-hash) 是一个帮助直接复制文件的webpack插件。 我添加了一个`namePattern`的选项目，这样能够让复制的文件也带上hash（一旦主要的repo接受了我的request，我可能会删掉这个临时的repo）
@@ -367,6 +374,7 @@ plugins: [
 - `env`
     - is optional
     - `production` (生产环境) | `development`  (开发环境, 支持不内联元素)
+    - 默认值 `production`
 - `filename`:
     - is required
     - 生成的html文件名
@@ -376,7 +384,11 @@ plugins: [
 - `entryLog`:
     - is optional
     - [Boolean]
-    - 默认值 `false`, 如果你使用 `html` `mode`, 你可以设置此值为`true`, 便可以看到`chunkName`以及其如何在`html`文件中占位的使用办法
+    - 默认值 `true`, 如果你使用 `html` `mode`, 你可以设置此值为`true`, 便可以看到`chunkName`以及其如何在`html`文件中占位的使用办法
+- `removeUnMatchedAssets`:
+    - is optional
+    - [Boolean]
+    - 默认值 `false`, 这是一个正在测试的配置，用于去掉那些找不到资源的匹配。
 - `chunks`:
     - is required 如果 `mode` 是 `default`, is not required 如果 `mode` 是 `html`
     - [Array|Object]
@@ -485,3 +497,4 @@ plugins: [
 - v3.0.0 [重大更新] 对于 `default` 或 `html` mode, `extention` （扩展名）需要用于匹配静态资源
 - v3.0.1 修复 replace 函数在内容带有 $& 字符串的问题
 - v3.0.2 修复热替换bug
+- v3.1.0 支持生产环境显示指定资源；允许配置去除资源；忽略带有 http 协议的资源
