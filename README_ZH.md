@@ -315,6 +315,13 @@ chunk8: libs/react
 <link asycn defer rel="stylesheet" href="./css/index.css?__production">
 ```
 
+如果只想在开发环境里出现某些资源，也如发炮制:
+
+```html
+<script asycn defer src="./libs/react.js?__development"></script>
+<link asycn defer rel="stylesheet" href="./css/index.css?__development">
+```
+
 
 ## 与 ```copy-webpack-plugin-hash```插件搭配使用
 [copy-webpack-plugin-hash](https://www.npmjs.com/package/copy-webpack-plugin-hash) 是一个帮助直接复制文件的webpack插件。 我添加了一个`namePattern`的选项目，这样能够让复制的文件也带上hash（一旦主要的repo接受了我的request，我可能会删掉这个临时的repo）
@@ -498,3 +505,4 @@ plugins: [
 - v3.0.1 修复 replace 函数在内容带有 $& 字符串的问题
 - v3.0.2 修复热替换bug
 - v3.1.0 支持生产环境显示指定资源；允许配置去除资源；忽略带有 http 协议的资源
+- v3.1.1 支持仅在开发环境里出现的指定资源

@@ -14,6 +14,7 @@ module.exports = {
 	entry: {
         'libs/react': [path.join(config.path.src, "/resource-production/libs/react")],
         'index': [path.join(config.path.src, "/resource-production/index")],
+        'detail': [path.join(config.path.src, "/resource-production/detail")],
     },
     output: {
         publicPath: config.defaultPath,
@@ -79,6 +80,15 @@ module.exports = {
             cssPublicPath: "//localhost:1111/",
             removeUnMatchedAssets: true,
 	        htmlMinify: null
+        }),
+        new HtmlResWebpackPlugin({
+            env: "production",
+            mode: 'html',
+            filename: "html/detail.html",
+            template: config.path.src + "/resource-production/detail.html",
+            cssPublicPath: "//localhost:1111/",
+            removeUnMatchedAssets: true,
+            htmlMinify: null
         })
     ],
     watch: true,

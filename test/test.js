@@ -562,20 +562,36 @@ describe("resource-remove", function() {
 
 describe("resource-production", function() {
     it("=> production environment", function() {
-        let distHtml = path.join(TEST, 'dist/resource-production/html/entry.html'),
+        var distHtml = path.join(TEST, 'dist/resource-production/html/entry.html'),
                 resultHtml = path.join(TEST, 'result/resource-production/index.html');
 
-        let distContent = trimString(fs.readFileSync(distHtml, 'utf-8')),
+        var distContent = trimString(fs.readFileSync(distHtml, 'utf-8')),
+            resultContent = trimString(fs.readFileSync(resultHtml, 'utf-8'));
+
+        expect(true).to.be(distContent === resultContent);
+
+        var distHtml = path.join(TEST, 'dist/resource-production/html/detail.html'),
+                resultHtml = path.join(TEST, 'result/resource-production/detail.html');
+
+        var distContent = trimString(fs.readFileSync(distHtml, 'utf-8')),
             resultContent = trimString(fs.readFileSync(resultHtml, 'utf-8'));
 
         expect(true).to.be(distContent === resultContent);
     });
 
     it("=> development environment", function() {
-        let distHtml = path.join(TEST, 'dist/resource-production-1/html/entry.html'),
+        var distHtml = path.join(TEST, 'dist/resource-production-1/html/entry.html'),
                 resultHtml = path.join(TEST, 'result/resource-production-1/index.html');
 
-        let distContent = trimString(fs.readFileSync(distHtml, 'utf-8')),
+        var distContent = trimString(fs.readFileSync(distHtml, 'utf-8')),
+            resultContent = trimString(fs.readFileSync(resultHtml, 'utf-8'));
+
+        expect(true).to.be(distContent === resultContent);
+
+        var distHtml = path.join(TEST, 'dist/resource-production-1/html/detail.html'),
+                resultHtml = path.join(TEST, 'result/resource-production-1/detail.html');
+
+        var distContent = trimString(fs.readFileSync(distHtml, 'utf-8')),
             resultContent = trimString(fs.readFileSync(resultHtml, 'utf-8'));
 
         expect(true).to.be(distContent === resultContent);

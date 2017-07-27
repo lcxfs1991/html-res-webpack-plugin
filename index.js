@@ -333,6 +333,14 @@ HtmlResWebpackPlugin.prototype.checkResource = function(htmlContent, publicPath,
 			route = route.replace('?__production', '');
 		}
 
+		if (isProduction && !!~route.indexOf("__development")) {
+			route = this.setDevelopmentAsset(); 
+			return route;
+		}
+		else {
+			route = route.replace('?__development', '');
+		}
+
 		if (!!~route.indexOf("__inline")) {
 			// css inline
 			let styleInlineRegex = new RegExp("<link.*href=(\s*?)*(.+)[\?]\_\_inline.*?(\s*?)>", "ig");
@@ -358,6 +366,13 @@ HtmlResWebpackPlugin.prototype.checkResource = function(htmlContent, publicPath,
 			route = route.replace('?__production', '');
 		}
 
+		if (isProduction && !!~route.indexOf("__development")) {
+			route = this.setDevelopmentAsset(); 
+			return route;
+		}
+		else {
+			route = route.replace('?__development', '');
+		}
 
 		if (!!~route.indexOf("__inline")) {
 			// js inline
@@ -377,6 +392,10 @@ HtmlResWebpackPlugin.prototype.checkResource = function(htmlContent, publicPath,
 };
 
 HtmlResWebpackPlugin.prototype.setProductionAsset = function() {
+	return '';
+};
+
+HtmlResWebpackPlugin.prototype.setDevelopmentAsset = function() {
 	return '';
 };
 
