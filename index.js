@@ -215,7 +215,6 @@ HtmlResWebpackPlugin.prototype.printChunkName = function(assets) {
 		return;
 	}
 
-	utils.alert('html-res-webapck-plugin: ');
 	utils.alert('assets used examples:');
 	utils.alert('<link rel="stylesheet" href="' + assetsArray[0] + '">');
 	utils.alert('<script src="' + assetsArray[0] + '"></script>');

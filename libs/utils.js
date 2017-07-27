@@ -36,7 +36,7 @@ module.exports = {
 	 * @return {[type]}     [description]
 	 */
 	info: function(msg) {
-		console.log(chalk.green(msg));
+		console.log(chalk.green('[html-res-webapck-plugin] ' + msg));
 	},
 
 	/**
@@ -45,6 +45,6 @@ module.exports = {
 	 * @return {[type]}     [description]
 	 */
 	alert: function(msg) {
-		console.log(chalk.yellow(msg));
+		console.log(chalk.yellow('[html-res-webapck-plugin] ' + msg));
 	}
 };
