@@ -1,6 +1,6 @@
 {
   "name": "html-res-webpack-plugin",
-  "version": "3.2.0",
+  "version": "3.2.1",
   "description": "html generation and resource inline or md5 for webpack",
   "keywords": [
     "front-end",
@@ -32,6 +32,7 @@
   "dependencies": {
     "bluebird": "^3.5.0",
     "chalk": "^2.1.0",
+    "fs-extra": "^4.0.1",
     "html-minifier": "^3.5.3",
     "loader-utils": "^1.1.0",
     "lodash": "^4.17.4",
@@ -48,7 +49,6 @@
     "expect.js": "^0.3.1",
     "extract-text-webpack-plugin": "^3.0.0",
     "file-loader": "^0.11.2",
-    "fs-extra": "^4.0.1",
     "html-loader": "^0.5.1",
     "klaw": "^2.0.0",
     "less": "^2.7.2",
