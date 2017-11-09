@@ -39,6 +39,7 @@ var webpackConfig = [
 	require(basePath + '/resource-remove/webpack.config.js'), //  remove asset if not found
 	require(basePath + '/resource-production/webpack.config.js'), //  keep asset only in production env -- production
 	require(basePath + '/resource-production-1/webpack.config.js'), //  keep asset only in production env -- development
+	require(basePath + '/resource-query-1/webpack.config.js'), //  asset width query or hash
 ];
 
 async.filter(webpackConfig, function(configPath, callback) {

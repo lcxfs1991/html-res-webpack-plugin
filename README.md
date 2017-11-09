@@ -508,3 +508,4 @@ If you still don't understand README, you can checkout examples in specWepback w
 - v3.1.0 add asset production asset support; remove asset when option is set; ignore asset with http protocol
 - v3.1.1 support development only asset
 - v3.2.0 update dependency
+- v3.2.2 support query and hash

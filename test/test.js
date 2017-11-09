@@ -598,4 +598,14 @@ describe("resource-production", function() {
     });
 });
 
-// fs.removeSync(path.resolve('./test/dist/'));
+describe("resource-query-hash", function() {
+    it("=> query & hash", function() {
+        var distHtml = path.join(TEST, 'dist/resource-query-1/html/entry.html'),
+                resultHtml = path.join(TEST, 'result/resource-query-1/entry.html');
+
+        var distContent = trimString(fs.readFileSync(distHtml, 'utf-8')),
+            resultContent = trimString(fs.readFileSync(resultHtml, 'utf-8'));
+
+        expect(true).to.be(distContent === resultContent);
+    });
+});

@@ -18,7 +18,8 @@ const fs = require('fs-extra'),
 	  minify = require('html-minifier').minify,
 	  childCompiler = require('./libs/compiler'),
 	  utils = require('./libs/utils'),
-	  errors = require('./libs/errors');
+	  errors = require('./libs/errors'),
+	  url = require('url');
 
 
 function hasProtocal(route) {
@@ -32,6 +33,21 @@ function removeAsset(tag) {
 
 function replaceTag(removeUnMatchedAssets, route, tag) {
 	return (removeUnMatchedAssets && !hasProtocal(route)) ? removeAsset(tag) : tag;
+}
+
+function removeQueryHash(route) {
+	let urlObj = url.parse(route),
+		newRoute = route;
+
+	if (urlObj.hash) {
+		newRoute = newRoute.replace(urlObj.hash, '');
+	}
+
+	if (urlObj.search) {
+		newRoute = newRoute.replace(urlObj.search, '');
+	}
+
+	return newRoute;
 }
 
 function HtmlResWebpackPlugin(options) {
@@ -316,6 +332,7 @@ HtmlResWebpackPlugin.prototype.processAssets = function(compilation) {
 	};
 };
 
+// 匹配资源
 HtmlResWebpackPlugin.prototype.checkResource = function(htmlContent, publicPath, compilation) {
 	let isProduction = this.options.env === "production",
 		linkRegex = new RegExp("(<link[^>]*href=([\'\"]*)(.*?)([\'\"]*).*?\>)", "ig"),
@@ -356,7 +373,6 @@ HtmlResWebpackPlugin.prototype.checkResource = function(htmlContent, publicPath,
 	});
 
 	htmlContent = htmlContent.replace(scriptRegex, (route) => {
-
 		if (!isProduction && !!~route.indexOf("__production")) {
 			route = this.setProductionAsset();
 			return route;
@@ -383,7 +399,6 @@ HtmlResWebpackPlugin.prototype.checkResource = function(htmlContent, publicPath,
 			let scriptMd5Regex = new RegExp("<script.*src=(\s*?)*(.+).*?(\s*?)><\/script>", "ig");
 			route = this.md5HtmlRes(route, scriptMd5Regex, publicPath);
 		}
-
 		return route;
 	});
 
@@ -399,12 +414,12 @@ HtmlResWebpackPlugin.prototype.setDevelopmentAsset = function() {
 };
 
 HtmlResWebpackPlugin.prototype.md5HtmlRes = function(routeStr, reg, publicPath) {
-
 	let _this = this;
 
 	routeStr = routeStr.replace(reg, function(tag, gap, route) {
-		
 		route = route.replace(/[\"|']/g, "").replace(/[ ]* \//g, "");
+
+		route = removeQueryHash(route);
 		let extension = path.extname(route);
 		extension = (extension) ? extension.replace(".", "") : extension;
 
