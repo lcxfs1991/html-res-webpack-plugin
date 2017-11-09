@@ -4,7 +4,7 @@
 [![Travis](https://img.shields.io/travis/lcxfs1991/html-res-webpack-plugin.svg)](https://travis-ci.org/lcxfs1991/html-res-webpack-plugin)
 [![Deps](https://david-dm.org/lcxfs1991/html-res-webpack-plugin.svg)](https://david-dm.org/lcxfs1991/html-res-webpack-plugin)
 
-### [英文文档](https://github.com/lcxfs1991/html-res-webpack-plugin/blob/master/README.md)
+### [英文文档](/README.md)
 
 ## 为什么我要重构
 
