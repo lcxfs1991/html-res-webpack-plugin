@@ -531,7 +531,8 @@ HtmlResWebpackPlugin.prototype.inlineHtmlRes = function(routeStr, reg, publicPat
 					else if (!!~item.indexOf("." + extension) && extension === "css") {
 						file = "";
 						let cssContent = "";
-						compilation.assets[item].children.forEach(function(item) {
+						let children = compilation.assets[item].children || [];
+						children.forEach(function(item) {
 							cssContent += item._value;
 						}) ;
 						file = "<style>" + cssContent + "</style>";
