@@ -2,7 +2,7 @@
 
 [![NPM Version](https://img.shields.io/npm/v/html-res-webpack-plugin.svg?style=flat)](https://www.npmjs.com/package/html-res-webpack-plugin)
 [![Travis](https://img.shields.io/travis/lcxfs1991/html-res-webpack-plugin.svg)](https://travis-ci.org/lcxfs1991/html-res-webpack-plugin)
-[![AppVeyor](https://img.shields.io/appveyor/ci/lcxfs1991/html-res-webpack-plugin.svg)]()
+[![AppVeyor](https://img.shields.io/appveyor/ci/lcxfs1991/html-res-webpack-plugin.svg)](https://ci.appveyor.com/project/lcxfs1991/html-res-webpack-plugin)
 [![Deps](https://david-dm.org/lcxfs1991/html-res-webpack-plugin.svg)](https://david-dm.org/lcxfs1991/html-res-webpack-plugin)
 
 ### [中文文档](/README_ZH.md)
