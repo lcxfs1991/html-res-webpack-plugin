@@ -508,3 +508,4 @@ plugins: [
 - v3.1.1 支持仅在开发环境里出现的指定资源
 - v3.2.0 更新依赖
 - v3.2.2 支持 query 和 hash
+- v3.2.4 引入 AppVeyor 测试 Windows 环境

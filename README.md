@@ -511,3 +511,4 @@ If you still don't understand README, you can checkout examples in specWepback w
 - v3.2.0 update dependency
 - v3.2.2 support query and hash
 - v3.2.3 fix children undefined array 
+- v3.2.4 Add AppVeyor to test Windows Environment
