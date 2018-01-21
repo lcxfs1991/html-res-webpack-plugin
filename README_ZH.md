@@ -509,3 +509,4 @@ plugins: [
 - v3.2.0 更新依赖
 - v3.2.2 支持 query 和 hash
 - v3.2.4 引入 AppVeyor 测试 Windows 环境
+- v3.2.5 升级 `copy-webpack-plugin-hash` 及做了更多测试
