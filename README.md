@@ -395,8 +395,13 @@ If you prefer writing assets in html files, it works too! Each file copied by th
     - default `true`, if you use `html` `mode`, you can enable this to show entry names and use example
 - `removeUnMatchedAssets`:
     - is optional
+    - not recommended anymore
     - [Boolean]
     - default `false`, this is a beta option, which is used for remove asset if it is not found.
+- `logLevel`: 
+    - is optional
+    - [Integer]
+    - default `0`, 0 => info(green), 1 => alert(yellow)
 - `chunks`:
     - is required if `mode` is `default`, is not required if `mode` is `html`
     - [Array|Object]

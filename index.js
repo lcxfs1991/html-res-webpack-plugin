@@ -27,12 +27,12 @@ function hasProtocal(route) {
 }
 
 function removeAsset(tag) {
-	utils.alert(tag + ' is removed because assets is not found.');
+	utils.alert(tag + ' is removed because assets is not found.', this.options.logLevel);
 	return '';
 }
 
 function replaceTag(removeUnMatchedAssets, route, tag) {
-	return (removeUnMatchedAssets && !hasProtocal(route)) ? removeAsset(tag) : tag;
+	return (removeUnMatchedAssets && !hasProtocal(route)) ? removeAsset.bind(this)(tag) : tag;
 }
 
 function removeQueryHash(route) {
@@ -63,6 +63,7 @@ function HtmlResWebpackPlugin(options) {
 		templateContent: options.templateContent || function(tpl) { return tpl; },
 		cssPublicPath: options.cssPublicPath || null,
 		entryLog: options.entryLog || true,
+		logLevel: options.logLevel || 0, // log level
 		removeUnMatchedAssets: options.removeUnMatchedAssets || false, // if asset is unmatch, it will be removed
 	}, options);
 
@@ -236,7 +237,7 @@ HtmlResWebpackPlugin.prototype.printChunkName = function(assets) {
 	utils.alert('<script src="' + assetsArray[0] + '"></script>');
 
 	assetsArray.map((chunk, key) => {	
-		utils.info("chunk" + (key + 1) + ": " + chunk);
+		utils.info("chunk" + (key + 1) + ": " + chunk, this.options.logLevel);
 	});
 };
 
@@ -439,7 +440,7 @@ HtmlResWebpackPlugin.prototype.md5HtmlRes = function(routeStr, reg, publicPath) 
 			file = "";
 
 		if (!assets.length) {
-			return replaceTag(_this.options.removeUnMatchedAssets, route, tag);
+			return replaceTag.bind(_this)(_this.options.removeUnMatchedAssets, route, tag);
 		}
 
 		assets.forEach(function(item) {
@@ -497,11 +498,11 @@ HtmlResWebpackPlugin.prototype.inlineHtmlRes = function(routeStr, reg, publicPat
 					});
 				}
 				else {
-					return replaceTag(_this.options.removeUnMatchedAssets, newRoute, tag);
+					return replaceTag.bind(_this)(_this.options.removeUnMatchedAssets, newRoute, tag);
 				}
 			}
 			else {
-				return replaceTag(_this.options.removeUnMatchedAssets, newRoute, tag);
+				return replaceTag.bind(_this)(_this.options.removeUnMatchedAssets, newRoute, tag);
 			}
 		}
 		// if asset is found in stats object
@@ -519,7 +520,7 @@ HtmlResWebpackPlugin.prototype.inlineHtmlRes = function(routeStr, reg, publicPat
 					tag = tag.replace(route, publicPath + file);
 				}
 				else {
-					return replaceTag(_this.options.removeUnMatchedAssets, newRoute, tag);
+					return replaceTag.bind(_this)(_this.options.removeUnMatchedAssets, newRoute, tag);
 				}
 			}
 			else {
@@ -619,7 +620,7 @@ HtmlResWebpackPlugin.prototype.injectAssets = function(compilation) {
 
 			// if file is undefined then pop a warning but continue
 			if (!file) {
-				utils.alert(`${chunkKey} is not found but defined in option`);
+				utils.alert(`${chunkKey} is not found but defined in option`, this.options.logLevel);
 				return;
 			}
 			let fileType = utils.getFileType(file),

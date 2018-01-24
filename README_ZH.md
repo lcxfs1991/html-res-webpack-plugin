@@ -394,8 +394,13 @@ plugins: [
     - 默认值 `true`, 如果你使用 `html` `mode`, 你可以设置此值为`true`, 便可以看到`chunkName`以及其如何在`html`文件中占位的使用办法
 - `removeUnMatchedAssets`:
     - is optional
+    - 不再推荐使用
     - [Boolean]
     - 默认值 `false`, 这是一个正在测试的配置，用于去掉那些找不到资源的匹配。
+- `logLevel`: 
+    - is optional
+    - [Integer]
+    - 默认值 `0`, 0 => info(绿色), 1 => alert(黄色)
 - `chunks`:
     - is required 如果 `mode` 是 `default`, is not required 如果 `mode` 是 `html`
     - [Array|Object]

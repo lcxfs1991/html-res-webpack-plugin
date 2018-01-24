@@ -35,8 +35,9 @@ module.exports = {
 	 * @param  {[type]} msg [description]
 	 * @return {[type]}     [description]
 	 */
-	info: function(msg) {
-		console.log(chalk.green('[html-res-webapck-plugin] ' + msg));
+	info: function(msg, level) {
+		let l = level || 0;
+		(l >= 0) && console.log(chalk.green('[html-res-webapck-plugin] ' + msg));
 	},
 
 	/**
@@ -44,7 +45,8 @@ module.exports = {
 	 * @param  {[type]} msg [description]
 	 * @return {[type]}     [description]
 	 */
-	alert: function(msg) {
-		console.log(chalk.yellow('[html-res-webapck-plugin] ' + msg));
+	alert: function(msg, level) {
+		let l = level || 0;
+		(l >= 1) && console.log(chalk.yellow('[html-res-webapck-plugin] ' + msg));
 	}
 };
