@@ -69,6 +69,25 @@ describe("resource-dev2", function() {
     });
 });
 
+describe("resource-dev3", function() {
+    it("=>lack of resources", function() {
+        let distHtml = path.join(TEST, 'dist/resource-dev3/html/entry.html'),
+            resultHtml = path.join(TEST, '/result/resource-dev3/index.html');
+
+        let distContent = trimString(fs.readFileSync(distHtml, 'utf-8')),
+            resultContent = trimString(fs.readFileSync(resultHtml, 'utf-8'));
+
+        expect(true).to.be(distContent === resultContent);
+
+        let folder =  path.join(TEST, 'dist/resource-dev3');
+        let fileInfo = fs.readdirSync(folder);
+        expect(fileInfo).to.eql([ 'html', 'js', 'libs']);
+
+        let jsfolder = path.join(TEST, 'dist/resource-dev3/js');
+        let jsInfo = fs.readdirSync(jsfolder);
+        expect(jsInfo).to.eql(['index.js']);
+    });
+});
 
 describe("resource-inline-1", function() {
 	it("=> inline without compression", function() {

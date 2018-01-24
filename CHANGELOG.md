@@ -1,0 +1,74 @@
+## English
+- v0.0.1 resouce inline and md5
+- v0.0.2 customized name and hash
+- v0.0.3 support favicon file
+- v0.0.4 fix adding prefix and adding md5 bugs
+- v0.0.5 offer templateContent to modify html content before output
+- v0.0.7 compatible with webpack2.0 [README](https://github.com/lcxfs1991/html-res-webpack-plugin/blob/v0.0.7/README.md)
+- v1.0.0 rewrite the whole thing and add testing function
+- v1.0.1 allow external resource to be injected
+- v1.1.0 support writing assets in html
+- v1.1.2 print chunk name in runtime
+- v1.1.3 fix bug for using hot update
+- v1.2.0 support using loader and image in html
+- v1.2.2 fix bug from uglify js which remove quotes
+- v1.2.3 just chanage a few text
+- v1.2.6 add doc and test for resource attribute
+- v1.3.0 upgrade `copy-webpack-plugin-hash` from 3.x to 4.x
+- v1.3.1 fix favicon copy bug
+- v1.3.2 compatible with link closing tag
+- v1.3.3 remove inline resource
+- v1.3.4 fix removeing inline resource bug
+- v2.0.0 upgrade some dependencies and improve test cases
+- v2.0.1 not inline when in dev mode
+- v2.0.2 appending extension to chunk in resource is also supported
+- v2.0.3 support inline resource without webpack compilation
+- v2.0.4 fix xxx.min files copied by `copy-webpack-plugin-hash` issue
+- v3.0.0 [breaking change] for `default` or `html` mode, `extention` is needed for matching resources
+- v3.0.1 fix replace bug with special string $&
+- v3.0.2 fix hot update bug
+- v3.1.0 add asset production asset support; remove asset when option is set; ignore asset with http protocol
+- v3.1.1 support development only asset
+- v3.2.0 update dependency
+- v3.2.2 support query and hash
+- v3.2.3 fix children undefined array 
+- v3.2.4 Add AppVeyor to test Windows Environment
+- v3.2.5 upgrade `copy-webpack-plugin-hash` and have more tests
+- v3.2.6 If the injected resources is not found, keep running the plugin
+
+## 中文
+- v0.0.1 html生成及相关js,css资源内联
+- v0.0.2 使生成的文件名和哈希可定制化
+- v0.0.3 支持生成favicon文件
+- v0.0.4 修复针对某些资源添加前缀或添加md5的错误
+- v0.0.5 添加templateContent函数以提供定制化修改html的办法
+- v0.0.7 compatible with webpack2.0 [README](https://github.com/lcxfs1991/html-res-webpack-plugin/blob/v0.0.7/README_ZH.md)
+- v1.0.0 重构及添加测试用例
+- v1.0.1 允许外部资源注入
+- v1.1.0 允许在html中写入资源配置
+- v1.1.2 在运行时打印出chunk的名字
+- v1.1.3 修复使用热替换时的bug
+- v1.2.0 支持对html使用loader以及支持image插入到html中
+- v1.2.2 修复uglify js引入的，去掉引号无法匹配问题
+- v1.2.3 改了点小文案而已
+- v1.2.6 给资源属性添加文档与测试用例
+- v1.3.0 将 `copy-webpack-plugin-hash` 从3.x 升级至 4.x
+- v1.3.1 修复 favicon 复制的 bug
+- v1.3.2 兼容link闭合写法
+- v1.3.3 去除inline的资源
+- v1.3.4 修复去除inline的资源带来的bug
+- v2.0.0 升级部份依赖，以及优化测试用例
+- v2.0.1 开发模式下，支持不内联资源
+- v2.0.2 支持在资源末尾添加后缀名
+- v2.0.3 支持内联不经webpack编译的资源
+- v2.0.4 修复 xxx.min 文件被 `copy-webpack-plugin-hash` 插件拷贝的问题
+- v3.0.0 [重大更新] 对于 `default` 或 `html` mode, `extention` （扩展名）需要用于匹配静态资源
+- v3.0.1 修复 replace 函数在内容带有 $& 字符串的问题
+- v3.0.2 修复热替换bug
+- v3.1.0 支持生产环境显示指定资源；允许配置去除资源；忽略带有 http 协议的资源
+- v3.1.1 支持仅在开发环境里出现的指定资源
+- v3.2.0 更新依赖
+- v3.2.2 支持 query 和 hash
+- v3.2.4 引入 AppVeyor 测试 Windows 环境
+- v3.2.5 升级 `copy-webpack-plugin-hash` 及做了更多测试
+- v3.2.6 若注入资源中，如果没有引入资源，会让程序继续运行

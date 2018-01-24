@@ -616,6 +616,12 @@ HtmlResWebpackPlugin.prototype.injectAssets = function(compilation) {
 		}
 		// console.log(this.stats.assets);
 		this.stats.assets[chunkKey].map((file) => {
+
+			// if file is undefined then pop a warning but continue
+			if (!file) {
+				utils.alert(`${chunkKey} is not found but defined in option`);
+				return;
+			}
 			let fileType = utils.getFileType(file),
 				isExternal = (optionChunks[chunkKey] && optionChunks[chunkKey].external) || false;
 			

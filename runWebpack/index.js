@@ -13,6 +13,7 @@ var webpackConfig = [
 	require(basePath + '/resource-dev/webpack.config.js'), 		// dev environment
 	require(basePath + '/resource-dev1/webpack.config.js'),		// html mode dev environment
 	require(basePath + '/resource-dev2/webpack.config.js'),		// html mode dev environment with extension
+	require(basePath + '/resource-dev3/webpack.config.js'),		// lack of resources
 	require(basePath + '/resource-inline-1/webpack.config.js'),	// inline without compression
 	require(basePath + '/resource-inline-2/webpack.config.js'),	// inline with compression
 	require(basePath + '/resource-inline-3/webpack.config.js'),		// html mode inline without compression
