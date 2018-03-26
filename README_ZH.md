@@ -31,7 +31,7 @@ entry: {
 自`v1.1.3`以后，webpack配置中需要包含[html-loader](https://github.com/webpack/html-loader)的配置，例如：
 
 ```javascript
-loaders: [
+rules: [
     // some other loaders
     {
       test: /\.html$/,

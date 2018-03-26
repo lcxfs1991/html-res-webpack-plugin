@@ -33,7 +33,7 @@ Since V3, we must add extension for both `default` or `html` mode. Otherwise, it
 [html-loader](https://github.com/webpack/html-loader) is required after `v1.1.3`, an example option is as follows:
 
 ```javascript
-loaders: [
+rules: [
     // some other loaders
     {
       test: /\.html$/,
