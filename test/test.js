@@ -384,11 +384,11 @@ describe("resource-common-1", function() {
 
         let folder = path.join(TEST, 'dist/resource-common-1'),
             folderInfo = fs.readdirSync(folder);
-        expect(folderInfo).to.eql([ 'css', 'index.html', 'js', 'libs', 'manifest.json' ]);
+        expect(folderInfo).to.eql([ 'chunk', 'css', 'index.html', 'js', 'libs', 'manifest.json' ]);
 
         let jsFolder = path.join(TEST, 'dist/resource-common-1/js'),
             jsInfo = fs.readdirSync(jsFolder);
-        expect(jsInfo.length).to.be(4);
+        expect(jsInfo.length).to.be(3);
 
         expect(true).to.be(distContent === resultContent);
     });
@@ -410,12 +410,11 @@ describe("resource-common-2", function() {
 
         let folder = path.join(TEST, 'dist/resource-common-2'),
             folderInfo = fs.readdirSync(folder);
-        expect(folderInfo).to.eql([ 'css', 'index.html', 'js', 'libs', 'manifest.json' ]);
+        expect(folderInfo).to.eql([ 'chunk', 'css', 'index.html', 'js', 'libs', 'manifest.json' ]);
 
         let jsFolder = path.join(TEST, 'dist/resource-common-2/js'),
             jsInfo = fs.readdirSync(jsFolder);
-        expect(jsInfo.length).to.be(4);
-
+        expect(jsInfo.length).to.be(3);
         expect(true).to.be(distContent === resultContent);
     });
 });
@@ -495,7 +494,7 @@ describe("resource-copy-plugin-3", function() {
 
         let libFolder = path.join(TEST, 'dist/resource-copy-plugin-3/libs'),
             libInfo = fs.readdirSync(libFolder);
-        expect(libInfo.length).to.be(4);
+        expect(libInfo.length).to.be(3);
     });
 });
 

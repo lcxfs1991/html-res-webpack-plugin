@@ -9,7 +9,7 @@ var webpack = require('webpack'),
 
 
 var HtmlResWebpackPlugin = require('../../../index'),
-	ExtractTextPlugin = require("extract-text-webpack-plugin"),
+	MiniCssExtractPlgugin = require('mini-css-extract-plugin'),
     CopyWebpackPlugin = require('copy-webpack-plugin-hash'),
     WebpackAssetPipeline = require('webpack-asset-pipeline');
 
@@ -18,7 +18,7 @@ function CopyAssetPlugin() {
 }
 
 CopyAssetPlugin.prototype.apply = function(compiler) {
-    compiler.plugin('after-emit', (compilation) => {
+    compiler.hooks.afterEmit.tap('HtmlResWebpackPlugin', (compilation) => {
         let assets = compilation.assets,
            copyAssets = Object.keys(assets),
            assetChunk = [];
@@ -53,7 +53,7 @@ module.exports = {
         chunkFilename: "chunk/[name]" + config.chunkhash + ".js",
     },
     module: {
-        loaders: [
+        rules: [
             { 
                 test: /\.js?$/,
                 loader: 'babel-loader',
@@ -67,20 +67,18 @@ module.exports = {
             },
             {
                 test: /\.less$/,
-                loader: ExtractTextPlugin.extract({
-                    // fallback: 'style-loader', 
-                    use: [
-                        {
-                            loader: 'css-loader',
-                            options: {
-                                localIdentName: '[name]-[local]-[hash:base64:5]',
-                            }
-                        },
-                        {
-                            loader:  'less-loader',
+                use: [
+                    MiniCssExtractPlgugin.loader,
+                    {
+                        loader: 'css-loader',
+                        options: {
+                            localIdentName: '[name]-[local]-[hash:base64:5]',
                         }
-                    ]
-                }),
+                    },
+                    {
+                        loader:  'less-loader',
+                    }
+                ],
             },
             {
                 test: /\.html$/,
@@ -88,7 +86,7 @@ module.exports = {
             },
             {
                 test: /\.(jpe?g|png|gif|svg)$/i,
-                loaders: [
+                use: [
                     "url-loader?limit=1000&name=img/[name]" + config.hash + ".[ext]",
                 ],
                 include: path.resolve(config.path.src)
@@ -97,7 +95,7 @@ module.exports = {
     },
     plugins: [
         new webpack.NoEmitOnErrorsPlugin(),
-        new ExtractTextPlugin({filename: "css/[name]-[contenthash:6].css", disable: false}),
+        new MiniCssExtractPlgugin({filename: "css/[name]-[contenthash:6].css"}),
         new CopyWebpackPlugin([
             {
                 from: config.path.src + '/resource-copy-plugin-2/libs/',
