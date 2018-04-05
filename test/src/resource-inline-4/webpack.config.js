@@ -7,7 +7,7 @@ var webpack = require('webpack'),
 	 nodeModulesPath = path.resolve('../node_modules');
 
 var HtmlResWebpackPlugin = require('../../../index'),
-	ExtractTextPlugin = require("extract-text-webpack-plugin");
+	MiniCssExtractPlgugin = require('mini-css-extract-plugin');
 
 module.exports = {
     context: config.path.src,
@@ -21,7 +21,7 @@ module.exports = {
         chunkFilename: "js/chunk/[name].js",
     },
     module: {
-        loaders: [
+        rules: [
             { 
                 test: /\.js?$/,
                 loader: 'babel-loader',
@@ -35,20 +35,18 @@ module.exports = {
             },
             {
                 test: /\.less$/,
-                loader: ExtractTextPlugin.extract({
-                    // fallback: 'style-loader', 
-                    use: [
-                        {
-                            loader: 'css-loader',
-                            options: {
-                                localIdentName: '[name]-[local]-[hash:base64:5]',
-                            }
-                        },
-                        {
-                            loader:  'less-loader',
+                use: [
+                    MiniCssExtractPlgugin.loader,
+                    {
+                        loader: 'css-loader',
+                        options: {
+                            localIdentName: '[name]-[local]-[hash:base64:5]',
                         }
-                    ]
-                }),
+                    },
+                    {
+                        loader:  'less-loader',
+                    }
+                ],
             },
             {
                 test: /\.html$/,
@@ -56,7 +54,7 @@ module.exports = {
             },
             {
                 test: /\.(jpe?g|png|gif|svg)$/i,
-                loaders: [
+                use: [
                     "url-loader?limit=1000&name=img/[name].[ext]",
                 ],
                 include: path.resolve(config.path.src)
@@ -65,7 +63,7 @@ module.exports = {
     },
     plugins: [
         new webpack.NoEmitOnErrorsPlugin(),
-        new ExtractTextPlugin({ filename: "css/[name].css", disable: false}),
+        new MiniCssExtractPlgugin({ filename: "css/[name].css"}),
         new HtmlResWebpackPlugin({
             mode: "html",
             env: "development",

@@ -1,91 +1,92 @@
 "use strict";
 
-const path = require('path');
+const path = require("path");
 
-var webpack = require('webpack'),
-	config = require('../../config/config'),
-	 nodeModulesPath = path.resolve('../node_modules');
+var webpack = require("webpack"),
+    config = require("../../config/config"),
+    nodeModulesPath = path.resolve("../node_modules");
 
-var HtmlResWebpackPlugin = require('../../../index'),
-	ExtractTextPlugin = require("extract-text-webpack-plugin");
+var HtmlResWebpackPlugin = require("../../../index"),
+    MiniCssExtractPlgugin = require("mini-css-extract-plugin");
 
 module.exports = {
     context: config.path.src,
-	entry: {
+    entry: {
         index: [path.join(config.path.src, "/resource-inline-3/index")],
-        'common': [path.join(config.path.src, "/resource-inline-3/common")],
+        common: [path.join(config.path.src, "/resource-inline-3/common")]
     },
     output: {
         publicPath: config.defaultPath,
-        path: path.join(config.path.dist + '/resource-inline-3/'),
+        path: path.join(config.path.dist, "resource-inline-3/"),
         filename: "js/[name]" + config.chunkhash + ".js",
-        chunkFilename: "js/chunk/[name]" + config.chunkhash + ".js",
+        chunkFilename: "js/chunk/[name]" + config.chunkhash + ".js"
     },
     module: {
-        loaders: [
-            { 
+        rules: [
+            {
                 test: /\.js?$/,
-                loader: 'babel-loader',
+                loader: "babel-loader",
                 query: {
                     cacheDirectory: false,
-                    presets: [
-                        'es2015', 
-                    ]
+                    presets: ["es2015"]
                 },
-                exclude: /node_modules/,
+                exclude: /node_modules/
             },
             {
                 test: /\.less$/,
-                loader: ExtractTextPlugin.extract({
-                    // fallback: 'style-loader', 
-                    use: [
-                        {
-                            loader: 'css-loader',
-                            options: {
-                                localIdentName: '[name]-[local]-[hash:base64:5]',
-                            }
-                        },
-                        {
-                            loader:  'less-loader',
+                use: [
+                    MiniCssExtractPlgugin.loader,
+                    {
+                        loader: "css-loader",
+                        options: {
+                            localIdentName: "[name]-[local]-[hash:base64:5]"
                         }
-                    ]
-                }),
+                    },
+                    {
+                        loader: "less-loader"
+                    }
+                ]
             },
             {
                 test: /\.html$/,
-                loader: 'html-loader'
+                loader: "html-loader"
             },
             {
                 test: /\.(jpe?g|png|gif|svg)$/i,
-                loaders: [
-                    "url-loader?limit=1000&name=img/[name]" + config.hash + ".[ext]",
+                use: [
+                    "url-loader?limit=1000&name=img/[name]" +
+                        config.hash +
+                        ".[ext]"
                 ],
                 include: path.resolve(config.path.src)
-            },
-        ],
+            }
+        ]
     },
     plugins: [
         new webpack.NoEmitOnErrorsPlugin(),
-        new ExtractTextPlugin({ filename: "css/[name]" + config.chunkhash + ".css", disable: false}),
+        new MiniCssExtractPlgugin({
+            filename: "[name].css",
+            chunkFilename: "[id].css"
+        }),
         new HtmlResWebpackPlugin({
             mode: "html",
-        	filename: "index.html",
+            filename: "index.html",
             template: config.path.src + "/resource-inline-3/index.html",
-	        templateContent: function(tpl) {
-	            // 生产环境不作处理
-	            if (!this.webpackOptions.watch) {
+            templateContent: function(tpl) {
+                // 生产环境不作处理
+                if (!this.webpackOptions.watch) {
                     return tpl;
                 }
-	            // 开发环境先去掉外链react.js
-	            var regex = new RegExp("<script.*src=[\"|\']*(.+).*?[\"|\']><\/script>", "ig");
-	            tpl = tpl.replace(regex, function(script, route) {
-	                if (!!~script.indexOf('react.js') || !!~script.indexOf('react-dom.js')) {
-	                    return '';
-	                }
-	                return script;
-	            });
-	            return tpl;
-	        }, 
+                // 开发环境先去掉外链react.js
+                var regex = new RegExp("<script.*src=[\"|\']*(.+).*?[\"|\']><\/script>", "ig");
+                tpl = tpl.replace(regex, function(script, route) {
+                    if (!!~script.indexOf('react.js') || !!~script.indexOf('react-dom.js')) {
+                        return '';
+                    }
+                    return script;
+                });
+                return tpl;
+            },
         }),
         new HtmlResWebpackPlugin({
             mode: "html",
@@ -105,7 +106,10 @@ module.exports = {
                     return script;
                 });
                 return tpl;
-            }, 
+            },
         })
     ],
+    optimization: {
+        minimize: false
+    }
 };

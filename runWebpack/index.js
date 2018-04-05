@@ -46,6 +46,9 @@ var webpackConfig = [
 async.filter(webpackConfig, function(configPath, callback) {
 	let compiler = webpack(configPath);
 	compiler.run(function(err, stats) {
+		if(err) {
+			console.log(err)
+		}
 		callback();
 	});
 }, function(err, results){

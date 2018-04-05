@@ -122,22 +122,22 @@ HtmlResWebpackPlugin.prototype.apply = function(compiler) {
 	this.options.templateDir = path.dirname(this.options.template); // template directory
 	this.options.distPath = compiler.options.output.path; // destination path
 
-	var compilationPromise = null;
+	let compilationPromise = null;
 
-  	compiler.plugin("make", (compilation, callback) => {
-	    isDebug && console.log("==================make================");
+	compiler.hooks.make.tapPromise('HtmlResWebpackPlugin', compilation => {
+		isDebug && console.log("==================make================");
+		return Promise.resolve().then(() => {
+			compilationPromise = childCompiler.compileTemplate(this.options.templateLoaderName, compiler.context, this.options.filename, compilation);
+		});
 
-	    compilationPromise = childCompiler.compileTemplate(this.options.templateLoaderName, compiler.context, this.options.filename, compilation);
-
-	    callback();
+		// return childCompiler.compileTemplate(this.options.templateLoaderName, compiler.context, this.options.filename, compilation);
 	});
 
 
   	// right after emit, files will be generated
-	compiler.plugin("emit", (compilation, callback) => {
+	compiler.hooks.emit.tapAsync('HtmlResWebpackPlugin', (compilation, callback) => {
 	    isDebug && console.log("===================emit===============");
-
-	    Promise.resolve()
+		Promise.resolve()
 	    	.then(() => {
         		return compilationPromise;
       		})
@@ -177,7 +177,7 @@ HtmlResWebpackPlugin.prototype.apply = function(compiler) {
       		});
 	});
 
-	compiler.plugin('done', () => {
+	compiler.hooks.done.tap('HtmlResWebpackPlugin', () => {
 		this.removeInlineRes();
 	});
 
@@ -532,9 +532,9 @@ HtmlResWebpackPlugin.prototype.inlineHtmlRes = function(routeStr, reg, publicPat
 					else if (!!~item.indexOf("." + extension) && extension === "css") {
 						file = "";
 						let cssContent = "";
-						let children = compilation.assets[item].children || [];
+						let children = compilation.assets[item]._source.children || [];
 						children.forEach(function(item) {
-							cssContent += item._value;
+							cssContent += item._value || '\n';
 						}) ;
 						file = "<style>" + cssContent + "</style>";
 						_this.storeInlineRes(compilation, item);
@@ -718,7 +718,7 @@ HtmlResWebpackPlugin.prototype.inlineRes = function(compilation, chunk, file) {
 HtmlResWebpackPlugin.prototype.addFileToWebpackAsset = function(compilation, template, basename, isToStr, source) {
 	var filename = path.resolve(template);
 	// console.log(isToStr, filename);
-    compilation.fileDependencies.push(filename);
+    compilation.fileDependencies.add(filename);
     compilation.assets[basename] = {
     	source: () => {
     		let fileContent = (isToStr) ? source : fs.readFileSync(filename);
