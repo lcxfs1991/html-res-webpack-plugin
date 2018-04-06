@@ -7,7 +7,7 @@ var webpack = require('webpack'),
 
 
 var HtmlResWebpackPlugin = require('../../../index'),
-	MiniCssExtractPlgugin = require('mini-css-extract-plugin'),
+    MiniCssExtractPlugin = require('mini-css-extract-plugin'),
     WebpackAssetPipeline = require('webpack-asset-pipeline');
 
 module.exports = {
@@ -40,7 +40,7 @@ module.exports = {
             {
                 test: /\.less$/,
                 use: [
-                    MiniCssExtractPlgugin.loader,
+                    MiniCssExtractPlugin.loader,
                     {
                         loader: 'css-loader',
                         options: {
@@ -80,7 +80,7 @@ module.exports = {
     },
     plugins: [
         new webpack.NoEmitOnErrorsPlugin(),
-        new MiniCssExtractPlgugin({filename: "css/[name]-[contenthash:6].css"}),
+        new MiniCssExtractPlugin({filename: "css/[name]-[contenthash:6].css"}),
         // TODO: remove code
         // new webpack.optimize.CommonsChunkPlugin({
         //   name: "commons",

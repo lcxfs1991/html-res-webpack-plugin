@@ -8,7 +8,7 @@ var webpack = require("webpack"),
     fs = require("fs");
 
 var HtmlResWebpackPlugin = require("../../../index"),
-    MiniCssExtractPlgugin = require("mini-css-extract-plugin"),
+    MiniCssExtractPlugin = require("mini-css-extract-plugin"),
     CopyWebpackPlugin = require("copy-webpack-plugin-hash"),
     WebpackAssetPipeline = require("webpack-asset-pipeline");
 
@@ -72,7 +72,7 @@ module.exports = {
             {
                 test: /\.less$/,
                 use: [
-                    MiniCssExtractPlgugin.loader,
+                    MiniCssExtractPlugin.loader,
                     {
                         loader: "css-loader",
                         options: {
@@ -101,7 +101,7 @@ module.exports = {
     },
     plugins: [
         new webpack.NoEmitOnErrorsPlugin(),
-        new MiniCssExtractPlgugin({
+        new MiniCssExtractPlugin({
             filename: "css/[name]-[contenthash:6].css"
         }),
         new CopyWebpackPlugin([

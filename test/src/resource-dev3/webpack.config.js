@@ -7,7 +7,7 @@ var webpack = require('webpack'),
 	 nodeModulesPath = path.resolve('../node_modules');
 
 var HtmlResWebpackPlugin = require('../../../index'),
-	MiniCssExtractPlgugin = require('mini-css-extract-plugin');
+    MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = {
     context: config.path.src,
@@ -38,7 +38,7 @@ module.exports = {
             {
                 test: /\.less$/,
                 use: [
-                    MiniCssExtractPlgugin.loader,
+                    MiniCssExtractPlugin.loader,
                     {
                         loader: 'css-loader',
                         options: {
@@ -65,7 +65,7 @@ module.exports = {
     },
     plugins: [
         new webpack.NoEmitOnErrorsPlugin(),
-        new MiniCssExtractPlgugin({ filename: "css/[name].css"}),
+        new MiniCssExtractPlugin({ filename: "css/[name].css"}),
         new HtmlResWebpackPlugin({
         	filename: "html/entry.html",
 	        template: config.path.src + "/resource-dev3/index.html",
