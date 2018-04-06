@@ -2,3 +2,4 @@ spec
 specWebpack
 runWebpack
 test
+.vscode
