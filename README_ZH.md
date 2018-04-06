@@ -330,7 +330,7 @@ chunk8: libs/react
 
 
 ```javascript
-// copy-webpack-plugin-hash@5.x
+// copy-webpack-plugin-hash@5.x 和 6.x
 plugins: [
     new CopyWebpackPlugin([
         {
@@ -352,7 +352,7 @@ plugins: [
     }),
 ]
 
-// copy-webpack-plugin-hash@5.x
+// copy-webpack-plugin-hash@5.x 和 6.x
 plugins: [
     new CopyWebpackPlugin([
         {

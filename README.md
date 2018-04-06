@@ -330,7 +330,7 @@ Same as asset in development environment:
 If you use copy-webpack-plugin for example, you can use `html-res-webpack-plugin` easily. For example, if you copy `/xxx/libs` folder to `libs/`. If the folder contains `react` and `react-dom`, you can add chunks `libs/react.js` and `libs/react-dom.js` in `html-res-webpack-plugin`.
 
 ```javascript
-// copy-webpack-plugin-hash@5.x
+// copy-webpack-plugin-hash@5.x and 6.x
 plugins: [
     new CopyWebpackPlugin([
         {
@@ -352,7 +352,7 @@ plugins: [
     }),
 ]
 
-// copy-webpack-plugin-hash@5.x
+// copy-webpack-plugin-hash@5.x and 6.x
 plugins: [
     new CopyWebpackPlugin([
         {
