@@ -124,11 +124,9 @@ HtmlResWebpackPlugin.prototype.apply = function(compiler) {
 
 	let compilationPromise = null;
 
-	compiler.hooks.make.tapPromise('HtmlResWebpackPlugin', compilation => {
+	compiler.hooks.make.tap('HtmlResWebpackPlugin', compilation => {
 		isDebug && console.log("==================make================");
-		return Promise.resolve().then(() => {
-			compilationPromise = childCompiler.compileTemplate(this.options.templateLoaderName, compiler.context, this.options.filename, compilation);
-		});
+		compilationPromise = childCompiler.compileTemplate(this.options.templateLoaderName, compiler.context, this.options.filename, compilation);
 
 		// return childCompiler.compileTemplate(this.options.templateLoaderName, compiler.context, this.options.filename, compilation);
 	});
