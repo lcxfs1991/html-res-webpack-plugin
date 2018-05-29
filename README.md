@@ -11,14 +11,14 @@
 
 I rencently notice that webpack is based itself on chunks. Therefore, writing plugin logic based on chunk may be adaptable to the core and sprite of webpack.
 
-
 ## Basic Concpets: `chunks` and `assets`
+
 In webpack, the basic element is `chunks`. The values in `entry` of webpack config are `chunks`. For instance, `index` and `detail` in the following entry config are chunks' names; In most cases, chunk is a js file. But if you require stylesheet or other files in js, a js chunk will include not only js file but also the files you require.
 
 ```javascript
 entry: {
-    index: xxx
-    detail: xxx
+  index: xxx;
+  detail: xxx;
 }
 ```
 
@@ -28,20 +28,19 @@ What about assets? Assets are files will be exported by webpack. They can be any
 
 Since V3, we must add extension for both `default` or `html` mode. Otherwise, it will prompt an error.
 
-
 ## Require html-loader
+
 [html-loader](https://github.com/webpack/html-loader) is required after `v1.1.3`, an example option is as follows:
 
 ```javascript
 rules: [
-    // some other loaders
-    {
-      test: /\.html$/,
-      loader: 'html-loader'
-    }
-]
+  // some other loaders
+  {
+    test: /\.html$/,
+    loader: "html-loader"
+  }
+];
 ```
-
 
 ## How to start
 
@@ -68,17 +67,19 @@ dist/index.html
 src/page/preview/main.js
 -->
 dist/js/preview/preview.js
+
 ```javascript
-require('./index.scss');
+require("./index.scss");
 
 var init = function() {
-    // some code here
+  // some code here
 };
 ```
 
 src/page/preview/index.scss
 -->
 dist/css/preview/preview.css
+
 ```javascript
 html, body {
     margin: 0;
@@ -87,6 +88,7 @@ html, body {
 ```
 
 webpack.config.js
+
 ```javascript
     var config = {
         hash: "-[hash:6]",
@@ -122,7 +124,7 @@ webpack.config.js
                 template: "src/index.html",
                 chunks:{
                     'index.js': {
-                        attr: "async=\"true\"",  // attributes for js file in index chunk
+                        attr: 'async="true"',  // attributes for js file in index chunk
                         inline: true,                   // inline or not for index chunk
                     },
                     'index.css': {
@@ -135,21 +137,21 @@ webpack.config.js
 ```
 
 package.json
+
 ```javascript
 "scripts": {
     "dev": "webpack --progress --colors --watch",
     "publish-mac": "export NODE_ENV=prod&&webpack -p --progress --colors",
     "publish-windows": "SET NODE_ENV=prod&&webpack -p --progress --colors"
  },
-
 ```
-
 
 One thing need to be noticed is `hash` and `chunkhash`. The difference between `hash` and `chunkhash` is that `hash` is the same for all resources and `chunkhash` is different for specific resource. Usually you are recommended to use `chunkhash` instead (Exception for style files required in an entry js file. They share the same `chunkhash` if you use extract-text-webpack-plugin. Please use `contenthash` instead in order to ensure hash for stylesheet changes only when content changes).
 
 Another thing worth being noticed is the order of `chunks`. The order of resources that will be injected is based on the order of `chunks` in `html-res-webpack-plugin`.
 
 ## Inject External Resource
+
 Sometimes, you may need to use external common resources. If this is the case, please write options like following:
 
 ```javascript
@@ -157,67 +159,68 @@ chunks:{
     'qreport': {
         external: true,                                 // tell the plugin not to append publicPath
         res:  "//s.url.cn/pub/js/qreport.js?_bid=2231", // resource path
-        attr: "async=\"true\"",
+        attr: 'async="true"',
     }
 }
 ```
 
-
 ## Multiple Html Page
+
 Sometimes there are more than one html pages in your projects. In this situation, please use similar iteration code to add plugins for different html pages
 
 ```javascript
 var config = {
-    hash: "-[hash:6]",
-    chunkhash: "-[chunkhash:6]",
-    contenthash: "-[contenthash:6]"
+  hash: "-[hash:6]",
+  chunkhash: "-[chunkhash:6]",
+  contenthash: "-[contenthash:6]"
 };
 
-var route = ['index', 'detail'];
+var route = ["index", "detail"];
 
 var webapckConfig = {
-    entry: {
-        "js/index": "xxx/index",
-        "js/detail": "xxx/detail",
-    }
+  entry: {
+    "js/index": "xxx/index",
+    "js/detail": "xxx/detail"
+  }
 };
 
 let pageMapping = {
-    'detail': {
-        'js/detail.js': {
-            attr: ""
-        },
-        'js/detail.css': {
-            attr: ""
-        },
+  detail: {
+    "js/detail.js": {
+      attr: ""
     },
-    'index': {
-        'js/index.js': {
-            attr: ""
-        },
-        'js/index.css': {
-            attr: ""
-        },
+    "js/detail.css": {
+      attr: ""
     }
+  },
+  index: {
+    "js/index.js": {
+      attr: ""
+    },
+    "js/index.css": {
+      attr: ""
+    }
+  }
 };
 
 webpackConfig.addPlugins = function(plugin, opt) {
-    devConfig.plugins.push(new plugin(opt));
+  devConfig.plugins.push(new plugin(opt));
 };
 
 route.html.forEach(function(page) {
-    webapckConfig.addPlugins(HtmlResWebpackPlugin, {
-        filename: page + ".html",
-        template: "src/" + page + ".html",
-        favicon: "src/favicon.ico",
-        chunks: pageMapping[page],
-    });
+  webapckConfig.addPlugins(HtmlResWebpackPlugin, {
+    filename: page + ".html",
+    template: "src/" + page + ".html",
+    favicon: "src/favicon.ico",
+    chunks: pageMapping[page]
+  });
 });
 ```
 
 ## Favicon
 
 webpack.config.js
+
 ```javascript
 new HtmlResWebpackPlugin({
     filename: "index.html",
@@ -247,9 +250,11 @@ new HtmlResWebpackPlugin({
 ```
 
 ## Support Writing Assets in html files
+
 In version 0.0.7 and before, we support writing assets in html files which is intuitive for developers. We drop this feature in v1.0 but not it is back in v1.1 but there are a few differences.
 
 For example, if the config for entry is like following:
+
 ```javascript
 entry: {
     'index': xxx,
@@ -257,7 +262,9 @@ entry: {
     'libs/react': xxx,
 }
 ```
+
 Then, the settings for assets in html can be like this. That is to say, we put the key value of entry in asset route in order for the plugin to replace with the correct value for convenience.
+
 ```javascript
 <script src="libs/react.js"></script>
 <link rel="stylesheet" href="index.css">
@@ -272,6 +279,7 @@ If you hope to add attribute to the resource, please add it right before `src` o
 ```
 
 But for favico, we can directly write like this:
+
 ```javascript
 <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
 <link rel="icon" type="image/x-icon" href="favicon.ico">
@@ -323,92 +331,97 @@ Same as asset in development environment:
 <link asycn defer rel="stylesheet" href="./css/index.css?__development">
 ```
 
+## Usage with `copy-webpack-plugin-hash`
 
-## Usage with ```copy-webpack-plugin-hash```
-[copy-webpack-plugin-hash](https://www.npmjs.com/package/copy-webpack-plugin-hash)  is a plugin that helps copy files directly without webpack parsing. I add `namePattern` option feature for it so that files generated by this plugin can also have hash (Once the main repo accepts my pull request, I will delete this temporary repo).
+[copy-webpack-plugin-hash](https://www.npmjs.com/package/copy-webpack-plugin-hash) is a plugin that helps copy files directly without webpack parsing. I add `namePattern` option feature for it so that files generated by this plugin can also have hash (Once the main repo accepts my pull request, I will delete this temporary repo).
 
 If you use copy-webpack-plugin for example, you can use `html-res-webpack-plugin` easily. For example, if you copy `/xxx/libs` folder to `libs/`. If the folder contains `react` and `react-dom`, you can add chunks `libs/react.js` and `libs/react-dom.js` in `html-res-webpack-plugin`.
 
 ```javascript
 // copy-webpack-plugin-hash@5.x and 6.x
 plugins: [
-    new CopyWebpackPlugin([
-        {
-            from: '/xxx/libs/',
-            to: 'libs/'
-        }
-    ], {
-        namePattern: "[name]-[contenthash:6].js"
-    }),
-    new HtmlResWebpackPlugin({
-        filename: "index.html",
-        template: config.path.src + "/resource-copy-plugin-1/index.html",
-        chunks:[
-            'libs/react.js',
-            'libs/react-dom.js',
-            'js/index.js',
-            'js/index.css',
-        ],
-    }),
-]
+  new CopyWebpackPlugin(
+    [
+      {
+        from: "/xxx/libs/",
+        to: "libs/"
+      }
+    ],
+    {
+      namePattern: "[name]-[contenthash:6].js"
+    }
+  ),
+  new HtmlResWebpackPlugin({
+    filename: "index.html",
+    template: config.path.src + "/resource-copy-plugin-1/index.html",
+    chunks: [
+      "libs/react.js",
+      "libs/react-dom.js",
+      "js/index.js",
+      "js/index.css"
+    ]
+  })
+];
 
 // copy-webpack-plugin-hash@5.x and 6.x
 plugins: [
-    new CopyWebpackPlugin([
-        {
-            from: '/xxx/libs/',
-            to: 'libs/[name]-[hash:6].[ext]'
-        }
-    ]),
-    new HtmlResWebpackPlugin({
-        filename: "index.html",
-        template: config.path.src + "/resource-copy-plugin-1/index.html",
-        chunks:[
-            'libs/react.js',
-            'libs/react-dom.js',
-            'js/index.js',
-            'js/index.css',
-        ],
-    }),
-]
+  new CopyWebpackPlugin([
+    {
+      from: "/xxx/libs/",
+      to: "libs/[name]-[hash:6].[ext]"
+    }
+  ]),
+  new HtmlResWebpackPlugin({
+    filename: "index.html",
+    template: config.path.src + "/resource-copy-plugin-1/index.html",
+    chunks: [
+      "libs/react.js",
+      "libs/react-dom.js",
+      "js/index.js",
+      "js/index.css"
+    ]
+  })
+];
 ```
 
 If you prefer writing assets in html files, it works too! Each file copied by the plugin will be regarded as a chunk, like `libs/react.js`, `libs/react-dom.js`, `js/index.js`. You can use these chunk names for `html-res-webpack-plugin` to match resource in html files which makes you easier to inline or md5 resources.
 
 ## Options
-- `mode`:
-    - is optional
-    - `default` (write assets in config `chunks`) | `html` (write assets in html)
-- `env`
-    - is optional
-    - `production` (production env) | `development`  (development env, not inline resource)
-    - default `production`
-- `filename`:
-    - is required
-    - generated filename
-- `template`:
-    - is required
-    - template source
-- `entryLog`:
-    - is optional
-    - [Boolean]
-    - default `true`, if you use `html` `mode`, you can enable this to show entry names and use example
-- `removeUnMatchedAssets`:
-    - is optional
-    - not recommended anymore
-    - [Boolean]
-    - default `false`, this is a beta option, which is used for remove asset if it is not found.
-- `logLevel`: 
-    - is optional
-    - [Integer]
-    - default `0`, 0 => info(green), 1 => alert(yellow)
-- `chunks`:
-    - is required if `mode` is `default`, is not required if `mode` is `html`
-    - [Array|Object]
-    - injected chunks
-    - examples:
+
+* `mode`:
+  * is optional
+  * `default` (write assets in config `chunks`) | `html` (write assets in html)
+* `env`
+  * is optional
+  * `production` (production env) | `development` (development env, not inline resource)
+  * default `production`
+* `filename`:
+  * is required
+  * generated filename
+* `template`:
+  * is required
+  * template source
+* `entryLog`:
+  * is optional
+  * [Boolean]
+  * default `true`, if you use `html` `mode`, you can enable this to show entry names and use example
+* `removeUnMatchedAssets`:
+  * is optional
+  * not recommended anymore
+  * [Boolean]
+  * default `false`, this is a beta option, which is used for remove asset if it is not found.
+* `logLevel`:
+  * is optional
+  * [Integer]
+  * default `0`, 0 => info(green), 1 => alert(yellow)
+* `chunks`:
+  * is required if `mode` is `default`, is not required if `mode` is `html`
+  * [Array|Object]
+  * injected chunks
+  * examples:
 
 [Array]
+
 ```javascript
     entry: {
         'index': xxx,
@@ -428,8 +441,8 @@ If you prefer writing assets in html files, it works too! Each file copied by th
             ]
         })
     ]
-
 ```
+
 [Object]
 
 ```javascript
@@ -442,8 +455,8 @@ If you prefer writing assets in html files, it works too! Each file copied by th
                     res: "xxx"                  // resource path
                 },
                 'index.js': {
-                    attr: "async=\"true\"",    // attributes for js file in index chunk
-                        js: 
+                    attr: {
+                        js: 'async="true"',    // attributes for js file in index chunk
                         css: "offline",
                     },
                 },
@@ -462,18 +475,18 @@ If you prefer writing assets in html files, it works too! Each file copied by th
     ]
 ```
 
-- `htmlMinify`:
-    - is optional
-    - please checkout [html-minifier](https://github.com/kangax/html-minifier) to see detail options. If set false | null, html files won't be compressed.
-- `favicon`:
-    - is optional
-    - favicon path, for example, "src/favicon.ico"
-- `templateContent`:
-    - is optional
-    - a point for developer to modify html content before output. `this.options` and `this.webpackOptions`can be used in such a function.
-- `cssPublicPath`:
-    - is optional
-    - pubilc path for css, using webpack config `output.publicPath` for default
+* `htmlMinify`:
+  * is optional
+  * please checkout [html-minifier](https://github.com/kangax/html-minifier) to see detail options. If set false | null, html files won't be compressed.
+* `favicon`:
+  * is optional
+  * favicon path, for example, "src/favicon.ico"
+* `templateContent`:
+  * is optional
+  * a point for developer to modify html content before output. `this.options` and `this.webpackOptions`can be used in such a function.
+* `cssPublicPath`:
+  * is optional
+  * pubilc path for css, using webpack config `output.publicPath` for default
 
 ## Last Words
 
