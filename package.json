@@ -2,13 +2,7 @@
   "name": "html-res-webpack-plugin",
   "version": "4.0.0",
   "description": "html generation and resource inline or md5 for webpack",
-  "keywords": [
-    "front-end",
-    "web",
-    "webpack",
-    "plugin",
-    "building tool"
-  ],
+  "keywords": ["front-end", "web", "webpack", "plugin", "building tool"],
   "homepage": "https://github.com/lcxfs1991/html-res-webpack-plugin",
   "bugs": {
     "url": "https://github.com/lcxfs1991/html-res-webpack-plugin/issues"
@@ -18,11 +12,7 @@
     "url": "git@github.com:lcxfs1991/html-res-webpack-plugin.git"
   },
   "author": "heyli",
-  "files": [
-    "bin",
-    "libs",
-    "index.js"
-  ],
+  "files": ["bin", "libs", "index.js"],
   "scripts": {
     "pretest": "node ./runWebpack/index.js",
     "lint": "eslint index.js libs",
