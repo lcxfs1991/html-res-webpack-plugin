@@ -15,5 +15,9 @@ module.exports = {
         "no-mixed-spaces-and-tabs": 0,
         "semi": 2,
         "no-useless-escape": 0,
+    },
+    "globals": {
+        "describe": true,
+        "it": true
     }
 };

@@ -10,8 +10,8 @@ function trimString(str) {
   return str.replace(/(\r\n|\n|\r)/gm, "");
 }
 
-describe("resource-dev", function() {
-  it("=> dev environment && custom html path", function() {
+describe("resource-dev", function () {
+  it("=> dev environment && custom html path", function () {
     let distHtml = path.join(TEST, "dist/resource-dev/html/entry.html"),
       resultHtml = path.join(TEST, "/result/resource-dev/index.html");
 
@@ -27,8 +27,8 @@ describe("resource-dev", function() {
   });
 });
 
-describe("resource-dev1", function() {
-  it("=> html mode dev environment && custom html path", function() {
+describe("resource-dev1", function () {
+  it("=> html mode dev environment && custom html path", function () {
     let distHtml = path.join(TEST, "dist/resource-dev1/html/entry.html"),
       resultHtml = path.join(TEST, "/result/resource-dev1/index.html");
 
@@ -47,8 +47,8 @@ describe("resource-dev1", function() {
   });
 });
 
-describe("resource-dev2", function() {
-  it("=> html mode dev environment with extension", function() {
+describe("resource-dev2", function () {
+  it("=> html mode dev environment with extension", function () {
     let distHtml = path.join(TEST, "dist/resource-dev2/html/entry.html"),
       resultHtml = path.join(TEST, "/result/resource-dev2/index.html");
 
@@ -67,8 +67,8 @@ describe("resource-dev2", function() {
   });
 });
 
-describe("resource-dev3", function() {
-  it("=>lack of resources", function() {
+describe("resource-dev3", function () {
+  it("=>lack of resources", function () {
     let distHtml = path.join(TEST, "dist/resource-dev3/html/entry.html"),
       resultHtml = path.join(TEST, "/result/resource-dev3/index.html");
 
@@ -87,8 +87,8 @@ describe("resource-dev3", function() {
   });
 });
 
-describe("resource-inline-1", function() {
-  it("=> inline without compression", function() {
+describe("resource-inline-1", function () {
+  it("=> inline without compression", function () {
     let distHtml = path.join(TEST, "dist/resource-inline-1/index.html"),
       resultHtml = path.join(TEST, "result/resource-inline-1/index.html");
 
@@ -101,15 +101,12 @@ describe("resource-inline-1", function() {
     expect(folderInfo.length).to.be(1);
     expect(folderInfo[0]).to.be("index.html");
 
-    console.log(distContent);
-    console.log("===============");
-    console.log(resultContent);
     expect(true).to.be(distContent === resultContent);
   });
 });
 
-describe("resource-inline-2", function() {
-  it("=> inline with compression", function() {
+describe("resource-inline-2", function () {
+  it("=> inline with compression", function () {
     let distHtml = path.join(TEST, "dist/resource-inline-2/index.html"),
       resultHtml = path.join(TEST, "result/resource-inline-2/index.html");
 
@@ -126,8 +123,8 @@ describe("resource-inline-2", function() {
   });
 });
 
-describe("resource-inline-3", function() {
-  it("=> html mode inline with compression", function() {
+describe("resource-inline-3", function () {
+  it("=> html mode inline with compression", function () {
     let distHtml = path.join(TEST, "dist/resource-inline-3/index.html"),
       resultHtml = path.join(TEST, "result/resource-inline-3/index.html");
 
@@ -150,8 +147,8 @@ describe("resource-inline-3", function() {
   });
 });
 
-describe("resource-inline-4", function() {
-  it("=> html mode inline without compression in dev mode", function() {
+describe("resource-inline-4", function () {
+  it("=> html mode inline without compression in dev mode", function () {
     let distHtml = path.join(TEST, "dist/resource-inline-4/index.html"),
       resultHtml = path.join(TEST, "result/resource-inline-4/index.html");
 
@@ -168,8 +165,8 @@ describe("resource-inline-4", function() {
   });
 });
 
-describe("resource-inline-5", function() {
-  it("=> inline without compression in dev mode ", function() {
+describe("resource-inline-5", function () {
+  it("=> inline without compression in dev mode ", function () {
     let distHtml = path.join(TEST, "dist/resource-inline-5/index.html"),
       resultHtml = path.join(TEST, "result/resource-inline-5/index.html");
 
@@ -186,8 +183,8 @@ describe("resource-inline-5", function() {
   });
 });
 
-describe("resource-inline-6", function() {
-  it("=> inline without compression with extension", function() {
+describe("resource-inline-6", function () {
+  it("=> inline without compression with extension", function () {
     let distHtml = path.join(TEST, "dist/resource-inline-6/index.html"),
       resultHtml = path.join(TEST, "result/resource-inline-6/index.html");
 
@@ -198,8 +195,8 @@ describe("resource-inline-6", function() {
   });
 });
 
-describe("resource-inline-7", function() {
-  it("=> inline without compression with extension", function() {
+describe("resource-inline-7", function () {
+  it("=> inline without compression with extension", function () {
     let distHtml = path.join(TEST, "dist/resource-inline-7/index.html"),
       resultHtml = path.join(TEST, "result/resource-inline-7/index.html");
 
@@ -210,8 +207,8 @@ describe("resource-inline-7", function() {
   });
 });
 
-describe("resource-inline-8", function() {
-  it("=> inline without compression with extension", function() {
+describe("resource-inline-8", function () {
+  it("=> inline without compression with extension", function () {
     let distHtml = path.join(TEST, "dist/resource-inline-8/index.html"),
       resultHtml = path.join(TEST, "result/resource-inline-8/index.html");
 
@@ -222,8 +219,8 @@ describe("resource-inline-8", function() {
   });
 });
 
-describe("resource-md5-1", function() {
-  it("=> md5 with compression / index chunk before react", function() {
+describe("resource-md5-1", function () {
+  it("=> md5 with compression / index chunk before react", function () {
     let distHtml = path.join(TEST, "dist/resource-md5-1/index.html"),
       resultHtml = path.join(TEST, "result/resource-md5-1/index.html");
 
@@ -245,8 +242,8 @@ describe("resource-md5-1", function() {
   });
 });
 
-describe("resource-md5-2", function() {
-  it("=> md5 without compression  / react chunk before index", function() {
+describe("resource-md5-2", function () {
+  it("=> md5 without compression  / react chunk before index", function () {
     let distHtml = path.join(TEST, "dist/resource-md5-2/index.html"),
       resultHtml = path.join(TEST, "result/resource-md5-2/index.html");
 
@@ -268,8 +265,8 @@ describe("resource-md5-2", function() {
   });
 });
 
-describe("resource-md5-3", function() {
-  it("=> html mode md5 without compression", function() {
+describe("resource-md5-3", function () {
+  it("=> html mode md5 without compression", function () {
     let distHtml = path.join(TEST, "dist/resource-md5-3/index.html"),
       resultHtml = path.join(TEST, "result/resource-md5-3/index.html");
 
@@ -291,8 +288,8 @@ describe("resource-md5-3", function() {
   });
 });
 
-describe("resource-md5-4", function() {
-  it("=> html mode md5 with compression and without quote", function() {
+describe("resource-md5-4", function () {
+  it("=> html mode md5 with compression and without quote", function () {
     let distHtml = path.join(TEST, "dist/resource-md5-4/index.html"),
       resultHtml = path.join(TEST, "result/resource-md5-4/index.html");
 
@@ -319,8 +316,8 @@ describe("resource-md5-4", function() {
   });
 });
 
-describe("resource-md5-5", function() {
-  it("=> html mode md5 without compression with extension", function() {
+describe("resource-md5-5", function () {
+  it("=> html mode md5 without compression with extension", function () {
     let distHtml = path.join(TEST, "dist/resource-md5-5/index.html"),
       resultHtml = path.join(TEST, "result/resource-md5-5/index.html");
 
@@ -347,8 +344,8 @@ describe("resource-md5-5", function() {
   });
 });
 
-describe("resource-favico", function() {
-  it("=> generate favicon", function() {
+describe("resource-favico", function () {
+  it("=> generate favicon", function () {
     let distHtml = path.join(TEST, "dist/resource-favico/index.html"),
       resultHtml = path.join(TEST, "result/resource-favico/index.html");
 
@@ -369,8 +366,8 @@ describe("resource-favico", function() {
     expect(true).to.be(distContent === resultContent);
 
     let srcFavicon = fs.lstatSync(
-        path.join(TEST, "src/resource-favico/favicon.ico")
-      ),
+      path.join(TEST, "src/resource-favico/favicon.ico")
+    ),
       destFavicon = fs.lstatSync(
         path.join(TEST, "src/resource-favico/favicon.ico")
       );
@@ -379,8 +376,8 @@ describe("resource-favico", function() {
   });
 });
 
-describe("resource-favico1", function() {
-  it("=> html mode generate favicon", function() {
+describe("resource-favico1", function () {
+  it("=> html mode generate favicon", function () {
     let distHtml = path.join(TEST, "dist/resource-favico-1/index.html"),
       resultHtml = path.join(TEST, "result/resource-favico-1/index.html");
 
@@ -401,8 +398,8 @@ describe("resource-favico1", function() {
     expect(true).to.be(distContent === resultContent);
 
     let srcFavicon = fs.lstatSync(
-        path.join(TEST, "src/resource-favico-1/favicon.ico")
-      ),
+      path.join(TEST, "src/resource-favico-1/favicon.ico")
+    ),
       destFavicon = fs.lstatSync(
         path.join(TEST, "src/resource-favico-1/favicon.ico")
       );
@@ -411,8 +408,8 @@ describe("resource-favico1", function() {
   });
 });
 
-describe("resource-common-1", function() {
-  it("=> common chunk generated by webpack", function() {
+describe("resource-common-1", function () {
+  it("=> common chunk generated by webpack", function () {
     let distHtml = path.join(TEST, "dist/resource-common-1/index.html"),
       resultHtml = path.join(TEST, "result/resource-common-1/index.html");
 
@@ -449,8 +446,8 @@ describe("resource-common-1", function() {
   });
 });
 
-describe("resource-common-2", function() {
-  it("=> html mode common chunk generated by webpack", function() {
+describe("resource-common-2", function () {
+  it("=> html mode common chunk generated by webpack", function () {
     let distHtml = path.join(TEST, "dist/resource-common-2/index.html"),
       resultHtml = path.join(TEST, "result/resource-common-2/index.html");
 
@@ -486,8 +483,8 @@ describe("resource-common-2", function() {
   });
 });
 
-describe("resource-copy-plugin-1", function() {
-  it("=> usage with copy-webpack-plugin", function() {
+describe("resource-copy-plugin-1", function () {
+  it("=> usage with copy-webpack-plugin", function () {
     let distHtml = path.join(TEST, "dist/resource-copy-plugin-1/index.html"),
       resultHtml = path.join(TEST, "result/resource-copy-plugin-1/index.html");
 
@@ -523,8 +520,8 @@ describe("resource-copy-plugin-1", function() {
   });
 });
 
-describe("resource-copy-plugin-2", function() {
-  it("=> usage with copy-webpack-plugin with attributes", function() {
+describe("resource-copy-plugin-2", function () {
+  it("=> usage with copy-webpack-plugin with attributes", function () {
     let distHtml = path.join(TEST, "dist/resource-copy-plugin-2/index.html"),
       resultHtml = path.join(TEST, "result/resource-copy-plugin-2/index.html");
 
@@ -560,8 +557,8 @@ describe("resource-copy-plugin-2", function() {
   });
 });
 
-describe("resource-copy-plugin-3", function() {
-  it("=> html mode usage with copy-webpack-plugin with attributes", function() {
+describe("resource-copy-plugin-3", function () {
+  it("=> html mode usage with copy-webpack-plugin with attributes", function () {
     let distHtml = path.join(TEST, "dist/resource-copy-plugin-3/index.html"),
       resultHtml = path.join(TEST, "result/resource-copy-plugin-3/index.html");
 
@@ -597,8 +594,8 @@ describe("resource-copy-plugin-3", function() {
   });
 });
 
-describe("resource-external-1", function() {
-  it("=> external resource", function() {
+describe("resource-external-1", function () {
+  it("=> external resource", function () {
     let distHtml = path.join(TEST, "dist/resource-external-1/index.html"),
       resultHtml = path.join(TEST, "result/resource-external-1/index.html");
 
@@ -620,8 +617,8 @@ describe("resource-external-1", function() {
   });
 });
 
-describe("image-in-html", function() {
-  it("=> image in html", function() {
+describe("image-in-html", function () {
+  it("=> image in html", function () {
     let distHtml = path.join(TEST, "dist/image-in-html/index.html"),
       resultHtml = path.join(TEST, "result/image-in-html/index.html");
 
@@ -656,8 +653,8 @@ describe("image-in-html", function() {
   });
 });
 
-describe("resource-attr-1", function() {
-  it("=> resource atribute", function() {
+describe("resource-attr-1", function () {
+  it("=> resource atribute", function () {
     let distHtml = path.join(TEST, "dist/resource-attr-1/index.html"),
       resultHtml = path.join(TEST, "result/resource-attr-1/index.html");
 
@@ -679,8 +676,8 @@ describe("resource-attr-1", function() {
   });
 });
 
-describe("resource-remove", function() {
-  it("=> resource remove", function() {
+describe("resource-remove", function () {
+  it("=> resource remove", function () {
     let distHtml = path.join(TEST, "dist/resource-remove/html/entry.html"),
       resultHtml = path.join(TEST, "result/resource-remove/index.html");
 
@@ -691,8 +688,8 @@ describe("resource-remove", function() {
   });
 });
 
-describe("resource-production", function() {
-  it("=> production environment", function() {
+describe("resource-production", function () {
+  it("=> production environment", function () {
     var distHtml = path.join(TEST, "dist/resource-production/html/entry.html"),
       resultHtml = path.join(TEST, "result/resource-production/index.html");
 
@@ -710,11 +707,11 @@ describe("resource-production", function() {
     expect(true).to.be(distContent === resultContent);
   });
 
-  it("=> development environment", function() {
+  it("=> development environment", function () {
     var distHtml = path.join(
-        TEST,
-        "dist/resource-production-1/html/entry.html"
-      ),
+      TEST,
+      "dist/resource-production-1/html/entry.html"
+    ),
       resultHtml = path.join(TEST, "result/resource-production-1/index.html");
 
     var distContent = trimString(fs.readFileSync(distHtml, "utf-8")),
@@ -723,9 +720,9 @@ describe("resource-production", function() {
     expect(true).to.be(distContent === resultContent);
 
     var distHtml = path.join(
-        TEST,
-        "dist/resource-production-1/html/detail.html"
-      ),
+      TEST,
+      "dist/resource-production-1/html/detail.html"
+    ),
       resultHtml = path.join(TEST, "result/resource-production-1/detail.html");
 
     var distContent = trimString(fs.readFileSync(distHtml, "utf-8")),
@@ -735,8 +732,8 @@ describe("resource-production", function() {
   });
 });
 
-describe("resource-query-hash", function() {
-  it("=> query & hash", function() {
+describe("resource-query-hash", function () {
+  it("=> query & hash", function () {
     var distHtml = path.join(TEST, "dist/resource-query-1/html/entry.html"),
       resultHtml = path.join(TEST, "result/resource-query-1/entry.html");
 

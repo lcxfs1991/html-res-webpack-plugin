@@ -35,6 +35,7 @@
 - v3.2.4 Add AppVeyor to test Windows Environment
 - v3.2.5 upgrade `copy-webpack-plugin-hash` and have more tests
 - v3.2.6 If the injected resources is not found, keep running the plugin
+- v4.0.1 Support webpack4.x
 
 ## 中文
 - v0.0.1 html生成及相关js,css资源内联
@@ -72,3 +73,4 @@
 - v3.2.4 引入 AppVeyor 测试 Windows 环境
 - v3.2.5 升级 `copy-webpack-plugin-hash` 及做了更多测试
 - v3.2.6 若注入资源中，如果没有引入资源，会让程序继续运行
+- v4.0.1 支持t webpack4.x
