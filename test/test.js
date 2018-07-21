@@ -89,29 +89,32 @@ describe("resource-dev3", function () {
 
 describe("resource-inline-1", function () {
   it("=> inline without compression", function () {
-    let distHtml = path.join(TEST, "dist/resource-inline-1/index.html"),
-      resultHtml = path.join(TEST, "result/resource-inline-1/index.html");
+    let distHtml = path.join(TEST, "dist/resource-inline-1/index.html");
+    // let resultHtml = path.join(TEST, "result/resource-inline-1/index.html");
 
-    let distContent = trimString(fs.readFileSync(distHtml, "utf-8")),
-      resultContent = trimString(fs.readFileSync(resultHtml, "utf-8"));
+    let distContent = trimString(fs.readFileSync(distHtml, "utf-8"));
+      // let resultContent = trimString(fs.readFileSync(resultHtml, "utf-8"));
 
     let folder = path.join(TEST, "dist/resource-inline-1");
     let folderInfo = fs.readdirSync(folder);
 
     expect(folderInfo.length).to.be(1);
     expect(folderInfo[0]).to.be("index.html");
-
-    expect(true).to.be(distContent === resultContent);
+    
+    let styleRegex = /<style offline>(\S|\s)+<\/style>/ig;
+    let scriptRegex = /<script async="true"(\s)*>(\S|\s)+<\/script>/ig;
+    expect(true).to.be(styleRegex.test(distContent));
+    expect(true).to.be(scriptRegex.test(distContent));
   });
 });
 
 describe("resource-inline-2", function () {
   it("=> inline with compression", function () {
-    let distHtml = path.join(TEST, "dist/resource-inline-2/index.html"),
-      resultHtml = path.join(TEST, "result/resource-inline-2/index.html");
+    let distHtml = path.join(TEST, "dist/resource-inline-2/index.html");
+    // let resultHtml = path.join(TEST, "result/resource-inline-2/index.html");
 
-    let distContent = trimString(fs.readFileSync(distHtml, "utf-8")),
-      resultContent = trimString(fs.readFileSync(resultHtml, "utf-8"));
+    let distContent = trimString(fs.readFileSync(distHtml, "utf-8"));
+    // let resultContent = trimString(fs.readFileSync(resultHtml, "utf-8"));
 
     let folder = path.join(TEST, "dist/resource-inline-2");
     let folderInfo = fs.readdirSync(folder);
@@ -119,17 +122,22 @@ describe("resource-inline-2", function () {
     expect(folderInfo.length).to.be(1);
     expect(folderInfo[0]).to.be("index.html");
 
-    expect(true).to.be(distContent === resultContent);
+    // expect(true).to.be(distContent === resultContent);
+    let styleRegex = /<style offline>(\S|\s)+<\/style>/ig;
+    let scriptRegex = /<script async="true"(\s)*>(\S|\s)+<\/script>/ig;
+
+    expect(true).to.be(styleRegex.test(distContent));
+    expect(true).to.be(scriptRegex.test(distContent));
   });
 });
 
 describe("resource-inline-3", function () {
   it("=> html mode inline with compression", function () {
-    let distHtml = path.join(TEST, "dist/resource-inline-3/index.html"),
-      resultHtml = path.join(TEST, "result/resource-inline-3/index.html");
+    let distHtml = path.join(TEST, "dist/resource-inline-3/index.html");
+    // let resultHtml = path.join(TEST, "result/resource-inline-3/index.html");
 
-    let distContent = trimString(fs.readFileSync(distHtml, "utf-8")),
-      resultContent = trimString(fs.readFileSync(resultHtml, "utf-8"));
+    let distContent = trimString(fs.readFileSync(distHtml, "utf-8"));
+    // let resultContent = trimString(fs.readFileSync(resultHtml, "utf-8"));
 
     let folder = path.join(TEST, "dist/resource-inline-3");
     let folderInfo = fs.readdirSync(folder);
@@ -138,7 +146,13 @@ describe("resource-inline-3", function () {
     expect(folderInfo[0]).to.be("detail.html");
     expect(folderInfo[1]).to.be("index.html");
 
-    expect(true).to.be(distContent === resultContent);
+    // expect(true).to.be(distContent === resultContent);
+
+    let styleRegex = /<style>(\S|\s)+<\/style>/ig;
+    let scriptRegex = /<script(\s)*>(\S|\s)+<\/script>/ig;
+
+    expect(true).to.be(styleRegex.test(distContent));
+    expect(true).to.be(scriptRegex.test(distContent));
 
     let jsFolder = path.join(TEST, "dist/resource-inline-3/js"),
       jsInfo = fs.readdirSync(jsFolder);
@@ -149,11 +163,11 @@ describe("resource-inline-3", function () {
 
 describe("resource-inline-4", function () {
   it("=> html mode inline without compression in dev mode", function () {
-    let distHtml = path.join(TEST, "dist/resource-inline-4/index.html"),
-      resultHtml = path.join(TEST, "result/resource-inline-4/index.html");
+    let distHtml = path.join(TEST, "dist/resource-inline-4/index.html");
+    let resultHtml = path.join(TEST, "result/resource-inline-4/index.html");
 
-    let distContent = trimString(fs.readFileSync(distHtml, "utf-8")),
-      resultContent = trimString(fs.readFileSync(resultHtml, "utf-8"));
+    let distContent = trimString(fs.readFileSync(distHtml, "utf-8"));
+    let resultContent = trimString(fs.readFileSync(resultHtml, "utf-8"));
 
     let folder = path.join(TEST, "dist/resource-inline-4");
     let folderInfo = fs.readdirSync(folder);
@@ -185,37 +199,53 @@ describe("resource-inline-5", function () {
 
 describe("resource-inline-6", function () {
   it("=> inline without compression with extension", function () {
-    let distHtml = path.join(TEST, "dist/resource-inline-6/index.html"),
-      resultHtml = path.join(TEST, "result/resource-inline-6/index.html");
+    let distHtml = path.join(TEST, "dist/resource-inline-6/index.html");
+    // let resultHtml = path.join(TEST, "result/resource-inline-6/index.html");
 
-    let distContent = trimString(fs.readFileSync(distHtml, "utf-8")),
-      resultContent = trimString(fs.readFileSync(resultHtml, "utf-8"));
+    let distContent = trimString(fs.readFileSync(distHtml, "utf-8"));
+    // let resultContent = trimString(fs.readFileSync(resultHtml, "utf-8"));
 
-    expect(true).to.be(distContent === resultContent);
+    let styleRegex = /<style>(\S|\s)+<\/style>/ig;
+    let scriptRegex = /<script(\s)*>(\S|\s)+<\/script>/ig;
+
+    expect(true).to.be(styleRegex.test(distContent));
+    expect(true).to.be(scriptRegex.test(distContent));
+
+    // expect(true).to.be(distContent === resultContent);
   });
 });
 
 describe("resource-inline-7", function () {
   it("=> inline without compression with extension", function () {
-    let distHtml = path.join(TEST, "dist/resource-inline-7/index.html"),
-      resultHtml = path.join(TEST, "result/resource-inline-7/index.html");
+    let distHtml = path.join(TEST, "dist/resource-inline-7/index.html");
+      // let resultHtml = path.join(TEST, "result/resource-inline-7/index.html");
 
-    let distContent = trimString(fs.readFileSync(distHtml, "utf-8")),
-      resultContent = trimString(fs.readFileSync(resultHtml, "utf-8"));
+    let distContent = trimString(fs.readFileSync(distHtml, "utf-8"));
+    // let resultContent = trimString(fs.readFileSync(resultHtml, "utf-8"));
 
-    expect(true).to.be(distContent === resultContent);
+    // expect(true).to.be(distContent === resultContent);
+    let styleRegex = /<style>(\S|\s)+<\/style>/ig;
+    let scriptRegex = /<script(\s)*>(\S|\s)+<\/script>/ig;
+
+    expect(true).to.be(styleRegex.test(distContent));
+    expect(true).to.be(scriptRegex.test(distContent));
   });
 });
 
 describe("resource-inline-8", function () {
   it("=> inline without compression with extension", function () {
-    let distHtml = path.join(TEST, "dist/resource-inline-8/index.html"),
-      resultHtml = path.join(TEST, "result/resource-inline-8/index.html");
+    let distHtml = path.join(TEST, "dist/resource-inline-8/index.html");
+    // let resultHtml = path.join(TEST, "result/resource-inline-8/index.html");
 
-    let distContent = trimString(fs.readFileSync(distHtml, "utf-8")),
-      resultContent = trimString(fs.readFileSync(resultHtml, "utf-8"));
+    let distContent = trimString(fs.readFileSync(distHtml, "utf-8"));
+    // let resultContent = trimString(fs.readFileSync(resultHtml, "utf-8"));
 
-    expect(true).to.be(distContent === resultContent);
+    // expect(true).to.be(distContent === resultContent);
+    let styleRegex = /<style>(\S|\s)+<\/style>/ig;
+    let scriptRegex = /<script(\s)*>(\S|\s)+<\/script>/ig;
+
+    expect(true).to.be(styleRegex.test(distContent));
+    expect(true).to.be(scriptRegex.test(distContent));
   });
 });
 

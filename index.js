@@ -140,7 +140,8 @@ HtmlResWebpackPlugin.prototype.apply = function(compiler) {
 
   let compilationPromise = null;
 
-  // Resets `this.stats` during watch mode before the compilation is started.
+  // Resets `this.stats` during watch mode before the compilation is started. 
+  // Otherwise it creates duplicate resources
   compiler.hooks.watchRun.tap("HtmlResWebpackPlugin", () => {
     isDebug && console.log("==================watchRun================");
     this.stats = {

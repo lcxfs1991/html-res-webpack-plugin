@@ -72,41 +72,11 @@ module.exports = {
             mode: "html",
             filename: "index.html",
             template: config.path.src + "/resource-inline-3/index.html",
-            templateContent: function(tpl) {
-                // 生产环境不作处理
-                if (!this.webpackOptions.watch) {
-                    return tpl;
-                }
-                // 开发环境先去掉外链react.js
-                var regex = new RegExp("<script.*src=[\"|\']*(.+).*?[\"|\']><\/script>", "ig");
-                tpl = tpl.replace(regex, function(script, route) {
-                    if (!!~script.indexOf('react.js') || !!~script.indexOf('react-dom.js')) {
-                        return '';
-                    }
-                    return script;
-                });
-                return tpl;
-            },
         }),
         new HtmlResWebpackPlugin({
             mode: "html",
             filename: "detail.html",
             template: config.path.src + "/resource-inline-3/detail.html",
-            templateContent: function(tpl) {
-                // 生产环境不作处理
-                if (!this.webpackOptions.watch) {
-                    return tpl;
-                }
-                // 开发环境先去掉外链react.js
-                var regex = new RegExp("<script.*src=[\"|\']*(.+).*?[\"|\']><\/script>", "ig");
-                tpl = tpl.replace(regex, function(script, route) {
-                    if (!!~script.indexOf('react.js') || !!~script.indexOf('react-dom.js')) {
-                        return '';
-                    }
-                    return script;
-                });
-                return tpl;
-            },
         })
     ],
     optimization: {

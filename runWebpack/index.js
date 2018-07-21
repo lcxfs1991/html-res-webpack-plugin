@@ -17,7 +17,7 @@ var webpackConfig = [
   require(basePath + "/resource-inline-1/webpack.config.js"), // inline without compression
   require(basePath + "/resource-inline-2/webpack.config.js"), // inline with compression
   require(basePath + "/resource-inline-3/webpack.config.js"), // html mode inline without compression
-  require(basePath + "/resource-inline-4/webpack.config.js"), // html mode inline without compression in dev mode
+  require(basePath + "/resource-inline-4/webpack.config.js"), // html mode inline without compression in dev mode (not inline)
   require(basePath + "/resource-inline-5/webpack.config.js"), // inline without compression in dev mode
   require(basePath + "/resource-inline-6/webpack.config.js"), // inline without compression with extension
   require(basePath + "/resource-inline-7/webpack.config.js"), // inline file without webpack parse
