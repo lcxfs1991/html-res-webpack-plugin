@@ -507,7 +507,9 @@ HtmlResWebpackPlugin.prototype.md5HtmlRes = function(
     }
 
     if (extension === "ico" && !!~route.indexOf("." + extension)) {
-      tag = tag.replace(route, publicPath + route);
+      if (!hasProtocal(route)) {
+        tag = tag.replace(route, publicPath + route);
+      }
       return tag;
     }
 

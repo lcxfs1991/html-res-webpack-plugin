@@ -37,6 +37,7 @@
 - v3.2.6 If the injected resources is not found, keep running the plugin
 - v4.0.1 Support webpack4.x
 - v4.0.2 Fix duplicate resource in watch mode
+- v4.0.3 fix external favico issue
 
 ## 中文
 - v0.0.1 html生成及相关js,css资源内联
@@ -76,3 +77,4 @@
 - v3.2.6 若注入资源中，如果没有引入资源，会让程序继续运行
 - v4.0.1 支持 webpack4.x
 - v4.0.2 修复 watch 模式下资源重复的问题
+- v4.0.3 修复外链 favico 的问题
