@@ -188,12 +188,18 @@ HtmlResWebpackPlugin.prototype.apply = function(compiler) {
           );
 
           // inject favicon
-          if (this.options.favicon) {
-            this.options.faviconFileName = this.addFileToWebpackAsset(
-              compilation,
-              this.options.favicon,
-              utils.getBaseName(this.options.favicon, null)
-            );
+          let favicon = this.options.favicon;
+          if (favicon) {
+            if (!fs.existsSync(favicon)) {
+              utils.alert(`Favicon file does not exist: ${this.options.favicon}`, 1);
+            }
+            else {
+              this.options.faviconFileName = this.addFileToWebpackAsset(
+                compilation,
+                favicon,
+                utils.getBaseName(favicon, null)
+              );
+            }
           }
 
           // webpack options

@@ -38,6 +38,7 @@
 - v4.0.1 Support webpack4.x
 - v4.0.2 Fix duplicate resource in watch mode
 - v4.0.3 fix external favico issue
+- v4.0.4 fix favico not exist error
 
 ## 中文
 - v0.0.1 html生成及相关js,css资源内联
@@ -78,3 +79,4 @@
 - v4.0.1 支持 webpack4.x
 - v4.0.2 修复 watch 模式下资源重复的问题
 - v4.0.3 修复外链 favico 的问题
+- v4.0.4 修复 favico 文件不存在报错
