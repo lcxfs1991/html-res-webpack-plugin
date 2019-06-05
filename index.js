@@ -400,8 +400,10 @@ HtmlResWebpackPlugin.prototype.checkResource = function(
   compilation
 ) {
   let isProduction = this.options.env === "production",
+    // eslint-disable-next-line no-control-regex
     linkRegex = new RegExp("(<link(?:[^>]|\n)*\bhref=(['\"]*)(.*?)(['\"]*).*?>)", "ig"),
     scriptRegex = new RegExp(
+      // eslint-disable-next-line no-control-regex
       "(<script(?:[^>]|\n)*\bsrc=(['\"]*)(.*?)(['\"]*).*?>(</script>)?)",
       "ig"
     );
@@ -425,6 +427,7 @@ HtmlResWebpackPlugin.prototype.checkResource = function(
     if (!!~route.indexOf("__inline")) {
       // css inline
       let styleInlineRegex = new RegExp(
+        // eslint-disable-next-line no-control-regex
         "<link(?:[^>]|\n)*\bhref=(s*?)*(.+)[?]__inline.*?(s*?)>",
         "ig"
       );
@@ -436,6 +439,7 @@ HtmlResWebpackPlugin.prototype.checkResource = function(
       );
     } else {
       // css md5
+      // eslint-disable-next-line no-control-regex
       let styleMd5Regex = new RegExp("<link(?:[^>]|\n)*\bhref=(s*?)*(.+).*?(s*?)>", "ig");
       let cssPublicPath = this.options.cssPublicPath || publicPath;
       route = this.md5HtmlRes(route, styleMd5Regex, cssPublicPath);
@@ -462,6 +466,7 @@ HtmlResWebpackPlugin.prototype.checkResource = function(
     if (!!~route.indexOf("__inline")) {
       // js inline
       let scriptInlineRegex = new RegExp(
+        // eslint-disable-next-line no-control-regex
         "<script(?:[^>]|\n)*\bsrc=(s*?)*(.+)[?]__inline.*?(s*?)></script>",
         "ig"
       );
@@ -474,6 +479,7 @@ HtmlResWebpackPlugin.prototype.checkResource = function(
     } else {
       // js md5
       let scriptMd5Regex = new RegExp(
+        // eslint-disable-next-line no-control-regex
         "<script(?:[^>]|\n)*\bsrc=(s*?)*(.+).*?(s*?)></script>",
         "ig"
       );
