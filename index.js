@@ -400,9 +400,9 @@ HtmlResWebpackPlugin.prototype.checkResource = function(
   compilation
 ) {
   let isProduction = this.options.env === "production",
-    linkRegex = new RegExp("(<link[^>]*href=(['\"]*)(.*?)(['\"]*).*?>)", "ig"),
+    linkRegex = new RegExp("(<link(?:[^>]|\n)*href=(['\"]*)(.*?)(['\"]*).*?>)", "ig"),
     scriptRegex = new RegExp(
-      "(<script[^>]*src=(['\"]*)(.*?)(['\"]*).*?>(</script>)?)",
+      "(<script(?:[^>]|\n)*src=(['\"]*)(.*?)(['\"]*).*?>(</script>)?)",
       "ig"
     );
 
@@ -425,7 +425,7 @@ HtmlResWebpackPlugin.prototype.checkResource = function(
     if (!!~route.indexOf("__inline")) {
       // css inline
       let styleInlineRegex = new RegExp(
-        "<link.*href=(s*?)*(.+)[?]__inline.*?(s*?)>",
+        "<link(?:[^>]|\n)*href=(s*?)*(.+)[?]__inline.*?(s*?)>",
         "ig"
       );
       route = this.inlineHtmlRes(
@@ -436,7 +436,7 @@ HtmlResWebpackPlugin.prototype.checkResource = function(
       );
     } else {
       // css md5
-      let styleMd5Regex = new RegExp("<link.*href=(s*?)*(.+).*?(s*?)>", "ig");
+      let styleMd5Regex = new RegExp("<link(?:[^>]|\n)*href=(s*?)*(.+).*?(s*?)>", "ig");
       let cssPublicPath = this.options.cssPublicPath || publicPath;
       route = this.md5HtmlRes(route, styleMd5Regex, cssPublicPath);
     }
@@ -462,7 +462,7 @@ HtmlResWebpackPlugin.prototype.checkResource = function(
     if (!!~route.indexOf("__inline")) {
       // js inline
       let scriptInlineRegex = new RegExp(
-        "<script.*src=(s*?)*(.+)[?]__inline.*?(s*?)></script>",
+        "<script(?:[^>]|\n)*src=(s*?)*(.+)[?]__inline.*?(s*?)></script>",
         "ig"
       );
       route = this.inlineHtmlRes(
@@ -474,7 +474,7 @@ HtmlResWebpackPlugin.prototype.checkResource = function(
     } else {
       // js md5
       let scriptMd5Regex = new RegExp(
-        "<script.*src=(s*?)*(.+).*?(s*?)></script>",
+        "<script(?:[^>]|\n)*src=(s*?)*(.+).*?(s*?)></script>",
         "ig"
       );
       route = this.md5HtmlRes(route, scriptMd5Regex, publicPath);
